@@ -1,2 +1,2 @@
 # aicyper.github.io
-I do not no
+저는 뉴비입니다.
