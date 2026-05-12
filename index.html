@@ -3,133 +3,570 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT 보안 전문가 가이드</title>
+    <title>보안 전문가 성장 포트폴리오</title>
+
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --bg-color: #f4f7f6;
-            --text-color: #333;
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
         }
-        body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+
+        html{
+            scroll-behavior:smooth;
         }
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 2rem 1rem;
-            text-align: center;
+
+        body{
+            font-family:'Pretendard', sans-serif;
+            background:#0f172a;
+            color:white;
+            line-height:1.8;
         }
-        main {
-            padding: 1rem;
-            max-width: 600px;
-            margin: auto;
+
+        /* ================= HEADER ================= */
+
+        header{
+            width:100%;
+            background:linear-gradient(90deg,#111827,#1e3a8a);
+            padding:20px 60px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            position:sticky;
+            top:0;
+            z-index:1000;
+            box-shadow:0 4px 15px rgba(0,0,0,0.4);
         }
-        section {
-            background: white;
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+        .logo{
+            font-size:28px;
+            font-weight:bold;
+            color:#38bdf8;
         }
-        h2 {
-            color: var(--accent-color);
-            border-left: 4px solid var(--accent-color);
-            padding-left: 10px;
-            margin-top: 0;
+
+        nav ul{
+            display:flex;
+            gap:30px;
+            list-style:none;
         }
-        ul {
-            padding-left: 1.2rem;
+
+        nav a{
+            color:white;
+            text-decoration:none;
+            font-weight:600;
+            transition:0.3s;
         }
-        li {
-            margin-bottom: 0.8rem;
+
+        nav a:hover{
+            color:#38bdf8;
         }
-        .badge {
-            display: inline-block;
-            background: #e1f5fe;
-            color: #01579b;
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-right: 5px;
+
+        /* ================= HERO ================= */
+
+        .hero{
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            padding:20px;
+
+            background:
+            linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.7)),
+            url('https://images.unsplash.com/photo-1510511459019-5dda7724fd87?q=80&w=1600&auto=format&fit=crop');
+
+            background-size:cover;
+            background-position:center;
         }
-        footer {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #888;
-            padding: 2rem;
+
+        .hero-content h1{
+            font-size:65px;
+            color:#38bdf8;
+            margin-bottom:20px;
         }
+
+        .hero-content p{
+            font-size:22px;
+            max-width:900px;
+            color:#e2e8f0;
+        }
+
+        /* ================= SECTION ================= */
+
+        section{
+            padding:100px 10%;
+        }
+
+        .section-title{
+            text-align:center;
+            font-size:42px;
+            margin-bottom:50px;
+            color:#38bdf8;
+        }
+
+        .content-box{
+            background:#1e293b;
+            padding:40px;
+            border-radius:25px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        /* ================= CARD ================= */
+
+        .card-container{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:30px;
+        }
+
+        .card{
+            background:#111827;
+            padding:30px;
+            border-radius:20px;
+            transition:0.3s;
+            border:1px solid transparent;
+        }
+
+        .card:hover{
+            transform:translateY(-10px);
+            border:1px solid #38bdf8;
+        }
+
+        .card h3{
+            margin-bottom:15px;
+            color:#38bdf8;
+        }
+
+        .card p{
+            color:#cbd5e1;
+        }
+
+        /* ================= LINKS ================= */
+
+        .link-list{
+            display:flex;
+            flex-direction:column;
+            gap:20px;
+        }
+
+        .link-item{
+            background:#111827;
+            padding:20px;
+            border-radius:15px;
+            transition:0.3s;
+        }
+
+        .link-item:hover{
+            background:#1e3a8a;
+        }
+
+        .link-item a{
+            text-decoration:none;
+            color:white;
+            font-size:18px;
+            font-weight:bold;
+        }
+
+        /* ================= IMAGE GALLERY ================= */
+
+        .gallery{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+            gap:25px;
+        }
+
+        .gallery img{
+            width:100%;
+            height:250px;
+            object-fit:cover;
+            border-radius:20px;
+            transition:0.4s;
+        }
+
+        .gallery img:hover{
+            transform:scale(1.03);
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer{
+            background:#020617;
+            padding:40px;
+            text-align:center;
+            border-top:1px solid #1e293b;
+            color:#94a3b8;
+        }
+
+        footer a{
+            color:#38bdf8;
+            text-decoration:none;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width:768px){
+
+            header{
+                flex-direction:column;
+                gap:20px;
+            }
+
+            nav ul{
+                flex-wrap:wrap;
+                justify-content:center;
+            }
+
+            .hero-content h1{
+                font-size:42px;
+            }
+
+            .hero-content p{
+                font-size:18px;
+            }
+        }
+
+        /* ================= INTRO SECTION ================= */
+
+.intro-box{
+    display:flex;
+    gap:50px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.intro-image{
+    flex:1;
+    min-width:300px;
+}
+
+.intro-image img{
+    width:100%;
+    border-radius:25px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.5);
+}
+
+.intro-text{
+    flex:1.3;
+    min-width:300px;
+}
+
+.intro-text p{
+    color:#dbeafe;
+    font-size:18px;
+}
+
+/* ================= CODING SECTION ================= */
+
+.code-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:30px;
+}
+
+.code-card{
+    background:linear-gradient(145deg,#111827,#1e293b);
+    padding:35px;
+    border-radius:25px;
+    transition:0.4s;
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(56,189,248,0.2);
+}
+
+.code-card:hover{
+    transform:translateY(-12px);
+    border:1px solid #38bdf8;
+    box-shadow:0 10px 25px rgba(56,189,248,0.3);
+}
+
+.code-card::before{
+    content:"</>";
+    position:absolute;
+    top:-10px;
+    right:20px;
+    font-size:80px;
+    color:rgba(56,189,248,0.08);
+    font-weight:bold;
+}
+
+.code-card h3{
+    color:#38bdf8;
+    margin-bottom:15px;
+    font-size:24px;
+}
+
+.code-card p{
+    color:#cbd5e1;
+    margin-bottom:20px;
+}
+
+.code-card a{
+    text-decoration:none;
+    color:white;
+    background:#2563eb;
+    padding:10px 18px;
+    border-radius:10px;
+    display:inline-block;
+    transition:0.3s;
+}
+
+.code-card a:hover{
+    background:#38bdf8;
+}
+
     </style>
 </head>
+
 <body>
 
-<header>
-    <h1>🛡️ 보안 전문가 가이드</h1>
-    <p>Cyber Security Specialist</p>
-</header>
+    <!-- ================= HEADER ================= -->
 
-<main>
-    <section>
-        <h2>1. 보안 전문가란?</h2>
-        <p>온라인상에서 발생하는 해킹이나 바이러스 유입 등을 방지하고, 기업이나 개인의 소중한 <strong>정보 자산을 보호하는 정보통신 시스템의 수호자</strong>입니다.</p>
+    <header>
+
+        <div class="logo">AI Security Portfolio</div>
+
+        <nav>
+            <ul>
+                <li><a href="#intro">학과 정보</a></li>
+                <li><a href="#security">보안 전문가</a></li>
+                <li><a href="#coding">프로그래밍</a></li>
+                <li><a href="#it">IT개론</a></li>
+                <li><a href="#gallery">갤러리</a></li>
+            </ul>
+        </nav>
+
+    </header>
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>보안 전문가 성장 홈페이지</h1>
+
+            <p>
+                AI 소프트웨어학과 학생으로서
+                프로그래밍과 IT개론을 학습하며
+                미래의 사이버 보안 전문가를 목표로
+                성장 과정을 기록하는 포트폴리오 홈페이지입니다.
+            </p>
+
+        </div>
+
     </section>
 
-    <section>
-        <h2>2. 주요 업무</h2>
-        <ul>
-            <li><strong>보안 정책 수립:</strong> 시스템과 네트워크의 취약점을 분석하고 방어 체계 설계</li>
-            <li><strong>침입 모니터링:</strong> 실시간으로 외부 해킹 시도를 감시하고 침입 시 즉각 대응</li>
-            <li><strong>모의 해킹:</strong> 직접 시스템을 공격해 보며 약점을 미리 찾아내 보완</li>
-            <li><strong>디지털 포렌식:</strong> 보안 사고 발생 시 원인을 추적하고 증거 수집</li>
-        </ul>
+   <!-- ================= SECTION 1 ================= -->
+
+<section id="intro">
+
+    <h2 class="section-title">1. 홈페이지 소개 & 보안 전문가란?</h2>
+
+    <div class="content-box intro-box">
+
+        <div class="intro-image">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200&auto=format&fit=crop"
+            alt="보안 전문가 이미지">
+        </div>
+
+        <div class="intro-text">
+
+        <p>
+            이 홈페이지는 AI 소프트웨어학과 학생으로서
+            프로그래밍과 정보보안 분야를 학습하며 성장 과정을 기록하기 위해 제작한 포트폴리오 웹사이트입니다.
+        </p>
+
+        <br>
+
+        <p>
+            보안 전문가는 네트워크와 시스템의 취약점을 분석하고
+            사이버 공격으로부터 데이터를 보호하는 역할을 수행합니다.
+        </p>
+
+        <br>
+
+        <p>
+            현재 HTML, CSS, JavaScript와 네트워크, Linux, AI 보안 기술을 학습하며
+            미래의 보안 전문가를 목표로 성장하고 있습니다.
+        </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+    <!-- ================= SECTION 2 ================= -->
+
+    <section id="security">
+
+        <h2 class="section-title">2. 보안 전문가가 되기 위한 과정</h2>
+
+        <div class="card-container">
+
+            <div class="card">
+                <h3>프로그래밍 학습</h3>
+                <p>
+                    Python, C언어, JavaScript를 활용하여
+                    자동화 및 해킹 분석 능력을 개발합니다.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>네트워크 이해</h3>
+                <p>
+                    TCP/IP, OSI 7계층,
+                    라우팅과 패킷 분석 기술을 학습합니다.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Linux 서버</h3>
+                <p>
+                    Kali Linux와 Ubuntu를 기반으로
+                    서버 및 시스템 보안을 학습합니다.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>추천 자격증</h3>
+                <p>
+                    정보보안기사, 네트워크관리사,
+                    리눅스마스터, CISSP 등을 목표로 학습합니다.
+                </p>
+            </div>
+
+        </div>
+
     </section>
 
-    <section>
-        <h2>3. 필요한 공부 (학습 로드맵)</h2>
-        <p>기초부터 심화까지 단계별 학습이 필요합니다.</p>
-        <ul>
-            <li><span class="badge">기초</span> <strong>컴퓨터 구조 & 운영체제:</strong> Windows, Linux 커널에 대한 깊은 이해</li>
-            <li><span class="badge">네트워크</span> <strong>TCP/IP 프로토콜:</strong> 데이터가 오가는 통로와 패킷의 구조 공부</li>
-            <li><span class="badge">프로그래밍</span> <strong>C, Python:</strong> 시스템 취약점 분석과 자동화 툴 제작 역량</li>
-            <li><span class="badge">보안 기술</span> <strong>암호학 & 웹 보안:</strong> SQL Injection, XSS 등 주요 공격 기법 대응</li>
-        </ul>
+    <!-- ================= SECTION 3 ================= -->
+
+<section id="coding">
+
+    <h2 class="section-title">3. 프로그래밍 수업 프로젝트</h2>
+
+    <div class="code-grid">
+
+        <div class="code-card">
+
+            <h3>HTML 기초 웹페이지</h3>
+
+            <p>
+                HTML 태그 구조와 웹 문서의 기본 뼈대를 학습하며
+                제작한 첫 번째 웹페이지 프로젝트입니다.
+            </p>
+
+            <a href="tag.html">프로젝트 보기</a>
+
+        </div>
+
+        <div class="code-card">
+
+            <h3>CSS 애니메이션</h3>
+
+            <p>
+                Flexbox, Grid, Hover 효과,
+                애니메이션을 활용하여 제작한
+                UI 디자인 실습 프로젝트입니다.
+            </p>
+
+            <a href="#">프로젝트 보기</a>
+
+        </div>
+
+        <div class="code-card">
+
+            <h3>JavaScript 인터랙션</h3>
+
+            <p>
+                버튼 이벤트, DOM 제어,
+                사용자 인터랙션 기능을 구현한
+                JavaScript 실습 코드입니다.
+            </p>
+
+            <a href="#">프로젝트 보기</a>
+
+        </div>
+
+    </div>
+
+</section>
+
+    <!-- ================= SECTION 4 ================= -->
+
+    <section id="it">
+
+        <h2 class="section-title">4. IT개론 문서 자료</h2>
+
+        <div class="link-list">
+
+            <div class="link-item">
+                <a href="#">
+                    OSI 7계층 정리 문서
+                </a>
+            </div>
+
+            <div class="link-item">
+                <a href="#">
+                    네트워크 기초 용어 정리
+                </a>
+            </div>
+
+            <div class="link-item">
+                <a href="#">
+                    디지털 정보와 아날로그 정보 비교
+                </a>
+            </div>
+
+            <div class="link-item">
+                <a href="#">
+                    스마트 공장과 4차 산업혁명
+                </a>
+            </div>
+
+        </div>
+
     </section>
 
-    <section>
-        <h2>4. 추천 자격증</h2>
-        <ul>
-            <li>정보보안기사 / 산업기사 (국내)</li>
-            <li>CISA / CISSP (국제 공인)</li>
-            <li>CEH (화이트해커 인증)</li>
-        </ul>
+    <!-- ================= SECTION 5 ================= -->
+
+    <section id="gallery">
+
+        <h2 class="section-title">5. AI 생성 보안 이미지 갤러리</h2>
+
+        <div class="gallery">
+
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
+            alt="보안 이미지">
+
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
+            alt="AI 이미지">
+
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop"
+            alt="해킹 이미지">
+
+        </div>
+
     </section>
 
-    <section>
-        <h2>5. 현재 하고 있는 공부</h2>
-        <ul>
-            <li>HTML5 <a href="tag.html" target="_self">이동하기</a></li>
-            <li>CSS</li>
-            <li>JavaScript</li>
-        </ul>
-    </section>
+    <!-- ================= FOOTER ================= -->
 
-    <section>
-        <h2>6. 기타 이미지</h2>
-        <ul>
-            <img src="img/yes.jpg" width="400px" height="400px">
-        </ul>
-    </section>
-</main>
+    <footer>
 
-<footer>
-    &copy; 2026 보안 전문가 로드맵 | 모바일 최적화 문서
-</footer>
+        <p>
+            © 2026 AI Security Portfolio. 2026-05-12
+        </p>
+
+        <p>
+            Email :
+            <a href="mailto:aiyittaehee@gmail.com">
+                aiyittaehee@gmail.com
+            </a>
+        </p>
+
+    </footer>
 
 </body>
 </html>
