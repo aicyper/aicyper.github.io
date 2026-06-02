@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Box Model 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --card: #1e1e1e;
+    --accent: #e8ff47;
+    --accent2: #ff6b6b;
+    --accent3: #47c5ff;
+    --text: #f0f0f0;
+    --muted: #888;
+    --border-color: #2e2e2e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nanum Gothic', sans-serif;
+    line-height: 1.7;
+    padding: 40px 20px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 80px;
+    position: relative;
+  }
+  .page-header::before {
+    content: 'CSS';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 120px;
+    font-weight: 800;
+    color: transparent;
+    -webkit-text-stroke: 1px #2a2a2a;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 0;
+  }
+  .page-header h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    position: relative;
+    z-index: 1;
+  }
+  .page-header h1 span { color: var(--accent); }
+  .page-header p {
+    color: var(--muted);
+    margin-top: 12px;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section {
+    max-width: 960px;
+    margin: 0 auto 80px auto;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-title .num {
+    background: var(--accent);
+    color: #000;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .grid { display: grid; gap: 20px; }
+  .grid-2 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 28px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+
+  .card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .card p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+
+  .code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #adf;
+    margin-bottom: 14px;
+    word-break: break-all;
+  }
+
+  /* ── 1. BORDER ── */
+  .border-demo {
+    height: 56px;
+    border-radius: 8px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .b-solid  { border: 3px solid var(--accent); }
+  .b-dashed { border: 3px dashed var(--accent2); }
+  .b-dotted { border: 3px dotted var(--accent3); }
+  .b-double { border: 6px double #c084fc; }
+  .b-groove { border: 6px groove #f97316; }
+  .b-ridge  { border: 6px ridge  #34d399; }
+  .b-inset  { border: 6px inset  #60a5fa; }
+  .b-outset { border: 6px outset #f43f5e; }
+  .b-none   { border: 3px none  var(--muted); }
+  .b-hidden { border: 3px hidden var(--muted); }
+
+  /* ── 2. MARGIN ── */
+  .margin-visual-wrap {
+    background: #111;
+    border: 1px dashed #333;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .margin-visual-wrap .label-outer {
+    position: absolute;
+    top: 6px; left: 10px;
+    font-size: 0.65rem;
+    color: #555;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .margin-inner {
+    background: #1a1a2e;
+    border: 1px solid #2e2e6e;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--accent3);
+    padding: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .m-top    { margin-top: 30px; }
+  .m-right  { margin-right: 60px; }
+  .m-bottom { margin-bottom: 30px; }
+  .m-left   { margin-left: 60px; }
+  .m-all    { margin: 20px; }
+  .m-xy     { margin: 10px 40px; }
+
+  /* ── 3. PADDING ── */
+  .padding-demo {
+    background: #1a2a1a;
+    border: 1px solid #2e5e2e;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: #6ee7b7;
+    position: relative;
+  }
+  .padding-demo .inner-box {
+    background: #0d1a0d;
+    border: 1px dashed #3e8e3e;
+    border-radius: 4px;
+    text-align: center;
+    padding: 6px;
+    font-size: 0.72rem;
+    color: #4ade80;
+  }
+
+  .pt-demo { padding-top: 32px; }
+  .pr-demo { padding-right: 60px; }
+  .pb-demo { padding-bottom: 32px; }
+  .pl-demo { padding-left: 60px; }
+  .pa-demo { padding: 28px; }
+  .pxy-demo { padding: 8px 40px; }
+
+  /* ── 4. BOX MODEL VISUAL ── */
+  .box-model-diagram {
+    background: #111;
+    border-radius: 14px;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    border: 1px solid var(--border-color);
+  }
+  .bm-margin {
+    background: rgba(248,113,113,0.08);
+    border: 2px dashed rgba(248,113,113,0.5);
+    border-radius: 10px;
+    padding: 24px;
+    position: relative;
+  }
+  .bm-margin::before {
+    content: 'margin';
+    position: absolute; top: 4px; left: 8px;
+    font-size: 0.65rem; color: #f87171;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .bm-border {
+    background: rgba(251,191,36,0.08);
+    border: 4px solid rgba(251,191,36,0.7);
+    border-radius: 6px;
+    padding: 20px;
+    position: relative;
+  }
+  .bm-border::before {
+    content: 'border';
+    position: absolute; top: 3px; left: 6px;
+    font-size: 0.65rem; color: #fbbf24;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .bm-padding {
+    background: rgba(74,222,128,0.08);
+    border: 2px dashed rgba(74,222,128,0.5);
+    border-radius: 3px;
+    padding: 18px;
+    position: relative;
+  }
+  .bm-padding::before {
+    content: 'padding';
+    position: absolute; top: 3px; left: 6px;
+    font-size: 0.65rem; color: #4ade80;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .bm-content {
+    background: rgba(71,197,255,0.15);
+    border: 2px solid rgba(71,197,255,0.5);
+    border-radius: 3px;
+    padding: 16px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent3);
+    text-align: center;
+  }
+
+  /* ── 5. BOX SHADOW ── */
+  .shadow-demo {
+    height: 80px;
+    background: var(--surface);
+    border-radius: 12px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    transition: box-shadow 0.3s;
+  }
+  .shadow-demo:hover { opacity: 0.9; }
+
+  .sh-basic    { box-shadow: 4px 4px 10px rgba(0,0,0,0.6); }
+  .sh-spread   { box-shadow: 0 0 0 6px var(--accent); }
+  .sh-inset    { box-shadow: inset 4px 4px 12px rgba(0,0,0,0.8); }
+  .sh-color    { box-shadow: 0 6px 24px rgba(232,255,71,0.35); }
+  .sh-multi    { box-shadow: 4px 4px 0 var(--accent2), 8px 8px 0 var(--accent3); }
+  .sh-soft     { box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+  .sh-neon     { box-shadow: 0 0 10px #47c5ff, 0 0 30px #47c5ff55, 0 0 60px #47c5ff22; }
+  .sh-none     { box-shadow: none; }
+
+  /* divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 60px auto;
+    max-width: 960px;
+  }
+
+  /* property table */
+  .prop-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .prop-table th {
+    background: #111;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .prop-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #1e1e1e;
+    color: var(--muted);
+    vertical-align: top;
+  }
+  .prop-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent3);
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+  .prop-table tr:last-child td { border-bottom: none; }
+  .prop-table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="page-header">
+  <h1>CSS <span>Box Model</span> 가이드</h1>
+  <p>Border · Margin · Padding · Box Shadow 완벽 정리</p>
+</header>
+
+<!-- ════════════════════════════════ 1. BORDER ════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="num">1</span> Border — 경계선 종류</h2>
+
+  <div class="prop-table-wrap">
+    <table class="prop-table">
+      <thead>
+        <tr><th>속성값</th><th>설명</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>solid</td><td>실선. 가장 기본적이고 많이 쓰이는 경계선</td></tr>
+        <tr><td>dashed</td><td>점선(직사각형 대시). 구분선·분리선에 자주 사용</td></tr>
+        <tr><td>dotted</td><td>점선(원형 점). 부드러운 느낌의 구분선</td></tr>
+        <tr><td>double</td><td>이중 실선. 선의 두께가 최소 3px 이상이어야 보임</td></tr>
+        <tr><td>groove</td><td>홈이 파인 3D 효과 (inset 느낌)</td></tr>
+        <tr><td>ridge</td><td>돌출된 3D 효과 (outset 느낌)</td></tr>
+        <tr><td>inset</td><td>요소 전체가 눌린 것처럼 보이는 3D 효과</td></tr>
+        <tr><td>outset</td><td>요소 전체가 튀어나온 것처럼 보이는 3D 효과</td></tr>
+        <tr><td>none</td><td>경계선 없음 (기본값, 레이아웃 공간도 차지하지 않음)</td></tr>
+        <tr><td>hidden</td><td>경계선 숨김 (테이블 충돌 시 none과 다르게 동작)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid grid-2">
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>solid</h3>
+      <p>가장 많이 사용하는 실선</p>
+      <div class="code">border: 3px solid #e8ff47;</div>
+      <div class="border-demo b-solid">solid</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>dashed</h3>
+      <p>직사각형 대시로 구성된 점선</p>
+      <div class="code">border: 3px dashed #ff6b6b;</div>
+      <div class="border-demo b-dashed">dashed</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>dotted</h3>
+      <p>원형 점으로 구성된 점선</p>
+      <div class="code">border: 3px dotted #47c5ff;</div>
+      <div class="border-demo b-dotted">dotted</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>double</h3>
+      <p>두 줄의 실선 (두께 ≥ 3px)</p>
+      <div class="code">border: 6px double #c084fc;</div>
+      <div class="border-demo b-double">double</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>groove</h3>
+      <p>홈이 파인 3D 음각 효과</p>
+      <div class="code">border: 6px groove #f97316;</div>
+      <div class="border-demo b-groove">groove</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>ridge</h3>
+      <p>돌출된 3D 양각 효과</p>
+      <div class="code">border: 6px ridge #34d399;</div>
+      <div class="border-demo b-ridge">ridge</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>inset</h3>
+      <p>요소 전체가 눌린 3D 효과</p>
+      <div class="code">border: 6px inset #60a5fa;</div>
+      <div class="border-demo b-inset">inset</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>outset</h3>
+      <p>요소 전체가 튀어나온 3D 효과</p>
+      <div class="code">border: 6px outset #f43f5e;</div>
+      <div class="border-demo b-outset">outset</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>none</h3>
+      <p>경계선 없음, 공간도 차지하지 않음</p>
+      <div class="code">border: none;</div>
+      <div class="border-demo b-none" style="background:#1a1a1a;">none (경계선 없음)</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">border-style</div>
+      <h3>hidden</h3>
+      <p>경계선 숨김, 테이블에서 none과 차이 있음</p>
+      <div class="code">border: hidden;</div>
+      <div class="border-demo b-hidden" style="background:#1a1a1a;">hidden (경계선 숨김)</div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════ 2. MARGIN ════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="num">2</span> Margin — 외부 여백</h2>
+  <p style="color:var(--muted);margin-bottom:28px;font-size:0.9rem;">
+    Margin은 요소의 <strong style="color:var(--text)">바깥쪽</strong> 여백입니다. 인접한 요소와의 거리를 조절하며, 배경색이 적용되지 않습니다.
+    빨간 점선 영역이 margin 영역입니다.
+  </p>
+
+  <div class="prop-table-wrap">
+    <table class="prop-table">
+      <thead>
+        <tr><th>속성</th><th>설명</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>margin-top</td><td>위쪽 외부 여백</td></tr>
+        <tr><td>margin-right</td><td>오른쪽 외부 여백</td></tr>
+        <tr><td>margin-bottom</td><td>아래쪽 외부 여백</td></tr>
+        <tr><td>margin-left</td><td>왼쪽 외부 여백</td></tr>
+        <tr><td>margin</td><td>단축 속성 (상 우 하 좌 순서)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid grid-2">
+
+    <div class="card">
+      <div class="card-label">property</div>
+      <h3>margin-top</h3>
+      <p>요소의 위쪽에 외부 여백을 추가합니다.</p>
+      <div class="code">margin-top: 30px;</div>
+      <div class="margin-visual-wrap">
+        <span class="label-outer">부모 영역</span>
+        <div class="margin-inner m-top">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">property</div>
+      <h3>margin-right</h3>
+      <p>요소의 오른쪽에 외부 여백을 추가합니다.</p>
+      <div class="code">margin-right: 60px;</div>
+      <div class="margin-visual-wrap">
+        <span class="label-outer">부모 영역</span>
+        <div class="margin-inner m-right">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">property</div>
+      <h3>margin-bottom</h3>
+      <p>요소의 아래쪽에 외부 여백을 추가합니다.</p>
+      <div class="code">margin-bottom: 30px;</div>
+      <div class="margin-visual-wrap">
+        <span class="label-outer">부모 영역</span>
+        <div class="margin-inner m-bottom">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">property</div>
+      <h3>margin-left</h3>
+      <p>요소의 왼쪽에 외부 여백을 추가합니다.</p>
+      <div class="code">margin-left: 60px;</div>
+      <div class="margin-visual-wrap">
+        <span class="label-outer">부모 영역</span>
+        <div class="margin-inner m-left">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">shorthand</div>
+      <h3>margin (전체)</h3>
+      <p>상하좌우 모두 동일한 여백을 설정합니다.</p>
+      <div class="code">margin: 20px;</div>
+      <div class="margin-visual-wrap">
+        <span class="label-outer">부모 영역</span>
+        <div class="margin-inner m-all">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">shorthand</div>
+      <h3>margin (상하 / 좌우)</h3>
+      <p>첫 번째 값은 상하, 두 번째 값은 좌우 여백입니다.</p>
+      <div class="code">margin: 10px 40px;</div>
+      <div class="margin-visual-wrap">
+        <span class="label-outer">부모 영역</span>
+        <div class="margin-inner m-xy">content</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════ 3. PADDING ════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="num">3</span> Padding — 내부 여백</h2>
+  <p style="color:var(--muted);margin-bottom:28px;font-size:0.9rem;">
+    Padding은 요소의 <strong style="color:var(--text)">안쪽</strong> 여백입니다. 배경색이 padding 영역까지 채워집니다.
+    초록 점선 영역이 padding이며, 안쪽 어두운 영역이 실제 content입니다.
+  </p>
+
+  <div class="prop-table-wrap">
+    <table class="prop-table">
+      <thead>
+        <tr><th>속성</th><th>설명</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>padding-top</td><td>위쪽 내부 여백</td></tr>
+        <tr><td>padding-right</td><td>오른쪽 내부 여백</td></tr>
+        <tr><td>padding-bottom</td><td>아래쪽 내부 여백</td></tr>
+        <tr><td>padding-left</td><td>왼쪽 내부 여백</td></tr>
+        <tr><td>padding</td><td>단축 속성 (상 우 하 좌 순서)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid grid-2">
+
+    <div class="card">
+      <div class="card-label">property</div>
+      <h3>padding-top</h3>
+      <p>콘텐츠 위쪽에 내부 여백을 추가합니다.</p>
+      <div class="code">padding-top: 32px;</div>
+      <div class="padding-demo pt-demo">
+        <div class="inner-box">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">property</div>
+      <h3>padding-right</h3>
+      <p>콘텐츠 오른쪽에 내부 여백을 추가합니다.</p>
+      <div class="code">padding-right: 60px;</div>
+      <div class="padding-demo pr-demo">
+        <div class="inner-box">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">property</div>
+      <h3>padding-bottom</h3>
+      <p>콘텐츠 아래쪽에 내부 여백을 추가합니다.</p>
+      <div class="code">padding-bottom: 32px;</div>
+      <div class="padding-demo pb-demo">
+        <div class="inner-box">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">property</div>
+      <h3>padding-left</h3>
+      <p>콘텐츠 왼쪽에 내부 여백을 추가합니다.</p>
+      <div class="code">padding-left: 60px;</div>
+      <div class="padding-demo pl-demo">
+        <div class="inner-box">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">shorthand</div>
+      <h3>padding (전체)</h3>
+      <p>상하좌우 모두 동일한 내부 여백을 설정합니다.</p>
+      <div class="code">padding: 28px;</div>
+      <div class="padding-demo pa-demo">
+        <div class="inner-box">content</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">shorthand</div>
+      <h3>padding (상하 / 좌우)</h3>
+      <p>첫 번째 값은 상하, 두 번째 값은 좌우 내부 여백입니다.</p>
+      <div class="code">padding: 8px 40px;</div>
+      <div class="padding-demo pxy-demo">
+        <div class="inner-box">content</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════ 4. BOX MODEL ════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="num">4</span> CSS Box Model — 박스 구조</h2>
+  <p style="color:var(--muted);margin-bottom:28px;font-size:0.9rem;">
+    모든 HTML 요소는 margin → border → padding → content의 네 겹으로 이루어진 박스 모델을 따릅니다.
+  </p>
+
+  <div class="box-model-diagram">
+    <div class="bm-margin">
+      <div class="bm-border">
+        <div class="bm-padding">
+          <div class="bm-content">content</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prop-table-wrap">
+    <table class="prop-table">
+      <thead>
+        <tr><th>영역</th><th>설명</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>content</td><td>실제 텍스트·이미지 등 내용이 들어가는 영역. width/height로 조절</td></tr>
+        <tr><td>padding</td><td>content와 border 사이의 내부 여백. 배경색 적용됨</td></tr>
+        <tr><td>border</td><td>padding 바깥을 둘러싸는 경계선</td></tr>
+        <tr><td>margin</td><td>border 바깥쪽 다른 요소와의 간격. 배경색 없음</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-bottom:0">
+    <div class="card-label">box-sizing</div>
+    <h3>box-sizing: border-box (권장)</h3>
+    <p>width에 padding과 border까지 포함해 계산하므로 레이아웃 관리가 훨씬 쉬워집니다.</p>
+    <div class="code">*, *::before, *::after { box-sizing: border-box; }</div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════ 5. BOX SHADOW ════════════════════════════════ -->
+<section class="section">
+  <h2 class="section-title"><span class="num">5</span> Box Shadow — 그림자</h2>
+  <p style="color:var(--muted);margin-bottom:8px;font-size:0.9rem;">
+    <code style="color:var(--accent3);font-family:'JetBrains Mono',monospace;">box-shadow: offset-x offset-y blur spread color;</code>
+  </p>
+  <p style="color:var(--muted);margin-bottom:28px;font-size:0.85rem;">
+    콤마(,)로 구분하여 여러 그림자를 중첩할 수 있습니다. <code style="color:var(--accent3);font-family:'JetBrains Mono',monospace;">inset</code> 키워드를 앞에 붙이면 내부 그림자로 전환됩니다.
+  </p>
+
+  <div class="prop-table-wrap">
+    <table class="prop-table">
+      <thead>
+        <tr><th>값</th><th>설명</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>offset-x</td><td>그림자의 수평 위치 (양수: 오른쪽, 음수: 왼쪽)</td></tr>
+        <tr><td>offset-y</td><td>그림자의 수직 위치 (양수: 아래쪽, 음수: 위쪽)</td></tr>
+        <tr><td>blur-radius</td><td>흐림 반경. 값이 클수록 그림자가 흐려짐 (기본값 0)</td></tr>
+        <tr><td>spread-radius</td><td>그림자 확장 반경. 양수면 커지고 음수면 작아짐 (기본값 0)</td></tr>
+        <tr><td>color</td><td>그림자 색상 (rgba 권장)</td></tr>
+        <tr><td>inset</td><td>키워드. 외부 그림자 대신 내부 그림자로 렌더링</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid grid-2">
+
+    <div class="card">
+      <div class="card-label">box-shadow</div>
+      <h3>기본 그림자</h3>
+      <p>오프셋과 블러를 지정한 가장 기본적인 형태</p>
+      <div class="code">box-shadow: 4px 4px 10px rgba(0,0,0,0.6);</div>
+      <div class="shadow-demo sh-basic">기본 그림자</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">box-shadow</div>
+      <h3>Spread — 외곽선 효과</h3>
+      <p>spread 값만 사용해 요소 주위에 테두리처럼 표현</p>
+      <div class="code">box-shadow: 0 0 0 6px #e8ff47;</div>
+      <div class="shadow-demo sh-spread">spread 외곽선</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">box-shadow</div>
+      <h3>inset — 내부 그림자</h3>
+      <p>그림자가 요소 안쪽으로 들어가 눌린 느낌</p>
+      <div class="code">box-shadow: inset 4px 4px 12px rgba(0,0,0,0.8);</div>
+      <div class="shadow-demo sh-inset">inset 그림자</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">box-shadow</div>
+      <h3>컬러 글로우</h3>
+      <p>색상 있는 블러로 발광 효과 연출</p>
+      <div class="code">box-shadow: 0 6px 24px rgba(232,255,71,0.35);</div>
+      <div class="shadow-demo sh-color">컬러 글로우</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">box-shadow</div>
+      <h3>다중 그림자</h3>
+      <p>쉼표로 구분해 여러 그림자를 동시에 적용</p>
+      <div class="code">box-shadow: 4px 4px 0 #ff6b6b, 8px 8px 0 #47c5ff;</div>
+      <div class="shadow-demo sh-multi">다중 그림자</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">box-shadow</div>
+      <h3>소프트 엘리베이션</h3>
+      <p>큰 blur로 카드가 떠있는 듯한 깊이감 표현</p>
+      <div class="code">box-shadow: 0 20px 60px rgba(0,0,0,0.7);</div>
+      <div class="shadow-demo sh-soft">소프트 엘리베이션</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">box-shadow</div>
+      <h3>네온 글로우</h3>
+      <p>여러 단계의 블러를 겹쳐 네온 발광 효과 구현</p>
+      <div class="code">box-shadow: 0 0 10px #47c5ff,<br>&nbsp;&nbsp;0 0 30px #47c5ff55,<br>&nbsp;&nbsp;0 0 60px #47c5ff22;</div>
+      <div class="shadow-demo sh-neon">네온 글로우</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">box-shadow</div>
+      <h3>none — 그림자 없음</h3>
+      <p>그림자를 제거할 때 사용 (hover 등 상태 변경 시 활용)</p>
+      <div class="code">box-shadow: none;</div>
+      <div class="shadow-demo sh-none">그림자 없음</div>
+    </div>
+
+  </div>
+</section>
+
+<footer style="text-align:center;color:#333;font-size:0.8rem;padding:40px 0 20px;font-family:'JetBrains Mono',monospace;">
+  CSS Box Model Guide — Border · Margin · Padding · Shadow
+</footer>
+
+</body>
+</html>
