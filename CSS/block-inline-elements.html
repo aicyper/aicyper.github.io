@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Block & Inline 요소 완전 가이드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0f1117;
+      --surface:  #181c27;
+      --border:   #272d3f;
+      --accent-b: #4f8ef7;   /* block 강조 */
+      --accent-i: #f76f4f;   /* inline 강조 */
+      --accent-g: #4fc98e;   /* 초록 포인트 */
+      --text:     #e2e6f0;
+      --muted:    #7a84a0;
+      --mono:     'IBM Plex Mono', monospace;
+      --sans:     'Noto Sans KR', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── 헤더 ─────────────────────────────── */
+    header {
+      padding: 64px 40px 48px;
+      border-bottom: 1px solid var(--border);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent-g);
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+    h1 span.b { color: var(--accent-b); }
+    h1 span.i { color: var(--accent-i); }
+    .subtitle {
+      margin-top: 16px;
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 560px;
+    }
+
+    /* ── 메인 레이아웃 ──────────────────────── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+
+    /* ── 섹션 카드 ─────────────────────────── */
+    .section {
+      margin-top: 56px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .badge-block { background: rgba(79,142,247,.15); color: var(--accent-b); border: 1px solid rgba(79,142,247,.3); }
+    .badge-inline { background: rgba(247,111,79,.15); color: var(--accent-i); border: 1px solid rgba(247,111,79,.3); }
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+
+    /* ── 정의 박스 ─────────────────────────── */
+    .definition {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left-width: 3px;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      font-size: 14.5px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .definition strong { color: var(--text); }
+    .section-block .definition { border-left-color: var(--accent-b); }
+    .section-inline .definition { border-left-color: var(--accent-i); }
+
+    /* ── 특성 태그 목록 ───────────────────────── */
+    .traits {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .trait {
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ── 데모 영역 ─────────────────────────── */
+    .demo-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .demo-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+    }
+    .demo-canvas {
+      padding: 28px 24px;
+    }
+
+    /* ── Block 데모 요소들 ──────────────────── */
+    .demo-div {
+      background: rgba(79,142,247,.08);
+      border: 1px dashed rgba(79,142,247,.5);
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .demo-div .tag-hint {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent-b);
+      margin-bottom: 4px;
+    }
+
+    .demo-p {
+      background: rgba(79,142,247,.05);
+      border: 1px dashed rgba(79,142,247,.4);
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .demo-p .tag-hint { font-family: var(--mono); font-size: 11px; color: var(--accent-b); margin-bottom: 2px; }
+
+    .demo-h {
+      background: rgba(79,142,247,.07);
+      border: 1px dashed rgba(79,142,247,.45);
+      padding: 10px 16px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .demo-h .tag-hint { font-family: var(--mono); font-size: 11px; color: var(--accent-b); margin-bottom: 2px; }
+    .demo-h h2 { font-size: 22px; color: var(--text); }
+    .demo-h h3 { font-size: 18px; color: var(--text); }
+
+    .demo-ul-wrap {
+      background: rgba(79,142,247,.05);
+      border: 1px dashed rgba(79,142,247,.4);
+      padding: 10px 16px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .demo-ul-wrap .tag-hint { font-family: var(--mono); font-size: 11px; color: var(--accent-b); margin-bottom: 4px; }
+    .demo-ul-wrap ul { padding-left: 20px; font-size: 14px; }
+    .demo-ul-wrap ul li { margin-bottom: 2px; }
+
+    /* ── Inline 데모 요소들 ─────────────────── */
+    .inline-sentence {
+      font-size: 15px;
+      line-height: 2.2;
+      color: var(--text);
+    }
+    .demo-span {
+      background: rgba(247,111,79,.18);
+      border: 1px solid rgba(247,111,79,.4);
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-size: 14px;
+      color: var(--accent-i);
+    }
+    .demo-a {
+      color: #7eb8ff;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-size: 14px;
+    }
+    .demo-strong {
+      font-weight: 700;
+      color: #fff;
+      font-size: 14px;
+    }
+    .demo-em {
+      font-style: italic;
+      color: #c8b4f8;
+      font-size: 14px;
+    }
+    .demo-code-inline {
+      font-family: var(--mono);
+      background: rgba(79,201,142,.12);
+      border: 1px solid rgba(79,201,142,.3);
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-size: 13px;
+      color: var(--accent-g);
+    }
+    .demo-mark {
+      background: rgba(255,210,80,.25);
+      border-radius: 2px;
+      padding: 0 3px;
+      color: #f5d96b;
+      font-size: 14px;
+    }
+    .demo-label-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent-i);
+      vertical-align: super;
+      margin-left: 2px;
+    }
+
+    /* ── 비교 테이블 ──────────────────────── */
+    .compare-section { margin-top: 56px; }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .compare-table thead tr {
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .compare-table td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:first-child { color: var(--muted); font-size: 13px; }
+    .td-block { color: var(--accent-b); }
+    .td-inline { color: var(--accent-i); }
+    .mono-text { font-family: var(--mono); font-size: 12px; }
+
+    /* ── 요소 태그 목록 ───────────────────────── */
+    .tag-list { margin-top: 28px; }
+    .tag-list-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag-pill {
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid;
+    }
+    .tag-pill-b { border-color: rgba(79,142,247,.4); color: var(--accent-b); background: rgba(79,142,247,.07); }
+    .tag-pill-i { border-color: rgba(247,111,79,.4);  color: var(--accent-i); background: rgba(247,111,79,.07); }
+
+    /* ── 시각적 흐름 다이어그램 ──────────────── */
+    .flow-section { margin-top: 56px; }
+    .flow-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 24px;
+    }
+    .flow-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .flow-row:last-child { margin-bottom: 0; }
+    .flow-block-el {
+      background: rgba(79,142,247,.12);
+      border: 1px solid rgba(79,142,247,.4);
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-family: var(--mono);
+      color: var(--accent-b);
+      flex: 1;
+      min-width: 100%;
+    }
+    .flow-inline-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .flow-inline-el {
+      background: rgba(247,111,79,.12);
+      border: 1px solid rgba(247,111,79,.4);
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--accent-i);
+    }
+    .flow-arrow {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .flow-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .flow-note code {
+      font-family: var(--mono);
+      font-size: 11px;
+      background: rgba(255,255,255,.06);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── 푸터 ─────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .06em;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 600px) {
+      header, main, footer { padding-left: 20px; padding-right: 20px; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">HTML 레이아웃 기초</p>
+  <h1><span class="b">Block</span> 요소와 <span class="i">Inline</span> 요소</h1>
+  <p class="subtitle">HTML 요소는 렌더링 방식에 따라 크게 두 종류로 나뉩니다. 각각의 특성과 대표 태그를 예제와 함께 살펴보세요.</p>
+</header>
+
+<main>
+
+  <!-- ───────── BLOCK ───────── -->
+  <section class="section section-block">
+    <div class="section-header">
+      <span class="badge badge-block">Block</span>
+      <span class="section-title">블록 요소</span>
+    </div>
+
+    <div class="definition">
+      블록 요소는 <strong>항상 새 줄에서 시작</strong>하며, <strong>가로 전체 너비를 차지</strong>합니다.
+      위아래로 다른 요소와 구분되는 독립적인 공간을 형성하고,
+      <code style="font-family:var(--mono);font-size:13px;">width</code>, <code style="font-family:var(--mono);font-size:13px;">height</code>,
+      <code style="font-family:var(--mono);font-size:13px;">margin</code>, <code style="font-family:var(--mono);font-size:13px;">padding</code> 등
+      모든 박스 모델 속성을 완전히 지원합니다.
+    </div>
+
+    <div class="traits">
+      <span class="trait">새 줄에서 시작</span>
+      <span class="trait">width: 100% (기본)</span>
+      <span class="trait">width / height 설정 가능</span>
+      <span class="trait">margin / padding 완전 지원</span>
+      <span class="trait">내부에 block & inline 포함 가능</span>
+    </div>
+
+    <div class="demo-wrap">
+      <div class="demo-label">▶ 라이브 예제</div>
+      <div class="demo-canvas">
+
+        <div class="demo-div">
+          <div class="tag-hint">&lt;div&gt;</div>
+          div — 범용 컨테이너. 레이아웃 구성에 가장 많이 쓰입니다.
+        </div>
+
+        <div class="demo-p">
+          <div class="tag-hint">&lt;p&gt;</div>
+          p — 단락 요소. 위아래에 기본 마진이 자동으로 생깁니다.
+        </div>
+
+        <div class="demo-h">
+          <div class="tag-hint">&lt;h2&gt; / &lt;h3&gt;</div>
+          <h2>h2 제목</h2>
+          <h3>h3 제목</h3>
+        </div>
+
+        <div class="demo-ul-wrap">
+          <div class="tag-hint">&lt;ul&gt; / &lt;li&gt;</div>
+          <ul>
+            <li>목록 항목 1</li>
+            <li>목록 항목 2</li>
+            <li>목록 항목 3</li>
+          </ul>
+        </div>
+
+        <div class="demo-div" style="background:rgba(79,142,247,.05);padding:0;">
+          <div class="tag-hint" style="padding:10px 16px 0;">&lt;header&gt; / &lt;section&gt; / &lt;article&gt; / &lt;footer&gt;</div>
+          <div style="display:flex;gap:0;flex-direction:column;">
+            <div style="background:rgba(79,142,247,.12);padding:8px 16px;font-size:13px;">header — 머리말 구역</div>
+            <div style="background:rgba(79,142,247,.07);padding:8px 16px;font-size:13px;">section — 콘텐츠 섹션</div>
+            <div style="background:rgba(79,142,247,.04);padding:8px 16px;font-size:13px;">article — 독립 콘텐츠</div>
+            <div style="background:rgba(79,142,247,.09);padding:8px 16px;font-size:13px;border-radius:0 0 6px 6px;">footer — 바닥글 구역</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="tag-list">
+      <p class="tag-list-title">주요 Block 태그</p>
+      <div class="tags">
+        <span class="tag-pill tag-pill-b">&lt;div&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;p&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;h1&gt; ~ &lt;h6&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;ul&gt; / &lt;ol&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;li&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;table&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;form&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;header&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;section&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;article&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;nav&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;footer&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;blockquote&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;pre&gt;</span>
+        <span class="tag-pill tag-pill-b">&lt;hr&gt;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── INLINE ───────── -->
+  <section class="section section-inline">
+    <div class="section-header">
+      <span class="badge badge-inline">Inline</span>
+      <span class="section-title">인라인 요소</span>
+    </div>
+
+    <div class="definition">
+      인라인 요소는 <strong>새 줄을 만들지 않고</strong> 텍스트 흐름 안에서 콘텐츠 크기만큼만 공간을 차지합니다.
+      여러 인라인 요소가 나란히 배치되며, <code style="font-family:var(--mono);font-size:13px;">width</code>와
+      <code style="font-family:var(--mono);font-size:13px;">height</code>는 콘텐츠에 의해 결정되고
+      상하 <code style="font-family:var(--mono);font-size:13px;">margin</code>은 적용되지 않습니다.
+    </div>
+
+    <div class="traits">
+      <span class="trait">텍스트 흐름 유지</span>
+      <span class="trait">콘텐츠 너비만큼만 차지</span>
+      <span class="trait">width / height 설정 불가</span>
+      <span class="trait">좌우 margin / padding만 유효</span>
+      <span class="trait">내부에 inline 요소만 포함 권장</span>
+    </div>
+
+    <div class="demo-wrap">
+      <div class="demo-label">▶ 라이브 예제 — 모든 요소가 같은 줄에 흐릅니다</div>
+      <div class="demo-canvas">
+        <p class="inline-sentence">
+          이 문장에는
+          <span class="demo-span">span<span class="demo-label-tag">&lt;span&gt;</span></span>
+          으로 강조된 단어와
+          <a class="demo-a" href="#">클릭 가능한 링크<span class="demo-label-tag">&lt;a&gt;</span></a>,
+          <strong class="demo-strong">굵은 텍스트<span class="demo-label-tag">&lt;strong&gt;</span></strong>,
+          <em class="demo-em">기울임 텍스트<span class="demo-label-tag">&lt;em&gt;</span></em>가 모두 한 흐름 안에 자연스럽게 섞입니다.
+        </p>
+        <br />
+        <p class="inline-sentence">
+          코드를 나타낼 때는
+          <code class="demo-code-inline">console.log()<span class="demo-label-tag">&lt;code&gt;</span></code>처럼 인라인으로 표시하고,
+          특정 내용을 강조하려면
+          <mark class="demo-mark">이렇게 하이라이트<span class="demo-label-tag">&lt;mark&gt;</span></mark>할 수 있습니다.
+          <img src="" alt="" style="width:0;height:0;" />{/* img 태그도 inline */}
+          <span class="demo-label-tag" style="font-size:11px;color:var(--accent-i);vertical-align:middle;">&lt;img&gt; 도 인라인 요소</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="tag-list">
+      <p class="tag-list-title">주요 Inline 태그</p>
+      <div class="tags">
+        <span class="tag-pill tag-pill-i">&lt;span&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;a&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;strong&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;em&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;b&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;i&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;u&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;code&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;mark&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;small&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;sub&gt; / &lt;sup&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;img&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;label&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;input&gt;</span>
+        <span class="tag-pill tag-pill-i">&lt;button&gt;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── 렌더링 흐름 다이어그램 ───────── -->
+  <section class="flow-section">
+    <div class="section-header">
+      <span class="badge" style="background:rgba(79,201,142,.12);color:var(--accent-g);border:1px solid rgba(79,201,142,.3);">DIAGRAM</span>
+      <span class="section-title">렌더링 흐름 비교</span>
+    </div>
+    <div class="flow-diagram">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">블록 요소는 수직으로 쌓이고, 인라인 요소는 수평으로 흐릅니다.</p>
+
+      <div class="flow-row">
+        <div class="flow-block-el">&lt;div&gt; — 전체 너비를 차지합니다</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-block-el">&lt;p&gt; 문단 안에
+          <span style="display:inline;background:rgba(247,111,79,.15);border:1px solid rgba(247,111,79,.4);border-radius:3px;padding:1px 7px;font-size:12px;color:var(--accent-i);">&lt;span&gt;</span>
+          <span style="margin:0 4px;color:var(--muted);">+</span>
+          <span style="display:inline;background:rgba(247,111,79,.15);border:1px solid rgba(247,111,79,.4);border-radius:3px;padding:1px 7px;font-size:12px;color:var(--accent-i);">&lt;strong&gt;</span>
+          <span style="margin:0 4px;color:var(--muted);">+</span>
+          <span style="display:inline;background:rgba(247,111,79,.15);border:1px solid rgba(247,111,79,.4);border-radius:3px;padding:1px 7px;font-size:12px;color:var(--accent-i);">&lt;a&gt;</span>
+          이 나란히 배치됩니다.
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-block-el">&lt;section&gt; — 다시 새 줄에서 시작합니다</div>
+      </div>
+
+      <p class="flow-note">
+        CSS로 <code>display: block</code> / <code>display: inline</code> / <code>display: inline-block</code>을 지정하면 기본 동작을 바꿀 수 있습니다.
+        <code>inline-block</code>은 인라인처럼 흐르면서도 width, height 설정이 가능합니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- ───────── 비교 테이블 ───────── -->
+  <section class="compare-section">
+    <div class="section-header">
+      <span class="badge" style="background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border);">COMPARE</span>
+      <span class="section-title">핵심 차이점 정리</span>
+    </div>
+    <div class="demo-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th class="td-block">Block 요소</th>
+            <th class="td-inline">Inline 요소</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>줄 바꿈</td>
+            <td class="td-block">항상 새 줄에서 시작</td>
+            <td class="td-inline">줄 바꿈 없이 이어짐</td>
+          </tr>
+          <tr>
+            <td>기본 너비</td>
+            <td class="td-block">부모 컨테이너의 100%</td>
+            <td class="td-inline">콘텐츠 크기만큼</td>
+          </tr>
+          <tr>
+            <td>width / height</td>
+            <td class="td-block mono-text">지정 가능 ✓</td>
+            <td class="td-inline mono-text">지정 불가 ✗</td>
+          </tr>
+          <tr>
+            <td>margin</td>
+            <td class="td-block">상하좌우 모두 적용</td>
+            <td class="td-inline">좌우만 유효, 상하 무시</td>
+          </tr>
+          <tr>
+            <td>padding</td>
+            <td class="td-block">상하좌우 모두 적용</td>
+            <td class="td-inline">좌우만 레이아웃 영향</td>
+          </tr>
+          <tr>
+            <td>자식 요소</td>
+            <td class="td-block">block + inline 모두 포함 가능</td>
+            <td class="td-inline">inline 요소만 권장</td>
+          </tr>
+          <tr>
+            <td>대표 태그</td>
+            <td class="td-block mono-text">&lt;div&gt; &lt;p&gt; &lt;h1&gt; &lt;section&gt;</td>
+            <td class="td-inline mono-text">&lt;span&gt; &lt;a&gt; &lt;strong&gt; &lt;em&gt;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  HTML Block &amp; Inline Elements Reference · CSS display 속성으로 언제든지 동작 방식을 변경할 수 있습니다
+</footer>
+
+</body>
+</html>
