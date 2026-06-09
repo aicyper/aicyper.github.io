@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML 레이아웃 요소 가이드</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f5f5f0;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    /* ── 공통 라벨 ── */
+    .tag-label {
+      display: inline-block;
+      font-family: monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .desc {
+      font-size: 0.88rem;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    /* ═══════════════════════════════════
+       SECTION 1 – 레이아웃 다이어그램
+    ═══════════════════════════════════ */
+    .intro {
+      max-width: 860px;
+      margin: 48px auto 0;
+      padding: 0 24px;
+    }
+    .intro h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .intro p {
+      margin-top: 8px;
+      color: #555;
+    }
+
+    /* 다이어그램 */
+    .diagram {
+      max-width: 860px;
+      margin: 32px auto;
+      padding: 0 24px;
+    }
+    .diagram-wrap {
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .d-header {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .d-nav {
+      background: #2d2d2d;
+      color: #e0e0e0;
+      padding: 10px 20px;
+      display: flex;
+      gap: 20px;
+      font-size: 0.85rem;
+    }
+    .d-nav span { opacity: 0.7; }
+    .d-nav span.active { opacity: 1; color: #fff; font-weight: 600; }
+
+    .d-body {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      min-height: 200px;
+    }
+    .d-main {
+      padding: 20px;
+      border-right: 2px solid #e8e8e8;
+    }
+    .d-article {
+      background: #f0f7ff;
+      border: 1.5px dashed #4a90d9;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .d-aside {
+      background: #fff8f0;
+      padding: 16px;
+      border-left: 3px solid #f0a040;
+    }
+    .d-footer {
+      background: #f0f0ec;
+      border-top: 2px solid #e0e0e0;
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .d-label {
+      font-family: monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+    .lbl-header { background: #444; color: #fff; }
+    .lbl-nav    { background: #555; color: #e0e0e0; }
+    .lbl-section{ background: #e0ecff; color: #1a4f9e; }
+    .lbl-article{ background: #c8e0ff; color: #1a4f9e; }
+    .lbl-aside  { background: #ffe4b8; color: #8a4d00; }
+    .lbl-footer { background: #ddd; color: #444; }
+
+    /* ═══════════════════════════════════
+       SECTION 2 – 각 요소 설명 카드
+    ═══════════════════════════════════ */
+    .cards {
+      max-width: 860px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } }
+
+    .card {
+      background: #fff;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card-head {
+      padding: 14px 18px 10px;
+      border-bottom: 1.5px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-icon {
+      width: 34px; height: 34px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .card-head h2 { font-size: 1rem; font-weight: 700; }
+    .card-head code {
+      font-size: 0.78rem;
+      background: #f5f5f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #666;
+    }
+    .card-body {
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: #444;
+    }
+    .card-body p { margin-bottom: 8px; }
+    .card-body ul { padding-left: 18px; }
+    .card-body ul li { margin-bottom: 4px; }
+    .card-example {
+      background: #f8f8f6;
+      border-top: 1.5px solid #f0f0f0;
+      padding: 12px 18px;
+    }
+    .card-example pre {
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #333;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .kw { color: #c0392b; }
+    .attr { color: #2980b9; }
+    .val { color: #27ae60; }
+    .cm { color: #95a5a6; font-style: italic; }
+
+    /* 색상 테마 per card */
+    .c-header .card-icon { background: #1a1a1a; color: #fff; }
+    .c-header .card-head { border-color: #e8e8e8; }
+    .c-nav    .card-icon { background: #2d2d2d; color: #e0e0e0; }
+    .c-section .card-icon { background: #e0ecff; color: #1a4f9e; }
+    .c-article .card-icon { background: #c8e0ff; color: #1a4f9e; }
+    .c-aside  .card-icon { background: #ffe4b8; color: #8a4d00; }
+    .c-footer .card-icon { background: #ddd; color: #555; }
+  </style>
+</head>
+<body>
+
+  <!-- ① 소개 -->
+  <div class="intro">
+    <h1>HTML 레이아웃 요소</h1>
+    <p>시맨틱 태그를 사용하면 구조가 명확해지고, 검색엔진·스크린리더 친화적인 페이지를 만들 수 있습니다.</p>
+  </div>
+
+  <!-- ② 전체 구조 다이어그램 -->
+  <div class="diagram">
+    <div class="diagram-wrap">
+
+      <!-- header -->
+      <div class="d-header">
+        <span class="d-label lbl-header">&lt;header&gt;</span>
+        <span style="font-size:0.9rem">사이트 로고 &amp; 대표 제목</span>
+      </div>
+
+      <!-- nav -->
+      <div class="d-nav">
+        <span class="d-label lbl-nav">&lt;nav&gt;</span>
+        <span class="active">홈</span>
+        <span>소개</span>
+        <span>블로그</span>
+        <span>문의</span>
+      </div>
+
+      <!-- section + article + aside -->
+      <div class="d-body">
+        <div class="d-main">
+          <div class="d-label lbl-section">&lt;section&gt; — 주요 콘텐츠 영역</div>
+
+          <div class="d-article">
+            <div class="d-label lbl-article">&lt;article&gt;</div>
+            <div style="font-size:0.85rem">독립적인 글 · 뉴스 · 포스트</div>
+          </div>
+
+          <div class="d-article" style="opacity:0.6">
+            <div class="d-label lbl-article">&lt;article&gt;</div>
+            <div style="font-size:0.85rem">또 다른 독립 콘텐츠</div>
+          </div>
+        </div>
+
+        <div class="d-aside">
+          <div class="d-label lbl-aside">&lt;aside&gt;</div>
+          <div style="font-size:0.82rem; margin-top:6px">사이드바<br>관련 링크<br>광고 · 위젯</div>
+        </div>
+      </div>
+
+      <!-- footer -->
+      <div class="d-footer">
+        <span class="d-label lbl-footer">&lt;footer&gt;</span>
+        &nbsp;저작권 · 연락처 · 하단 링크
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ③ 개별 카드 설명 -->
+  <div class="cards">
+
+    <!-- header -->
+    <div class="card c-header">
+      <div class="card-head">
+        <div class="card-icon">🏠</div>
+        <div>
+          <h2>header</h2>
+          <code>&lt;header&gt;</code>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>페이지나 섹션의 <strong>머리말</strong>을 담습니다.</p>
+        <ul>
+          <li>로고, 사이트 제목</li>
+          <li>검색 바, 슬로건</li>
+          <li>페이지 상단 고정 영역</li>
+        </ul>
+      </div>
+      <div class="card-example"><pre><span class="kw">&lt;header&gt;</span>
+  <span class="kw">&lt;h1&gt;</span>My Site<span class="kw">&lt;/h1&gt;</span>
+  <span class="kw">&lt;img</span> <span class="attr">src</span>=<span class="val">"logo.png"</span> <span class="attr">alt</span>=<span class="val">"로고"</span><span class="kw">&gt;</span>
+<span class="kw">&lt;/header&gt;</span></pre></div>
+    </div>
+
+    <!-- nav -->
+    <div class="card c-nav">
+      <div class="card-head">
+        <div class="card-icon">🧭</div>
+        <div>
+          <h2>nav</h2>
+          <code>&lt;nav&gt;</code>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>사이트의 <strong>주요 내비게이션 링크</strong> 모음입니다.</p>
+        <ul>
+          <li>상단 메뉴, 사이드 메뉴</li>
+          <li>목차(Table of Contents)</li>
+          <li>보조 링크엔 사용 자제</li>
+        </ul>
+      </div>
+      <div class="card-example"><pre><span class="kw">&lt;nav&gt;</span>
+  <span class="kw">&lt;a</span> <span class="attr">href</span>=<span class="val">"/"</span><span class="kw">&gt;</span>홈<span class="kw">&lt;/a&gt;</span>
+  <span class="kw">&lt;a</span> <span class="attr">href</span>=<span class="val">"/blog"</span><span class="kw">&gt;</span>블로그<span class="kw">&lt;/a&gt;</span>
+<span class="kw">&lt;/nav&gt;</span></pre></div>
+    </div>
+
+    <!-- section -->
+    <div class="card c-section">
+      <div class="card-head">
+        <div class="card-icon">📄</div>
+        <div>
+          <h2>section</h2>
+          <code>&lt;section&gt;</code>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>주제별로 콘텐츠를 <strong>논리적으로 묶는</strong> 구역입니다.</p>
+        <ul>
+          <li>보통 제목(h2~h6)을 포함</li>
+          <li>단순 스타일 묶음엔 div 사용</li>
+          <li>여러 section 중첩 가능</li>
+        </ul>
+      </div>
+      <div class="card-example"><pre><span class="kw">&lt;section&gt;</span>
+  <span class="kw">&lt;h2&gt;</span>최신 뉴스<span class="kw">&lt;/h2&gt;</span>
+  <span class="cm">&lt;!-- 관련 콘텐츠 --&gt;</span>
+<span class="kw">&lt;/section&gt;</span></pre></div>
+    </div>
+
+    <!-- article -->
+    <div class="card c-article">
+      <div class="card-head">
+        <div class="card-icon">📝</div>
+        <div>
+          <h2>article</h2>
+          <code>&lt;article&gt;</code>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>페이지에서 <strong>독립적으로 배포·재사용</strong>될 수 있는 콘텐츠입니다.</p>
+        <ul>
+          <li>블로그 포스트, 뉴스 기사</li>
+          <li>댓글, 포럼 글</li>
+          <li>RSS 피드로 그대로 내보낼 수 있는 단위</li>
+        </ul>
+      </div>
+      <div class="card-example"><pre><span class="kw">&lt;article&gt;</span>
+  <span class="kw">&lt;h3&gt;</span>글 제목<span class="kw">&lt;/h3&gt;</span>
+  <span class="kw">&lt;p&gt;</span>본문 내용...<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;/article&gt;</span></pre></div>
+    </div>
+
+    <!-- aside -->
+    <div class="card c-aside">
+      <div class="card-head">
+        <div class="card-icon">📌</div>
+        <div>
+          <h2>aside</h2>
+          <code>&lt;aside&gt;</code>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>본문과 <strong>간접적으로 연관된 부가 콘텐츠</strong>입니다.</p>
+        <ul>
+          <li>사이드바, 관련 글 목록</li>
+          <li>광고, 위젯, 인용구</li>
+          <li>없어도 본문 이해에 지장 없음</li>
+        </ul>
+      </div>
+      <div class="card-example"><pre><span class="kw">&lt;aside&gt;</span>
+  <span class="kw">&lt;h4&gt;</span>관련 글<span class="kw">&lt;/h4&gt;</span>
+  <span class="kw">&lt;ul&gt;</span>...<span class="kw">&lt;/ul&gt;</span>
+<span class="kw">&lt;/aside&gt;</span></pre></div>
+    </div>
+
+    <!-- footer -->
+    <div class="card c-footer">
+      <div class="card-head">
+        <div class="card-icon">🔻</div>
+        <div>
+          <h2>footer</h2>
+          <code>&lt;footer&gt;</code>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>페이지나 섹션의 <strong>바닥글</strong>입니다.</p>
+        <ul>
+          <li>저작권, 제작자 정보</li>
+          <li>이용약관, 개인정보 링크</li>
+          <li>section·article 안에도 사용 가능</li>
+        </ul>
+      </div>
+      <div class="card-example"><pre><span class="kw">&lt;footer&gt;</span>
+  <span class="kw">&lt;p&gt;</span>© 2025 My Site<span class="kw">&lt;/p&gt;</span>
+  <span class="kw">&lt;a</span> <span class="attr">href</span>=<span class="val">"/privacy"</span><span class="kw">&gt;</span>개인정보<span class="kw">&lt;/a&gt;</span>
+<span class="kw">&lt;/footer&gt;</span></pre></div>
+    </div>
+
+  </div><!-- /cards -->
+
+</body>
+</html>
