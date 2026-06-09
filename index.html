@@ -28,23 +28,35 @@
 
         header{
             width:100%;
-            background:linear-gradient(90deg,#111827,#1e3a8a);
-            padding:20px 60px;
+            background:linear-gradient(90deg,#1140a7de,#1e293b,#0f172a);
+            padding:12px 60px;
             display:flex;
             justify-content:space-between;
             align-items:center;
             position:sticky;
             top:0;
             z-index:1000;
-            box-shadow:0 4px 15px rgba(0,0,0,0.4);
+            box-shadow:0 4px 20px rgba(163, 191, 226, 0.5);
+            border-bottom:1px solid rgba(41, 229, 151, 0.2);
         }
 
         .logo{
-            font-size:28px;
-            font-weight:bold;
-            color:#38bdf8;
+            display:flex;
+            align-items:center;
         }
 
+        .logo img{
+            height:120px;
+            width:auto;
+            display:block;
+            transition:0.3s;
+            filter:drop-shadow(0 0 8px rgba(56,189,248,0.4));
+        }
+
+        .logo img:hover{
+            transform:scale(1.05);
+            filter:drop-shadow(0 0 14px rgba(56,189,248,0.7));
+        }
         nav ul{
             display:flex;
             gap:30px;
@@ -324,7 +336,11 @@
 
     <header>
 
-        <div class="logo">AI Security Portfolio</div>
+        <div class="logo">
+            <a href="#">
+                <img src="aicyperLogo1-removebg-preview.png" alt="AICYPER">
+            </a>
+        </div>
 
         <nav>
             <ul>
