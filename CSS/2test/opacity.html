@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    body {
+      position: relative;   
+      height: 200px;        
+      padding: 20px;        
+      font-family: sans-serif;
+    }
+    #box1 {
+      position: absolute;  
+      top: 0;               
+      left: 0;            
+      width: 150px;        
+      height: 50px;    
+      background: yellow;   
+      color: white;   
+      z-index: 20; 
+      line-height: 50px;
+      text-align: center; 
+      opacity: 0.4;
+    }
+    #box2 {
+      position: absolute;
+      top: 30px; 
+      left: 30px;
+      width: 150px;
+      height: 50px;
+      background: blue; 
+      color: white;
+      z-index: 10; 
+      line-height: 50px;
+      text-align: center;
+      opacity: 0.6;
+    }
+    #box3 {
+      position: absolute;
+      top: 60px; 
+      left: 60px;
+      width: 150px;
+      height: 50px;
+      background: green;
+      color: white;
+      z-index: 0;
+      line-height: 50px;
+      text-align: center;
+      opacity: 0.8;
+    }
+  
+    </style>
+</head>
+<body>
+    <div id="box1">Number1</div>
+    <div id="box2">Number2</div>
+    <div id="box3">Number3</div>
+</body>
+</html>
