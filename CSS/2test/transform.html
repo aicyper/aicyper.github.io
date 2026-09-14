@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Transform — 2D 좌표 변형 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f6f3;
+    --ink: #16181c;
+    --ink-soft: #55585f;
+    --line: #dcdcd4;
+    --line-strong: #b9bab0;
+    --accent: #1f5673;
+    --accent-soft: #dfe9ec;
+    --paper: #ffffff;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .wrap{
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding: 76px 0 40px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1{
+    font-size: clamp(38px, 6vw, 56px);
+    line-height: 1.05;
+    margin: 0 0 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header p{
+    max-width: 52ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+    margin: 0;
+  }
+
+  /* ---------- Section scaffolding ---------- */
+  section.topic{
+    padding: 56px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  section.topic:last-of-type{ border-bottom: none; }
+
+  .topic-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .topic-head h2{
+    font-size: 26px;
+    margin: 0;
+    font-weight: 600;
+  }
+  .topic-head .fn{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .topic-intro{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+    max-width: 56ch;
+  }
+
+  /* ---------- Demo stage: coordinate grid with origin + ghost/live boxes ---------- */
+  .stage-row{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .stage-card{
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+  }
+  .stage{
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .stage::before, .stage::after{
+    content: "";
+    position: absolute;
+    background: var(--line-strong);
+  }
+  .stage::before{ left:0; right:0; top:50%; height:1px; }
+  .stage::after{ top:0; bottom:0; left:50%; width:1px; }
+
+  .box{
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 96px;
+    height: 52px;
+    margin-top: -26px;
+    margin-left: -48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: rgba(255,255,255,.92);
+  }
+  .box.ghost{
+    background: transparent;
+    border: 1.5px dashed var(--line-strong);
+    color: var(--ink-soft);
+  }
+  .box.green{ background:#2f7a4f; }
+  .box.red{ background:#b7402e; }
+  .box.blue{ background:#25507f; }
+
+  .t-xy   { transform: translate(50px, 60px); }
+  .t-x    { transform: translateX(75px); }
+  .t-y    { transform: translateY(-40px); }
+  .sk-x   { transform: skew(20deg, 0); }
+  .sk-y   { transform: skew(0, 20deg); }
+  .sk-z   { transform: skew(20deg, 20deg); }
+  .rt-30    { transform: rotate(30deg); }
+  .rt-neg45 { transform: rotate(-45deg); }
+  .rt-180   { transform: rotate(180deg); }
+  .sc-xy  { transform: scale(0.55, 0.55); }
+  .sc-x   { transform: scaleX(1.5); }
+  .sc-y   { transform: scaleY(1.5); }
+
+  .stage-cap{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .stage-cap code{
+    color: var(--accent);
+  }
+  .stage-cap .desc{
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Summary table ---------- */
+  .summary h2{
+    font-size: 26px;
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .summary > p{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+  }
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    font-size: 14.5px;
+  }
+  thead th{
+    text-align:left;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  tbody td{
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  td.fn{
+    font-family: var(--mono);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  td.role{ color: var(--ink-soft); }
+
+  .core-row{
+    margin-top: 28px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 1px;
+    background: var(--line-strong);
+    border: 1px solid var(--line-strong);
+  }
+  .core-item{
+    background: var(--paper);
+    padding: 18px 16px;
+  }
+  .core-item .fn{
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 13px;
+    display:block;
+    margin-bottom: 6px;
+  }
+  .core-item .meaning{
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  footer{
+    padding-top: 56px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .box{ transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">personal study notes</p>
+    <h1>CSS Transform</h1>
+    <p>이동(translate), 기울이기(skew), 확대·축소(scale) 세 가지 2D 변형을 좌표 격자 위에서 비교합니다. 점선 상자는 원래 위치, 색이 있는 상자는 transform이 적용된 결과입니다.</p>
+  </header>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>이동 — translate()</h2>
+      <span class="fn">translate · translateX · translateY</span>
+    </div>
+    <p class="topic-intro">요소를 원래 자리에서 x축·y축 방향으로 밀어 이동시킵니다. 레이아웃 흐름에는 영향을 주지 않고 시각적 위치만 바뀝니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box green t-xy">box</div>
+        </div>
+        <div class="stage-cap"><code>translate(100px, 200px)</code><span class="desc">x, y 동시 이동</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box green t-x">box</div>
+        </div>
+        <div class="stage-cap"><code>translateX(150px)</code><span class="desc">x축만 이동</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box green t-y">box</div>
+        </div>
+        <div class="stage-cap"><code>translateY(-50px)</code><span class="desc">y축만 이동</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>기울이기 — skew()</h2>
+      <span class="fn">skew · skewX · skewY</span>
+    </div>
+    <p class="topic-intro">사각형의 변을 지정한 각도만큼 비스듬히 기울입니다. 첫 번째 값은 x축 기준, 두 번째 값은 y축 기준 기울기입니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box red sk-x">box</div>
+        </div>
+        <div class="stage-cap"><code>skew(20deg, 0)</code><span class="desc">x축 기준 기울임</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box blue sk-y">box</div>
+        </div>
+        <div class="stage-cap"><code>skew(0, 20deg)</code><span class="desc">y축 기준 기울임</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box green sk-z">box</div>
+        </div>
+        <div class="stage-cap"><code>skew(20deg, 20deg)</code><span class="desc">x, y축 동시 기울임</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>회전 — rotate()</h2>
+      <span class="fn">rotate</span>
+    </div>
+    <p class="topic-intro">요소를 지정한 각도만큼 시계 방향(양수) 또는 반시계 방향(음수)으로 회전시킵니다. 기본 기준점은 요소의 중심입니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box red rt-30">box</div>
+        </div>
+        <div class="stage-cap"><code>rotate(30deg)</code><span class="desc">시계 방향 30도</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box blue rt-neg45">box</div>
+        </div>
+        <div class="stage-cap"><code>rotate(-45deg)</code><span class="desc">반시계 방향 45도</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box green rt-180">box</div>
+        </div>
+        <div class="stage-cap"><code>rotate(180deg)</code><span class="desc">180도 반전</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>확대·축소 — scale()</h2>
+      <span class="fn">scale · scaleX · scaleY</span>
+    </div>
+    <p class="topic-intro">요소의 가로·세로 크기를 배수로 조정합니다. 1보다 작으면 축소, 크면 확대되며 중심점을 기준으로 커지거나 작아집니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box blue sc-xy">box</div>
+        </div>
+        <div class="stage-cap"><code>scale(0.5, 0.5)</code><span class="desc">가로·세로 50% 축소</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box green sc-x">box</div>
+        </div>
+        <div class="stage-cap"><code>scaleX(1.5)</code><span class="desc">가로만 150% 확대</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box red sc-y">box</div>
+        </div>
+        <div class="stage-cap"><code>scaleY(1.5)</code><span class="desc">세로만 150% 확대</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic summary">
+    <h2>핵심 요약</h2>
+    <p>transform과 transform-origin의 개념, 그리고 주요 메소드를 표로 정리했습니다.</p>
+
+    <div class="core-row">
+      <div class="core-item">
+        <span class="fn">transform</span>
+        <div class="meaning">HTML 요소에 2D/3D 변형 적용 — 이동·회전·확대/축소·기울이기</div>
+      </div>
+      <div class="core-item">
+        <span class="fn">transform-origin</span>
+        <div class="meaning">변형의 기준점(중심) 설정</div>
+      </div>
+    </div>
+
+    <table style="margin-top:20px;">
+      <thead>
+        <tr><th>메소드</th><th>역할</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="fn">translate(x, y)</td><td class="role">x, y축 이동</td></tr>
+        <tr><td class="fn">translateX(n)</td><td class="role">x축 이동</td></tr>
+        <tr><td class="fn">translateY(n)</td><td class="role">y축 이동</td></tr>
+        <tr><td class="fn">scale(x, y)</td><td class="role">크기 확대/축소</td></tr>
+        <tr><td class="fn">scaleX(n)</td><td class="role">x축 크기 변경</td></tr>
+        <tr><td class="fn">scaleY(n)</td><td class="role">y축 크기 변경</td></tr>
+        <tr><td class="fn">rotate(angle)</td><td class="role">지정 각도만큼 회전</td></tr>
+        <tr><td class="fn">skew(x, y)</td><td class="role">x, y축 기울이기</td></tr>
+        <tr><td class="fn">skewX(angle)</td><td class="role">x축 기울이기</td></tr>
+        <tr><td class="fn">skewY(angle)</td><td class="role">y축 기울이기</td></tr>
+        <tr><td class="fn">matrix(...)</td><td class="role">행렬을 이용한 복합 변형</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>translate · rotate · scale · skew · transform-origin</footer>
+
+</div>
+</body>
+</html>
