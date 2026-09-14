@@ -154,14 +154,18 @@
   .rt-30    { transform: rotate(30deg); }
   .rt-neg45 { transform: rotate(-45deg); }
   .rt-180   { transform: rotate(180deg); }
+  .mx-translate { transform: matrix(1, 0, 0, 1, 50, 60); }
+  .mx-skew      { transform: matrix(1, 0.3, 0, 1, 0, 0); }
+  .mx-rotate    { transform: matrix(0.87, 0.5, -0.5, 0.87, 0, 0); }
   .sc-xy  { transform: scale(0.55, 0.55); }
   .sc-x   { transform: scaleX(1.5); }
   .sc-y   { transform: scaleY(1.5); }
 
   .stage-cap{
     display:flex;
-    justify-content: space-between;
-    align-items:center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
     padding: 12px 16px;
     border-top: 1px solid var(--line);
     font-family: var(--mono);
@@ -169,9 +173,12 @@
   }
   .stage-cap code{
     color: var(--accent);
+    word-break: break-all;
   }
   .stage-cap .desc{
     color: var(--ink-soft);
+    font-family: var(--sans);
+    white-space: normal;
   }
 
   /* ---------- Summary table ---------- */
@@ -379,6 +386,37 @@
           <div class="box red sc-y">box</div>
         </div>
         <div class="stage-cap"><code>scaleY(1.5)</code><span class="desc">세로만 150% 확대</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>복합 변형 — matrix()</h2>
+      <span class="fn">matrix(a, b, c, d, tx, ty)</span>
+    </div>
+    <p class="topic-intro">6개의 값으로 이동·회전·확대/축소·기울이기를 한 번에 표현하는 행렬 함수입니다. a, d는 가로·세로 크기, b, c는 기울기, tx, ty는 이동량과 관련됩니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box red mx-translate">box</div>
+        </div>
+        <div class="stage-cap"><code>matrix(1,0,0,1,50,60)</code><span class="desc">translate(50px,60px)와 동일</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box blue mx-skew">box</div>
+        </div>
+        <div class="stage-cap"><code>matrix(1,0.3,0,1,0,0)</code><span class="desc">b값으로 기울임 표현</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box ghost"></div>
+          <div class="box green mx-rotate">box</div>
+        </div>
+        <div class="stage-cap"><code>matrix(0.87,0.5,-0.5,0.87,0,0)</code><span class="desc">rotate(30deg)와 동일</span></div>
       </div>
     </div>
   </section>

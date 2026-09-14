@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Transition — 부드러운 변화 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f6f3;
+    --ink: #16181c;
+    --ink-soft: #55585f;
+    --line: #dcdcd4;
+    --line-strong: #b9bab0;
+    --accent: #1f5673;
+    --paper: #ffffff;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .wrap{
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding: 76px 0 40px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1{
+    font-size: clamp(38px, 6vw, 56px);
+    line-height: 1.05;
+    margin: 0 0 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header p{
+    max-width: 54ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+    margin: 0;
+  }
+
+  /* ---------- Section scaffolding ---------- */
+  section.topic{
+    padding: 56px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  section.topic:last-of-type{ border-bottom: none; }
+
+  .topic-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .topic-head h2{
+    font-size: 26px;
+    margin: 0;
+    font-weight: 600;
+  }
+  .topic-head .fn{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .topic-intro{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+    max-width: 58ch;
+  }
+
+  /* ---------- Hover demo ---------- */
+  .stage-card{
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+  }
+  .hover-stage{
+    position: relative;
+    height: 220px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .hover-box{
+    width: 160px;
+    height: 90px;
+    background: #55585f;
+    color: #fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    text-align:center;
+    line-height: 1.4;
+    cursor: default;
+    transition: background-color 0.7s ease, transform 0.7s ease;
+  }
+  .hover-box:hover{
+    background: #b7402e;
+    transform: scale(1.12);
+  }
+  .stage-cap{
+    display:flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .stage-cap code{
+    color: var(--accent);
+    word-break: break-all;
+  }
+  .stage-cap .desc{
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    white-space: normal;
+  }
+
+  /* ---------- Timing-function tracks ---------- */
+  .track-list{
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+  }
+  .track-row{
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 18px;
+    align-items: center;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .track-row:last-child{ border-bottom: none; }
+  .track-label .fn{
+    display:block;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 4px;
+    word-break: break-all;
+  }
+  .track-label .desc{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .track{
+    position: relative;
+    height: 28px;
+    background-image: linear-gradient(90deg, var(--line-strong) 1px, transparent 1px);
+    background-size: 25% 100%;
+  }
+  .track::before{
+    content: "";
+    position:absolute;
+    left:0; right:0; top:50%;
+    height: 1px;
+    background: var(--line-strong);
+  }
+  .track-dot{
+    position:absolute;
+    top:50%;
+    width: 22px; height: 22px;
+    margin-top: -11px;
+    border-radius: 50%;
+    left: 0;
+    animation-duration: 1.9s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+  .t-linear{ background:#25507f; animation-name: moveDot; animation-timing-function: linear; }
+  .t-ease{ background:#2f7a4f; animation-name: moveDot; animation-timing-function: ease; }
+  .t-ease-in{ background:#b7402e; animation-name: moveDot; animation-timing-function: ease-in; }
+  .t-ease-out{ background:#a0632b; animation-name: moveDot; animation-timing-function: ease-out; }
+  .t-ease-in-out{ background:#5c4b91; animation-name: moveDot; animation-timing-function: ease-in-out; }
+  .t-cubic{ background:#1f5673; animation-name: moveDot; animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+
+  @keyframes moveDot{
+    from{ left: 0; }
+    to{ left: calc(100% - 22px); }
+  }
+
+  /* ---------- Summary ---------- */
+  .summary h2{
+    font-size: 26px;
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .summary > p{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+  }
+  .summary h3{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin: 32px 0 12px;
+  }
+  .summary h3:first-of-type{ margin-top: 0; }
+
+  .core-row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 1px;
+    background: var(--line-strong);
+    border: 1px solid var(--line-strong);
+  }
+  .core-item{
+    background: var(--paper);
+    padding: 18px 16px;
+  }
+  .core-item .meaning{
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .syntax-block{
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    font-size: 14.5px;
+  }
+  thead th{
+    text-align:left;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  tbody td{
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  td.fn{
+    font-family: var(--mono);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  td.role{ color: var(--ink-soft); }
+
+  .example-block{
+    margin-top: 20px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    padding: 14px 20px;
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+  .example-block .fn{
+    display:block;
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .example-block code{ color: var(--accent); }
+
+  .core-note{
+    margin-top: 32px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+  }
+  .core-note .fn{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    display:block;
+    margin-bottom: 10px;
+  }
+  .core-note ul{
+    margin: 0;
+    padding-left: 18px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+  .core-note li{ margin-bottom: 6px; }
+  .core-note li:last-child{ margin-bottom: 0; }
+
+  footer{
+    padding-top: 56px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">personal study notes</p>
+    <h1>CSS Transition</h1>
+    <p>속성이 바뀌는 과정을 순간적인 변화가 아니라 자연스러운 흐름으로 보여줍니다. hover로 색상·크기 변화를 직접 확인하고, timing-function에 따라 속도 곡선이 어떻게 달라지는지 비교합니다.</p>
+  </header>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>hover 시 색상·크기 변화</h2>
+      <span class="fn">background-color, transform + transition</span>
+    </div>
+    <p class="topic-intro">마우스를 블록 위에 올리면 background-color와 transform(scale)이 동시에 바뀝니다. transition이 없으면 색과 크기가 즉시 바뀌지만, transition을 걸어두면 그 변화가 부드럽게 이어집니다.</p>
+    <div class="stage-card">
+      <div class="hover-stage">
+        <div class="hover-box">마우스를 올려보세요<br>hover me</div>
+      </div>
+      <div class="stage-cap">
+        <code>transition: background-color 0.35s ease, transform 0.35s ease;</code>
+        <span class="desc">hover 시 background-color가 바뀌고 transform: scale(1.12)로 살짝 커짐</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>속도 곡선 — timing-function</h2>
+      <span class="fn">transition-timing-function</span>
+    </div>
+    <p class="topic-intro">timing-function은 transition의 세 번째 값으로, 시작부터 끝까지 속도가 어떻게 변하는지를 정합니다. 아래 점들은 모두 같은 거리를 같은 시간(1.9s) 동안 왕복하지만, 곡선이 달라 움직이는 느낌이 다릅니다.</p>
+    <div class="track-list">
+      <div class="track-row">
+        <div class="track-label">
+          <span class="fn">linear</span>
+          <span class="desc">일정한 속도로 이동</span>
+        </div>
+        <div class="track"><div class="track-dot t-linear"></div></div>
+      </div>
+      <div class="track-row">
+        <div class="track-label">
+          <span class="fn">ease</span>
+          <span class="desc">기본값 — 천천히 시작해 빨라졌다가 다시 천천히</span>
+        </div>
+        <div class="track"><div class="track-dot t-ease"></div></div>
+      </div>
+      <div class="track-row">
+        <div class="track-label">
+          <span class="fn">ease-in</span>
+          <span class="desc">천천히 시작해서 점점 빨라짐</span>
+        </div>
+        <div class="track"><div class="track-dot t-ease-in"></div></div>
+      </div>
+      <div class="track-row">
+        <div class="track-label">
+          <span class="fn">ease-out</span>
+          <span class="desc">빠르게 시작해서 점점 느려짐</span>
+        </div>
+        <div class="track"><div class="track-dot t-ease-out"></div></div>
+      </div>
+      <div class="track-row">
+        <div class="track-label">
+          <span class="fn">ease-in-out</span>
+          <span class="desc">시작과 끝 모두 느리고 중간만 빠름</span>
+        </div>
+        <div class="track"><div class="track-dot t-ease-in-out"></div></div>
+      </div>
+      <div class="track-row">
+        <div class="track-label">
+          <span class="fn">cubic-bezier(n,n,n,n)</span>
+          <span class="desc">직접 정의한 곡선 — 예시는 끝에서 튕기는 효과</span>
+        </div>
+        <div class="track"><div class="track-dot t-cubic"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic summary">
+    <h2>CSS Transition 핵심 요약</h2>
+    <p>transition의 개념과 기본 문법, 구성 요소를 정리했습니다.</p>
+
+    <h3>■ transition</h3>
+    <div class="core-row">
+      <div class="core-item"><div class="meaning">CSS 속성 변경을 부드러운 애니메이션으로 표현</div></div>
+      <div class="core-item"><div class="meaning">hover, click 등의 효과에 자주 사용</div></div>
+    </div>
+
+    <h3>■ 기본 문법</h3>
+    <div class="syntax-block">transition: property duration timing-function delay;</div>
+
+    <h3>■ 구성 요소</h3>
+    <table>
+      <thead><tr><th>구성 요소</th><th>역할</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">property</td><td class="role">변경할 CSS 속성</td></tr>
+        <tr><td class="fn">duration</td><td class="role">실행 시간(s, ms)</td></tr>
+        <tr><td class="fn">timing-function</td><td class="role">속도 변화(ease, linear, ease-in, ease-out 등)</td></tr>
+        <tr><td class="fn">delay</td><td class="role">시작 지연 시간</td></tr>
+      </tbody>
+    </table>
+
+    <div class="example-block">
+      <span class="fn">예)</span>
+      <code>transition: all 0.5s ease;</code>
+    </div>
+
+    <div class="core-note">
+      <span class="fn">※ 핵심</span>
+      <ul>
+        <li>transition은 스타일 변화를 자연스럽게 만든다.</li>
+        <li>duration이 없으면 애니메이션 효과가 나타나지 않는다.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>transition · timing-function · duration · delay</footer>
+
+</div>
+</body>
+</html>

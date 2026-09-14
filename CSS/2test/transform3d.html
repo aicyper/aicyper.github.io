@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Transform 3D — 입체 좌표 변형 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f6f3;
+    --ink: #16181c;
+    --ink-soft: #55585f;
+    --line: #dcdcd4;
+    --line-strong: #b9bab0;
+    --accent: #1f5673;
+    --paper: #ffffff;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .wrap{
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding: 76px 0 40px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1{
+    font-size: clamp(38px, 6vw, 56px);
+    line-height: 1.05;
+    margin: 0 0 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header p{
+    max-width: 54ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+    margin: 0;
+  }
+
+  /* ---------- Section scaffolding ---------- */
+  section.topic{
+    padding: 56px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  section.topic:last-of-type{ border-bottom: none; }
+
+  .topic-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .topic-head h2{
+    font-size: 26px;
+    margin: 0;
+    font-weight: 600;
+  }
+  .topic-head .fn{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .topic-intro{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+    max-width: 58ch;
+  }
+
+  /* ---------- Demo stage ---------- */
+  .stage-row{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .stage-card{
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+  }
+  .stage{
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .stage::before, .stage::after{
+    content: "";
+    position: absolute;
+    background: var(--line-strong);
+  }
+  .stage::before{ left:0; right:0; top:50%; height:1px; }
+  .stage::after{ top:0; bottom:0; left:50%; width:1px; }
+
+  .p-std{ perspective: 650px; }
+
+  /* overlapping perspective comparison: each wrapper covers the whole stage
+     and carries its own perspective, so the boxes inside sit at the same
+     spot but distort differently */
+  .persp-wrap{
+    position: absolute;
+    inset: 0;
+  }
+  .persp-wrap.near{ perspective: 150px; }
+  .persp-wrap.mid{ perspective: 500px; }
+  .persp-wrap.far{ perspective: 1200px; }
+
+  .box{
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 96px;
+    height: 52px;
+    margin-top: -26px;
+    margin-left: -48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: rgba(255,255,255,.92);
+    transform-style: preserve-3d;
+  }
+  .box.ghost{
+    background: transparent;
+    border: 1.5px dashed var(--line-strong);
+    color: var(--ink-soft);
+  }
+  .box.green{ background: rgba(47,122,79,.8); }
+  .box.red{ background: rgba(183,64,46,.8); }
+  .box.blue{ background: rgba(37,80,127,.8); }
+
+  /* perspective demos: same rotateY, different stage perspective */
+  .rotY-fixed{ transform: translateZ(80px) rotateY(55deg); }
+
+  /* scale3d demos: one axis isolated per example */
+  .sc3-x{ transform: scale3d(1.6, 1, 1); }
+  .sc3-y{ transform: scale3d(1, 1.6, 1); }
+  .sc3-z{ transform: translateZ(-60px) scale3d(1, 1, 2); }
+
+  .stage-cap{
+    display:flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .stage-cap code{
+    color: var(--accent);
+    word-break: break-all;
+  }
+  .stage-cap .desc{
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    white-space: normal;
+  }
+
+  /* ---------- Summary ---------- */
+  .summary h2{
+    font-size: 26px;
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .summary > p{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+  }
+  .summary h3{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    text-transform: none;
+    margin: 32px 0 12px;
+  }
+  .summary h3:first-of-type{ margin-top: 0; }
+
+  .core-row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 1px;
+    background: var(--line-strong);
+    border: 1px solid var(--line-strong);
+  }
+  .core-item{
+    background: var(--paper);
+    padding: 18px 16px;
+  }
+  .core-item .meaning{
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    font-size: 14.5px;
+  }
+  thead th{
+    text-align:left;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  tbody td{
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  td.fn{
+    font-family: var(--mono);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  td.role{ color: var(--ink-soft); }
+
+  .core-note{
+    margin-top: 32px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+  }
+  .core-note .fn{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    display:block;
+    margin-bottom: 10px;
+  }
+  .core-note ul{
+    margin: 0;
+    padding-left: 18px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+  .core-note li{ margin-bottom: 6px; }
+  .core-note li:last-child{ margin-bottom: 0; }
+
+  footer{
+    padding-top: 56px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">personal study notes</p>
+    <h1>CSS Transform 3D</h1>
+    <p>x, y축에 z축을 더해 입체적으로 변형합니다. perspective로 시점을 설정하고, scale3d로 가로·세로·깊이 방향 크기를 조정하는 방식을 좌표 격자 위에서 비교합니다.</p>
+  </header>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>원근감 — perspective()</h2>
+      <span class="fn">perspective</span>
+    </div>
+    <p class="topic-intro">시점(카메라)이 요소로부터 얼마나 가까운지를 설정합니다. 값이 작을수록 시점이 가까워 원근 왜곡이 강해지고, 값이 클수록 평면에 가까워 보입니다. 세 박스 모두 translateZ(80px)로 화면 쪽에 두고 같은 rotateY(55deg)를 적용했는데, perspective 값이 작을수록 그만큼 훨씬 크게 튀어나와 보입니다.</p>
+    <div class="stage-card">
+      <div class="stage">
+        <div class="box ghost"></div>
+        <div class="persp-wrap near"><div class="box red rotY-fixed">150</div></div>
+        <div class="persp-wrap mid"><div class="box blue rotY-fixed">500</div></div>
+        <div class="persp-wrap far"><div class="box green rotY-fixed">1200</div></div>
+      </div>
+      <div class="stage-cap">
+        <code>perspective: 150px / 500px / 1200px</code>
+        <span class="desc">빨강 150px(가까운 시점 — 확 커짐) · 파랑 500px(보통) · 초록 1200px(먼 시점 — 거의 그대로) — translateZ(80px)와 rotateY(55deg)는 세 박스 모두 동일</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>3축 확대·축소 — scale3d()</h2>
+      <span class="fn">scale3d(x, y, z)</span>
+    </div>
+    <p class="topic-intro">가로·세로·깊이 방향 크기를 각각 조정합니다. x, y값은 2D의 scaleX·scaleY처럼 바로 눈에 보이지만, 평면 요소는 두께가 없어 z값만으로는 모양이 바뀌지 않습니다. 대신 translateZ로 만든 이동 거리와 결합하면 z값이 그 거리를 배로 늘려 원근 안에서 크기가 달라져 보입니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage p-std">
+          <div class="box ghost"></div>
+          <div class="box red sc3-x">box</div>
+        </div>
+        <div class="stage-cap"><code>scale3d(1.6, 1, 1)</code><span class="desc">x축만 160% 확대</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage p-std">
+          <div class="box ghost"></div>
+          <div class="box blue sc3-y">box</div>
+        </div>
+        <div class="stage-cap"><code>scale3d(1, 1.6, 1)</code><span class="desc">y축만 160% 확대</span></div>
+      </div>
+      <div class="stage-card">
+        <div class="stage p-std">
+          <div class="box ghost"></div>
+          <div class="box green sc3-z">box</div>
+        </div>
+        <div class="stage-cap"><code>translateZ(-60px) scale3d(1,1,2)</code><span class="desc">z 2배 — 이동 거리도 2배로 늘어나 더 작고 멀게 보임</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic summary">
+    <h2>CSS 3D Transform 핵심 요약</h2>
+    <p>3D Transform의 개념, 관련 속성과 메소드를 정리했습니다.</p>
+
+    <h3>■ 3D Transform</h3>
+    <div class="core-row">
+      <div class="core-item"><div class="meaning">x, y, z축을 이용한 입체적인 변형</div></div>
+      <div class="core-item"><div class="meaning">원근감(Perspective) 표현 가능</div></div>
+      <div class="core-item"><div class="meaning">애니메이션과 함께 사용하면 역동적인 UI 구현</div></div>
+    </div>
+
+    <h3>■ 주요 속성</h3>
+    <table>
+      <thead><tr><th>속성</th><th>역할</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">transform</td><td class="role">2D/3D 변형 적용</td></tr>
+        <tr><td class="fn">transform-origin</td><td class="role">변형 기준점 설정</td></tr>
+        <tr><td class="fn">transform-style</td><td class="role">3D 렌더링 방식 지정</td></tr>
+        <tr><td class="fn">perspective</td><td class="role">원근감(시점) 설정</td></tr>
+        <tr><td class="fn">perspective-origin</td><td class="role">시점 위치 설정</td></tr>
+        <tr><td class="fn">backface-visibility</td><td class="role">뒷면 표시 여부</td></tr>
+      </tbody>
+    </table>
+
+    <h3>■ 주요 메소드</h3>
+    <table>
+      <thead><tr><th>메소드</th><th>역할</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">translate3d(x,y,z)</td><td class="role">3축 이동</td></tr>
+        <tr><td class="fn">translateX/Y/Z()</td><td class="role">축별 이동</td></tr>
+        <tr><td class="fn">scale3d(x,y,z)</td><td class="role">3축 확대/축소</td></tr>
+        <tr><td class="fn">scaleX/Y/Z()</td><td class="role">축별 크기 변경</td></tr>
+        <tr><td class="fn">rotate3d(...)</td><td class="role">3축 회전</td></tr>
+        <tr><td class="fn">rotateX()</td><td class="role">X축 회전</td></tr>
+        <tr><td class="fn">rotateY()</td><td class="role">Y축 회전</td></tr>
+        <tr><td class="fn">rotateZ()</td><td class="role">Z축 회전</td></tr>
+        <tr><td class="fn">perspective(n)</td><td class="role">원근감 적용</td></tr>
+        <tr><td class="fn">matrix3d(...)</td><td class="role">행렬 기반 3D 변형</td></tr>
+      </tbody>
+    </table>
+
+    <div class="core-note">
+      <span class="fn">※ 핵심</span>
+      <ul>
+        <li>2D : x, y축 변형</li>
+        <li>3D : x, y, z축 + 원근감(Perspective)</li>
+        <li>translate3d, rotate3d, scale3d를 사용하여 입체 효과 구현</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>perspective · scale3d · transform-style · backface-visibility</footer>
+
+</div>
+</body>
+</html>
