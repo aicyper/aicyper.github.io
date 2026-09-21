@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Animation — 키프레임 애니메이션 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f6f3;
+    --ink: #16181c;
+    --ink-soft: #55585f;
+    --line: #dcdcd4;
+    --line-strong: #b9bab0;
+    --accent: #1f5673;
+    --paper: #ffffff;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .wrap{
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding: 76px 0 40px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1{
+    font-size: clamp(38px, 6vw, 56px);
+    line-height: 1.05;
+    margin: 0 0 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header p{
+    max-width: 54ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+    margin: 0;
+  }
+
+  /* ---------- Section scaffolding ---------- */
+  section.topic{
+    padding: 56px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  section.topic:last-of-type{ border-bottom: none; }
+
+  .topic-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .topic-head h2{
+    font-size: 26px;
+    margin: 0;
+    font-weight: 600;
+  }
+  .topic-head .fn{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .topic-intro{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+    max-width: 58ch;
+  }
+
+  /* ---------- Demo stage ---------- */
+  .stage-row{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .stage-card{
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+  }
+  .stage{
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .box{
+    width: 96px;
+    height: 56px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,.95);
+    background: #55585f;
+  }
+
+  /* 모든 예시는 정지 상태로 대기하다가, 마우스가 박스에 닿으면 실행된다.
+     (움직이는 박스가 커서에서 벗어나도 끊기지 않도록, 데모 영역 안에서는 계속 실행) */
+  .stage .box{
+    animation-play-state: paused;
+  }
+  .stage:hover .box{
+    animation-play-state: running;
+  }
+
+  .hover-hint{
+    position: absolute;
+    left: 0; right: 0; bottom: 8px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .stage:hover .hover-hint{ opacity: 0; }
+
+  .stage-cap{
+    display:flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .stage-cap code{
+    color: var(--accent);
+    word-break: break-all;
+  }
+  .stage-cap .desc{
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    white-space: normal;
+  }
+
+  /* ---------- 1. color animation ---------- */
+  @keyframes colorShift{
+    0%   { background-color: #25507f; }
+    33%  { background-color: #2f7a4f; }
+    66%  { background-color: #b7402e; }
+    100% { background-color: #25507f; }
+  }
+  .anim-color{
+    animation: colorShift 4s linear infinite;
+  }
+  @keyframes fadeInOut{
+    from { opacity: 1; }
+    to   { opacity: 0.15; }
+  }
+  .anim-fade{
+    background: #5c4b91;
+    animation: fadeInOut 2s ease-in-out infinite alternate;
+  }
+
+  /* ---------- 2. 이동 animation ---------- */
+  @keyframes slideX{
+    from { transform: translateX(-70px); }
+    to   { transform: translateX(70px); }
+  }
+  .anim-slide{
+    background: #b7402e;
+    animation: slideX 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes bounceY{
+    0%   { transform: translateY(-50px); }
+    50%  { transform: translateY(40px); }
+    100% { transform: translateY(-50px); }
+  }
+  .anim-bounce{
+    background: #25507f;
+    animation: bounceY 1.8s ease-in-out infinite;
+  }
+  @keyframes pathMove{
+    0%   { transform: translate(-70px, -40px); }
+    25%  { transform: translate(70px, -40px); }
+    50%  { transform: translate(70px, 40px); }
+    75%  { transform: translate(-70px, 40px); }
+    100% { transform: translate(-70px, -40px); }
+  }
+  .anim-path{
+    background: #2f7a4f;
+    animation: pathMove 5s linear infinite;
+  }
+
+  /* ---------- 3. 반복 animation ---------- */
+  @keyframes spin{
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .anim-once{
+    background: #a0632b;
+    animation: spin 1.6s ease-out 1 forwards;
+  }
+  .anim-three{
+    background: #5c4b91;
+    animation: spin 1.6s linear 3 forwards;
+  }
+  .anim-infinite{
+    background: #1f5673;
+    animation: spin 1.6s linear infinite;
+  }
+
+  /* ---------- Code explanation ---------- */
+  .code-explain{
+    margin-top: 20px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+  }
+  .code-explain > .ce-head{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .code-explain pre{
+    margin: 0;
+    padding: 18px 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.75;
+    overflow-x: auto;
+    color: var(--ink);
+  }
+  .code-explain pre .cm{ color: #8a8d86; }
+  .code-explain pre .kw{ color: var(--accent); }
+  .ce-notes{
+    border-top: 1px solid var(--line);
+    padding: 16px 20px 18px;
+  }
+  .ce-notes dl{
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 18px;
+    align-items: baseline;
+  }
+  .ce-notes dt{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .ce-notes dd{
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  @media (max-width: 560px){
+    .ce-notes dl{ grid-template-columns: 1fr; gap: 2px 0; }
+    .ce-notes dd{ margin-bottom: 10px; }
+  }
+
+  /* ---------- Summary ---------- */
+  .summary h2{
+    font-size: 26px;
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .summary > p{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+  }
+  .summary h3{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin: 32px 0 12px;
+  }
+  .summary h3:first-of-type{ margin-top: 0; }
+
+  .core-row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 1px;
+    background: var(--line-strong);
+    border: 1px solid var(--line-strong);
+  }
+  .core-item{
+    background: var(--paper);
+    padding: 18px 16px;
+  }
+  .core-item .term{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    display:block;
+    margin-bottom: 6px;
+  }
+  .core-item .meaning{
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .syntax-block{
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    font-size: 14.5px;
+  }
+  thead th{
+    text-align:left;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  tbody td{
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  td.fn{
+    font-family: var(--mono);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  td.role{ color: var(--ink-soft); }
+
+  .compare-row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    gap: 1px;
+    background: var(--line-strong);
+    border: 1px solid var(--line-strong);
+  }
+  .compare-item{
+    background: var(--paper);
+    padding: 18px 16px;
+  }
+  .compare-item .term{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    display:block;
+    margin-bottom: 6px;
+  }
+  .compare-item .meaning{
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .flow{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    padding: 24px 20px;
+    font-family: var(--mono);
+    font-size: 13.5px;
+  }
+  .flow .node{
+    border: 1px solid var(--line-strong);
+    padding: 10px 18px;
+    text-align:center;
+    min-width: 220px;
+  }
+  .flow .node.key{
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .flow .arrow{
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  footer{
+    padding-top: 56px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">personal study notes</p>
+    <h1>CSS Animation</h1>
+    <p>@keyframes로 시작·중간·끝 상태만 정의하면 브라우저가 그 사이를 자동으로 채워 움직임을 만듭니다. 아래 예시들은 모두 정지 상태로 대기하다가, 마우스가 박스에 닿으면 실행됩니다.</p>
+  </header>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>색상 애니메이션 — color animation</h2>
+      <span class="fn">background-color, opacity</span>
+    </div>
+    <p class="topic-intro">@keyframes 안에서 background-color나 opacity 값을 단계별로 지정하면, 브라우저가 그 사이의 색을 자동으로 계산해 부드럽게 이어줍니다. 마우스를 박스에 올리면 실행되고, 떼면 그 자리에서 멈춥니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box anim-color">color</div>
+          <div class="hover-hint">마우스를 올리면 시작</div>
+        </div>
+        <div class="stage-cap">
+          <code>animation: colorShift 4s linear infinite;</code>
+          <span class="desc">파랑 → 초록 → 빨강 → 파랑 순으로 배경색이 순환</span>
+        </div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box anim-fade">opacity</div>
+          <div class="hover-hint">마우스를 올리면 시작</div>
+        </div>
+        <div class="stage-cap">
+          <code>animation: fadeInOut 2s ease-in-out infinite alternate;</code>
+          <span class="desc">opacity 1 → 0.15를 오가며 서서히 사라졌다 나타남</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-explain">
+      <div class="ce-head">CSS — 색상 순환 예시</div>
+<pre><span class="kw">@keyframes</span> colorShift {
+  0%   { background-color: #25507f; }  <span class="cm">/* 시작 키프레임 */</span>
+  33%  { background-color: #2f7a4f; }  <span class="cm">/* 중간 키프레임 */</span>
+  66%  { background-color: #b7402e; }
+  100% { background-color: #25507f; }  <span class="cm">/* 시작색으로 되돌아와 자연스럽게 이어짐 */</span>
+}
+
+.box {
+  <span class="kw">animation</span>: colorShift 4s linear infinite;
+  <span class="kw">animation-play-state</span>: paused;   <span class="cm">/* 평소엔 정지 상태로 대기 */</span>
+}
+.stage:hover .box {
+  <span class="kw">animation-play-state</span>: running;  <span class="cm">/* 마우스가 닿으면 실행 */</span>
+}</pre>
+      <div class="ce-notes">
+        <dl>
+          <dt>colorShift</dt><dd>@keyframes로 정의한 이름. animation에서 이 이름을 불러 사용합니다.</dd>
+          <dt>0% ~ 100%</dt><dd>전체 재생 시간을 비율로 나눈 지점. 각 지점의 색만 적으면 사이 색은 브라우저가 계산합니다.</dd>
+          <dt>4s</dt><dd>한 번 도는 데 걸리는 시간(duration). 이 값이 없으면 애니메이션이 보이지 않습니다.</dd>
+          <dt>linear</dt><dd>속도 곡선. 색이 일정한 속도로 바뀝니다.</dd>
+          <dt>infinite</dt><dd>반복 횟수. 끝나지 않고 계속 순환합니다.</dd>
+          <dt>alternate</dt><dd>opacity 예시에 쓰인 값으로, to까지 간 뒤 반대로 되돌아옵니다.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>이동 애니메이션 — 위치 변화</h2>
+      <span class="fn">transform: translate</span>
+    </div>
+    <p class="topic-intro">키 프레임마다 translate 값을 다르게 주면 요소가 그 지점들을 따라 움직입니다. 중간 경로는 브라우저가 자동으로 계산하는 중간 프레임(인터폴레이션)입니다. 마우스를 올리면 움직이기 시작합니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box anim-slide">slideX</div>
+          <div class="hover-hint">마우스를 올리면 시작</div>
+        </div>
+        <div class="stage-cap">
+          <code>animation: slideX 2.4s ease-in-out infinite alternate;</code>
+          <span class="desc">좌우로 왕복 이동 — alternate로 되돌아옴</span>
+        </div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box anim-bounce">bounceY</div>
+          <div class="hover-hint">마우스를 올리면 시작</div>
+        </div>
+        <div class="stage-cap">
+          <code>animation: bounceY 1.8s ease-in-out infinite;</code>
+          <span class="desc">위아래로 튀는 듯한 상하 이동</span>
+        </div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box anim-path">path</div>
+          <div class="hover-hint">마우스를 올리면 시작</div>
+        </div>
+        <div class="stage-cap">
+          <code>animation: pathMove 5s linear infinite;</code>
+          <span class="desc">0·25·50·75·100% 키프레임으로 사각 경로를 순회</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-explain">
+      <div class="ce-head">CSS — 이동 예시</div>
+<pre><span class="cm">/* 좌우 왕복 : 시작(from)과 끝(to) 두 지점만 지정 */</span>
+<span class="kw">@keyframes</span> slideX {
+  from { transform: translateX(-70px); }
+  to   { transform: translateX(70px); }
+}
+.box { <span class="kw">animation</span>: slideX 2.4s ease-in-out infinite alternate; }
+
+<span class="cm">/* 사각 경로 : 네 모서리를 %로 찍어 순서대로 이동 */</span>
+<span class="kw">@keyframes</span> pathMove {
+  0%   { transform: translate(-70px, -40px); }  <span class="cm">/* 좌상 */</span>
+  25%  { transform: translate( 70px, -40px); }  <span class="cm">/* 우상 */</span>
+  50%  { transform: translate( 70px,  40px); }  <span class="cm">/* 우하 */</span>
+  75%  { transform: translate(-70px,  40px); }  <span class="cm">/* 좌하 */</span>
+  100% { transform: translate(-70px, -40px); }  <span class="cm">/* 다시 좌상 */</span>
+}
+.box { <span class="kw">animation</span>: pathMove 5s linear infinite; }</pre>
+      <div class="ce-notes">
+        <dl>
+          <dt>from / to</dt><dd>0%와 100%를 뜻하는 다른 표기. 두 지점만 필요할 때 더 간결합니다.</dd>
+          <dt>translateX / translate</dt><dd>left·top 대신 transform으로 옮기면 레이아웃을 다시 계산하지 않아 더 부드럽습니다.</dd>
+          <dt>ease-in-out</dt><dd>시작과 끝이 느려 자연스럽게 방향을 바꾸는 느낌을 줍니다.</dd>
+          <dt>alternate</dt><dd>to까지 간 뒤 역방향으로 되돌아옵니다. 없으면 끝에서 시작 위치로 순간이동합니다.</dd>
+          <dt>100%를 0%와 같게</dt><dd>경로를 닫아두면 반복될 때 튀지 않고 매끄럽게 이어집니다.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>반복 애니메이션 — iteration-count</h2>
+      <span class="fn">animation-iteration-count</span>
+    </div>
+    <p class="topic-intro">같은 회전 애니메이션에 반복 횟수만 다르게 지정했습니다. 숫자를 쓰면 그 횟수만큼만 실행되고, infinite를 쓰면 멈추지 않고 계속 반복됩니다. 마우스를 올려 실행한 뒤, 정해진 횟수가 끝나면 더 이상 움직이지 않는 것을 확인할 수 있습니다.</p>
+    <div class="stage-row">
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box anim-once">1회</div>
+          <div class="hover-hint">마우스를 올리면 시작</div>
+        </div>
+        <div class="stage-cap">
+          <code>animation: spin 1.6s ease-out 1 forwards;</code>
+          <span class="desc">한 바퀴만 돌고 정지</span>
+        </div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box anim-three">3회</div>
+          <div class="hover-hint">마우스를 올리면 시작</div>
+        </div>
+        <div class="stage-cap">
+          <code>animation: spin 1.6s linear 3 forwards;</code>
+          <span class="desc">세 바퀴 돈 뒤 정지</span>
+        </div>
+      </div>
+      <div class="stage-card">
+        <div class="stage">
+          <div class="box anim-infinite">무한</div>
+          <div class="hover-hint">마우스를 올리면 시작</div>
+        </div>
+        <div class="stage-cap">
+          <code>animation: spin 1.6s linear infinite;</code>
+          <span class="desc">끝나지 않고 계속 회전</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-explain">
+      <div class="ce-head">CSS — 반복 횟수 비교</div>
+<pre><span class="kw">@keyframes</span> spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+<span class="cm">/* 같은 keyframes를 쓰고 반복 횟수만 다르게 지정 */</span>
+.once     { <span class="kw">animation</span>: spin 1.6s ease-out 1 forwards; }
+.three    { <span class="kw">animation</span>: spin 1.6s linear  3 forwards; }
+.infinite { <span class="kw">animation</span>: spin 1.6s linear  infinite; }</pre>
+      <div class="ce-notes">
+        <dl>
+          <dt>1 / 3 / infinite</dt><dd>animation-iteration-count 자리. 숫자만큼 실행하거나, infinite면 멈추지 않습니다.</dd>
+          <dt>forwards</dt><dd>animation-fill-mode. 끝난 뒤 마지막 상태를 유지시켜 처음 각도로 되돌아가지 않게 합니다.</dd>
+          <dt>0deg &rarr; 360deg</dt><dd>한 바퀴. 시작과 끝 모습이 같아 반복해도 이음매가 보이지 않습니다.</dd>
+          <dt>paused / running</dt><dd>animation-play-state. 진행 위치를 기억하므로 다시 올리면 멈춘 지점부터 이어집니다.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic summary">
+    <h2>CSS3 애니메이션 핵심 요약</h2>
+    <p>애니메이션의 개념, 기본 구성과 주요 속성을 정리했습니다.</p>
+
+    <h3>■ 1. 애니메이션(Animation)</h3>
+    <div class="core-row">
+      <div class="core-item"><div class="meaning">요소의 위치, 크기, 색상, 회전 등을 시간에 따라 변화시키는 기능</div></div>
+      <div class="core-item"><div class="meaning">JavaScript 없이 CSS만으로 구현 가능</div></div>
+    </div>
+
+    <h3>■ 2~4. 프레임 관련 용어</h3>
+    <div class="core-row">
+      <div class="core-item">
+        <span class="term">프레임 (Frame)</span>
+        <div class="meaning">애니메이션을 구성하는 하나의 정지 화면</div>
+      </div>
+      <div class="core-item">
+        <span class="term">키 프레임 (Key Frame)</span>
+        <div class="meaning">사용자가 직접 지정하는 중요한 시점(시작, 중간, 끝) — @keyframes 규칙으로 정의</div>
+      </div>
+      <div class="core-item">
+        <span class="term">중간 프레임 (In-between)</span>
+        <div class="meaning">브라우저가 키 프레임 사이를 자동 계산하여 생성 — 인터폴레이션(Interpolation) 또는 트위닝(Tweening)</div>
+      </div>
+    </div>
+
+    <h3>■ 5. 애니메이션 기본 구성</h3>
+    <div class="syntax-block">@keyframes 이름 {
+    from { 시작 상태 }
+    to   { 종료 상태 }
+}</div>
+
+    <h3>■ 6. animation 단축 속성</h3>
+    <div class="syntax-block">animation:
+    이름
+    지속시간
+    속도곡선
+    지연시간
+    반복횟수
+    방향
+    채움모드
+    실행상태;</div>
+
+    <h3>■ 7. 주요 속성</h3>
+    <table>
+      <thead><tr><th>속성</th><th>역할</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">@keyframes</td><td class="role">키 프레임 정의</td></tr>
+        <tr><td class="fn">animation</td><td class="role">모든 속성의 단축형</td></tr>
+        <tr><td class="fn">animation-name</td><td class="role">사용할 키 프레임 이름</td></tr>
+        <tr><td class="fn">animation-duration</td><td class="role">실행 시간</td></tr>
+        <tr><td class="fn">animation-delay</td><td class="role">시작 지연 시간</td></tr>
+        <tr><td class="fn">animation-timing-function</td><td class="role">속도 변화(ease, linear 등)</td></tr>
+        <tr><td class="fn">animation-iteration-count</td><td class="role">반복 횟수(infinite 가능)</td></tr>
+        <tr><td class="fn">animation-direction</td><td class="role">실행 방향(normal, reverse, alternate)</td></tr>
+        <tr><td class="fn">animation-fill-mode</td><td class="role">종료 후 스타일 유지 여부</td></tr>
+        <tr><td class="fn">animation-play-state</td><td class="role">running / paused</td></tr>
+      </tbody>
+    </table>
+
+    <h3>■ 8. 기억하기</h3>
+    <div class="compare-row">
+      <div class="compare-item">
+        <span class="term">Transition</span>
+        <div class="meaning">상태 변화가 있을 때만 실행</div>
+      </div>
+      <div class="compare-item">
+        <span class="term">Animation</span>
+        <div class="meaning">상태 변화 없이도 자동 실행 가능</div>
+      </div>
+    </div>
+
+    <h3>■ 9. 애니메이션 흐름</h3>
+    <div class="flow">
+      <div class="node key">시작 (Key Frame)</div>
+      <div class="arrow">↓</div>
+      <div class="node">중간 프레임 (자동 생성)</div>
+      <div class="arrow">↓</div>
+      <div class="node key">종료 (Key Frame)</div>
+    </div>
+  </section>
+
+  <footer>@keyframes · animation · iteration-count · fill-mode · animation-play-state</footer>
+
+</div>
+</body>
+</html>
