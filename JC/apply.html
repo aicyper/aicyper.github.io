@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript — 적용 방식 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f6f3;
+    --ink: #16181c;
+    --ink-soft: #55585f;
+    --line: #dcdcd4;
+    --line-strong: #b9bab0;
+    --accent: #1f5673;
+    --paper: #ffffff;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .wrap{
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+  }
+
+  header{
+    padding: 76px 0 40px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1{
+    font-size: clamp(38px, 6vw, 56px);
+    line-height: 1.05;
+    margin: 0 0 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header p{
+    max-width: 54ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+    margin: 0;
+  }
+
+  section.topic{
+    padding: 56px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  section.topic:last-of-type{ border-bottom: none; }
+
+  .topic-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .topic-head h2{
+    font-size: 26px;
+    margin: 0;
+    font-weight: 600;
+  }
+  .topic-head .fn{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .topic-intro{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 28px;
+    max-width: 58ch;
+  }
+
+  /* ---------- Live demo panel ---------- */
+  .demo-panel{
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 22px 24px;
+    flex-wrap: wrap;
+  }
+  .demo-btn{
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    padding: 11px 20px;
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .demo-btn:hover{ background:#173f52; }
+  .demo-btn:active{ transform: scale(.96); }
+  .demo-log{
+    flex: 1 1 260px;
+    min-height: 96px;
+    max-height: 140px;
+    overflow-y: auto;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .demo-log .placeholder{ color: var(--line-strong); }
+  .demo-log ul{ margin:0; padding:0; list-style:none; }
+  .demo-log li{ padding: 3px 0; border-bottom: 1px dashed var(--line); }
+  .demo-log li:last-child{ border-bottom:none; }
+  .demo-log li .tag{ color: var(--accent); margin-right: 6px; }
+  .demo-log li.i-external .tag{ color:#25507f; }
+  .demo-log li.i-internal .tag{ color:#2f7a4f; }
+  .demo-log li.i-inline .tag{ color:#b7402e; }
+
+  /* ---------- Code explanation ---------- */
+  .code-explain{
+    margin-top: 20px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+  }
+  .code-explain > .ce-head{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .code-explain pre{
+    margin: 0;
+    padding: 18px 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.75;
+    overflow-x: auto;
+    color: var(--ink);
+  }
+  .code-explain pre .cm{ color: #8a8d86; }
+  .code-explain pre .kw{ color: var(--accent); }
+  .code-explain pre .tg{ color: #b7402e; }
+  .ce-notes{
+    border-top: 1px solid var(--line);
+    padding: 16px 20px 18px;
+  }
+  .ce-notes dl{
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 18px;
+    align-items: baseline;
+  }
+  .ce-notes dt{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .ce-notes dd{
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  @media (max-width: 560px){
+    .ce-notes dl{ grid-template-columns: 1fr; gap: 2px 0; }
+    .ce-notes dd{ margin-bottom: 10px; }
+  }
+
+  /* ---------- Combined section ---------- */
+  .order-steps{
+    margin-top: 20px;
+    display:flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--line-strong);
+    border: 1px solid var(--line-strong);
+  }
+  .order-steps .step{
+    background: var(--paper);
+    display:flex;
+    align-items:center;
+    gap: 16px;
+    padding: 14px 20px;
+  }
+  .order-steps .step .n{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 20px;
+  }
+  .order-steps .step .label{
+    font-family: var(--mono);
+    font-size: 13px;
+    min-width: 170px;
+  }
+  .order-steps .step .desc{
+    color: var(--ink-soft);
+    font-size: 13.5px;
+  }
+
+  .core-note{
+    margin-top: 24px;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+  }
+  .core-note .fn{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    display:block;
+    margin-bottom: 10px;
+  }
+  .core-note ul{
+    margin: 0;
+    padding-left: 18px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+  .core-note li{ margin-bottom: 6px; }
+  .core-note li:last-child{ margin-bottom: 0; }
+
+  /* ---------- comparison table ---------- */
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    font-size: 14px;
+    margin-top: 20px;
+  }
+  thead th{
+    text-align:left;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  tbody td{
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    color: var(--ink-soft);
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  td.fn{
+    font-family: var(--mono);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  footer{
+    padding-top: 56px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">personal study notes</p>
+    <h1>JavaScript</h1>
+    <p>HTML에 자바스크립트를 연결하는 세 가지 방법 — 외부 파일, 문서 내부 스크립트, 인라인 이벤트 핸들러 — 을 각각 실행해보고, 세 가지를 한 요소에 동시에 걸면 어떤 순서로 실행되는지 확인합니다.</p>
+  </header>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>외부에서 — External Script</h2>
+      <span class="fn">&lt;script src="app.js"&gt;</span>
+    </div>
+    <p class="topic-intro">자바스크립트 코드를 별도의 .js 파일에 작성하고, HTML에서는 script 태그의 src로 그 파일만 불러옵니다. 코드와 마크업이 분리되어 있어 여러 페이지에서 재사용하거나 유지보수하기 좋습니다.</p>
+
+    <div class="demo-panel">
+      <button class="demo-btn" id="btn-external">외부 스크립트 버튼</button>
+      <div class="demo-log" id="log-external"><span class="placeholder">클릭하면 실행 결과가 여기에 표시됩니다</span></div>
+    </div>
+
+    <div class="code-explain">
+      <div class="ce-head">HTML + app.js (외부 파일)</div>
+<pre><span class="cm">&lt;!-- index.html --&gt;</span>
+&lt;button id="btn-external"&gt;외부 스크립트 버튼&lt;/button&gt;
+<span class="tg">&lt;script src="app.js"&gt;&lt;/script&gt;</span>
+
+<span class="cm">/* app.js — 별도로 저장된 자바스크립트 파일 */</span>
+<span class="kw">document</span>.getElementById(<span class="cm">'btn-external'</span>)
+  .addEventListener(<span class="cm">'click'</span>, function () {
+    console.log(<span class="cm">'외부 파일(app.js)에서 실행됨'</span>);
+  });</pre>
+      <div class="ce-notes">
+        <dl>
+          <dt>src="app.js"</dt><dd>HTML 안에 코드를 적지 않고, 이 경로에 있는 파일을 불러와 실행합니다.</dd>
+          <dt>분리 구조</dt><dd>HTML(구조)과 JS(동작)가 서로 다른 파일에 있어 코드가 길어져도 문서가 깔끔합니다.</dd>
+          <dt>재사용</dt><dd>같은 app.js를 여러 HTML 페이지에서 함께 불러와 쓸 수 있습니다.</dd>
+          <dt>주의</dt><dd>script 태그가 버튼보다 먼저 나오면 아직 없는 요소를 찾다 오류가 나므로, 보통 body 끝이나 defer와 함께 씁니다.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>내부에서 — Internal Script</h2>
+      <span class="fn">&lt;script&gt; ... &lt;/script&gt;</span>
+    </div>
+    <p class="topic-intro">별도 파일 없이, HTML 문서 안에 script 태그를 두고 그 안에 코드를 직접 작성합니다. 이 페이지처럼 파일 하나로 완결된 데모나 짧은 스크립트에 자주 쓰입니다.</p>
+
+    <div class="demo-panel">
+      <button class="demo-btn" id="btn-internal">내부 스크립트 버튼</button>
+      <div class="demo-log" id="log-internal"><span class="placeholder">클릭하면 실행 결과가 여기에 표시됩니다</span></div>
+    </div>
+
+    <div class="code-explain">
+      <div class="ce-head">HTML 한 파일 안에서</div>
+<pre>&lt;button id="btn-internal"&gt;내부 스크립트 버튼&lt;/button&gt;
+
+<span class="tg">&lt;script&gt;</span>
+  <span class="kw">document</span>.getElementById(<span class="cm">'btn-internal'</span>)
+    .addEventListener(<span class="cm">'click'</span>, function () {
+      console.log(<span class="cm">'문서 내부 script 태그에서 실행됨'</span>);
+    });
+<span class="tg">&lt;/script&gt;</span></pre>
+      <div class="ce-notes">
+        <dl>
+          <dt>&lt;script&gt;&lt;/script&gt;</dt><dd>src 없이 태그 사이에 코드를 바로 작성합니다. 파일이 하나뿐이라 배포가 간단합니다.</dd>
+          <dt>위치</dt><dd>버튼처럼 조작할 요소를 찾는 코드는 그 요소가 이미 그려진 뒤(대개 body 끝)에 두는 것이 안전합니다.</dd>
+          <dt>단점</dt><dd>다른 페이지에서 같은 기능이 필요하면 코드를 복사해야 하므로 재사용이 번거롭습니다.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>이벤트 — 인라인 이벤트 핸들러</h2>
+      <span class="fn">onclick="..."</span>
+    </div>
+    <p class="topic-intro">script 태그 없이, 태그의 속성(onclick, onmouseover 등)에 실행할 코드를 바로 적습니다. 가장 빠르게 붙일 수 있지만, 마크업과 동작이 한 줄에 섞여 코드가 많아지면 관리하기 어렵습니다.</p>
+
+    <div class="demo-panel">
+      <button class="demo-btn" id="btn-inline" onclick="handleInlineDemo()">인라인 이벤트 버튼</button>
+      <div class="demo-log" id="log-inline"><span class="placeholder">클릭하면 실행 결과가 여기에 표시됩니다</span></div>
+    </div>
+
+    <div class="code-explain">
+      <div class="ce-head">HTML 태그의 속성으로</div>
+<pre>&lt;button id="btn-inline" <span class="tg">onclick="handleInlineDemo()"</span>&gt;
+  인라인 이벤트 버튼
+&lt;/button&gt;
+
+&lt;script&gt;
+  function handleInlineDemo() {
+    console.log(<span class="cm">'onclick 속성에서 바로 실행됨'</span>);
+  }
+&lt;/script&gt;</pre>
+      <div class="ce-notes">
+        <dt style="display:none"></dt>
+        <dl>
+          <dt>onclick="함수()"</dt><dd>클릭 시 실행할 코드를 속성값으로 직접 적습니다. 내부적으로는 element.onclick에 함수를 대입한 것과 같습니다.</dd>
+          <dt>장점</dt><dd>요소 하나에 코드 한 줄만 붙이면 되어 가장 간단합니다.</dd>
+          <dt>단점</dt><dd>HTML과 로직이 섞이고, 같은 요소에 onclick을 또 대입하면 이전 것을 덮어써 하나만 남습니다.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <h2>세 가지를 동시에 걸면?</h2>
+      <span class="fn">external + internal + inline</span>
+    </div>
+    <p class="topic-intro">같은 버튼 하나에 외부 스크립트, 내부 스크립트, 인라인 onclick을 모두 걸어봤습니다. addEventListener로 등록한 것들은 서로 덮어쓰지 않고 쌓이기 때문에, 클릭 한 번에 세 가지가 전부 실행됩니다.</p>
+
+    <div class="demo-panel">
+      <button class="demo-btn" id="btn-combined" onclick="handleCombinedInline()">동시 적용 버튼</button>
+      <div class="demo-log" id="log-combined"><span class="placeholder">클릭하면 실행 순서가 여기에 표시됩니다</span></div>
+    </div>
+
+    <div class="code-explain">
+      <div class="ce-head">한 버튼에 세 가지 방식을 모두 연결</div>
+<pre>&lt;button id="btn-combined" <span class="tg">onclick="handleCombinedInline()"</span>&gt;
+  동시 적용 버튼
+&lt;/button&gt;
+
+<span class="cm">/* ① 외부 파일(app.js)이라고 가정 */</span>
+btn.addEventListener(<span class="cm">'click'</span>, function () {
+  console.log(<span class="cm">'외부 스크립트 실행'</span>);
+});
+
+<span class="cm">/* ② 문서 내부 script 태그 */</span>
+btn.addEventListener(<span class="cm">'click'</span>, function () {
+  console.log(<span class="cm">'내부 스크립트 실행'</span>);
+});
+
+<span class="cm">/* ③ 인라인 onclick 속성 (위 태그에 이미 적용됨) */</span>
+function handleCombinedInline() {
+  console.log(<span class="cm">'인라인 이벤트 실행'</span>);
+}</pre>
+    </div>
+
+    <div class="order-steps">
+      <div class="step"><span class="n">1</span><span class="label">인라인 onclick</span><span class="desc">HTML을 파싱하는 시점에 이미 element.onclick으로 등록되어 있어 가장 먼저 실행됩니다.</span></div>
+      <div class="step"><span class="n">2</span><span class="label">외부 스크립트</span><span class="desc">addEventListener로 등록된 순서대로 실행 — 이 데모에서는 먼저 등록됐습니다.</span></div>
+      <div class="step"><span class="n">3</span><span class="label">내부 스크립트</span><span class="desc">역시 addEventListener로 등록 — 나중에 등록된 만큼 마지막에 실행됩니다.</span></div>
+    </div>
+
+    <div class="core-note">
+      <span class="fn">※ 핵심</span>
+      <ul>
+        <li>onclick 속성과 addEventListener는 서로 다른 방식으로 등록되며, 함께 있어도 둘 다 실행된다.</li>
+        <li>addEventListener는 여러 번 호출해도 계속 쌓이지만, element.onclick = fn 처럼 직접 대입하는 방식은 나중 것이 이전 것을 덮어쓴다.</li>
+        <li>실행 순서는 "등록된 순서"를 따른다 — 인라인 onclick은 HTML 파싱 시점에 가장 먼저 등록되므로 보통 가장 먼저 실행된다.</li>
+      </ul>
+    </div>
+
+    <table>
+      <thead><tr><th>방식</th><th>작성 위치</th><th>여러 개 등록 시</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">외부 스크립트</td><td>별도 .js 파일 + src</td><td>addEventListener면 누적</td></tr>
+        <tr><td class="fn">내부 스크립트</td><td>문서 안 &lt;script&gt;</td><td>addEventListener면 누적</td></tr>
+        <tr><td class="fn">인라인 이벤트</td><td>태그의 on* 속성</td><td>다시 쓰면 이전 것을 덮어씀</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>external script · internal script · inline event handler · addEventListener</footer>
+
+</div>
+
+<script>
+  function appendLog(containerId, text, kind){
+    const el = document.getElementById(containerId);
+    if (el.querySelector('.placeholder')) el.innerHTML = '<ul></ul>';
+    const ul = el.querySelector('ul');
+    const li = document.createElement('li');
+    li.className = 'i-' + kind;
+    const time = new Date().toLocaleTimeString('ko-KR', { hour12:false });
+    li.innerHTML = '<span class="tag">[' + time + ']</span>' + text;
+    ul.appendChild(li);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  /* ---- ① 외부 파일(app.js)이라고 가정한 스크립트 ---- */
+  document.getElementById('btn-external').addEventListener('click', function () {
+    appendLog('log-external', '외부 파일(app.js)에서 실행됨', 'external');
+  });
+
+  /* ---- ② 내부 스크립트 ---- */
+  document.getElementById('btn-internal').addEventListener('click', function () {
+    appendLog('log-internal', '문서 내부 script 태그에서 실행됨', 'internal');
+  });
+
+  /* ---- ③ 인라인 이벤트 핸들러 (HTML의 onclick 속성이 호출) ---- */
+  function handleInlineDemo(){
+    appendLog('log-inline', 'onclick 속성에서 바로 실행됨', 'inline');
+  }
+
+  /* ---- 동시 적용 데모 ---- */
+  const combinedBtn = document.getElementById('btn-combined');
+
+  // 인라인 onclick 속성이 이미 handleCombinedInline()을 호출하도록 걸려 있음 (①)
+  function handleCombinedInline(){
+    appendLog('log-combined', '① 인라인 onclick 실행', 'inline');
+  }
+
+  // 외부 스크립트라고 가정 (②)
+  combinedBtn.addEventListener('click', function () {
+    appendLog('log-combined', '② 외부 스크립트 addEventListener 실행', 'external');
+  });
+
+  // 내부 스크립트 (③)
+  combinedBtn.addEventListener('click', function () {
+    appendLog('log-combined', '③ 내부 스크립트 addEventListener 실행', 'internal');
+  });
+</script>
+
+
+</body>
+</html>

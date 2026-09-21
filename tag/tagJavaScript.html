@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS 학습 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0: #0b0c10;
+    --bg-1: #121319;
+    --line: rgba(255,255,255,0.09);
+    --line-hover: rgba(255,255,255,0.22);
+    --ink: #f1f1ee;
+    --ink-soft: #9a9ca6;
+    --accent-a: #7dd3c0;
+    --accent-b: #b79cf0;
+    --accent-c: #f0a678;
+    --accent-d: #7ea6f0;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html, body{ height: 100%; }
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 600px at 12% -10%, rgba(125,211,192,0.10), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(183,156,240,0.10), transparent 55%),
+      var(--bg-0);
+    color: var(--ink);
+    font-family: var(--sans);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 48px 20px;
+  }
+  .wrap{
+    width: 100%;
+    max-width: 860px;
+  }
+
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width: 22px;
+    height: 1px;
+    background: var(--ink-soft);
+    display:inline-block;
+  }
+
+  h1{
+    font-size: clamp(36px, 6vw, 58px);
+    line-height: 1.05;
+    margin: 0 0 16px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+  h1 span{
+    background: linear-gradient(100deg, var(--accent-a), var(--accent-d) 55%, var(--accent-b));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .lede{
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 56ch;
+    margin: 0 0 52px;
+  }
+
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 620px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  .card{
+    position: relative;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 26px 24px;
+    min-height: 168px;
+    text-decoration: none;
+    color: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform .35s cubic-bezier(.22,.9,.28,1), border-color .35s ease, background .35s ease;
+  }
+  .card::before{
+    content: "";
+    position: absolute;
+    inset: -40% -20% auto auto;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--tint, var(--accent-a)) 0%, transparent 70%);
+    opacity: 0.16;
+    transition: opacity .35s ease, transform .35s ease;
+    pointer-events: none;
+  }
+  .card:hover{
+    transform: translateY(-4px);
+    border-color: var(--line-hover);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015));
+  }
+  .card:hover::before{
+    opacity: 0.28;
+    transform: scale(1.12);
+  }
+
+  .card .num{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+  }
+  .card h2{
+    margin: 0;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .card p{
+    margin: 6px 0 0;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .card .bottom{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+  }
+  .card .tag{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+  .card .go{
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--ink);
+    transform: translateX(0);
+    transition: transform .3s ease;
+  }
+  .card:hover .go{ transform: translateX(4px); }
+
+  .c1{ --tint: var(--accent-a); }
+  .c2{ --tint: var(--accent-d); }
+  .c3{ --tint: var(--accent-c); }
+  .c4{ --tint: var(--accent-b); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">personal study notes</p>
+  <h1>JavaScript <span>학습 노트</span></h1>
+  <p class="lede">기본 문법부터 클로저, 프로토타입까지 — 정리해둔 네 편의 노트입니다.</p>
+
+  <div class="grid">
+    <a class="card c1" href="../JC/apply.html">
+      <div>
+        <span class="num">01</span>
+        <h2>1.적용방식</h2>
+        <p>외부 파일, 내부 파일, 인라인에따라 적용되는 방식을 알아봅니다.</p>
+      </div>
+      <div class="bottom">
+        <span class="tag">2D</span>
+        <span class="go">→</span>
+      </div>
+    </a>
+
+    <a class="card c2" href="../JC/declarations.html">
+      <div>
+        <span class="num">02</span>
+        <h2>선언문과 변수</h2>
+        <p>var, let, const — 변수 선언 방식과 스코프</p>
+      </div>
+      <div class="bottom">
+        <span class="tag">3D</span>
+        <span class="go">→</span>
+      </div>
+    </a>
+
+    <a class="card c3" href="#">
+      <div>
+        <span class="num">03</span>
+        <h2>Transition</h2>
+        <p>hover 인터랙션과 timing-function별 속도 곡선 비교</p>
+      </div>
+      <div class="bottom">
+        <span class="tag">STATE</span>
+        <span class="go">→</span>
+      </div>
+    </a>
+
+    <a class="card c4" href="#">
+      <div>
+        <span class="num">04</span>
+        <h2>Animation</h2>
+        <p>@keyframes로 만드는 색상, 이동, 반복 애니메이션</p>
+      </div>
+      <div class="bottom">
+        <span class="tag">KEYFRAMES</span>
+        <span class="go">→</span>
+      </div>
+    </a>
+  </div>
+
+</div>
+</body>
+</html>
