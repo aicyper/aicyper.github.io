@@ -26,6 +26,8 @@
     color: var(--ink);
     font-family: var(--sans);
     line-height: 1.5;
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
     background-image:
       linear-gradient(var(--line) 1px, transparent 1px),
       linear-gradient(90deg, var(--line) 1px, transparent 1px);
@@ -450,7 +452,7 @@ x ** y  <span class="cm">// 거듭제곱</span></pre>
     y = 3;
     appendLog('log-let', '<span class="ok">재대입 성공</span> → y = ' + y);
     try {
-      eval('let y = 2;');
+      new Function('let y = 1; let y = 2;');
     } catch (e) {
       appendLog('log-let', '<span class="err">재선언 실패</span> → ' + e.constructor.name);
     }
@@ -526,6 +528,8 @@ x ** y  <span class="cm">// 거듭제곱</span></pre>
       const cls = result ? 'ok' : 'err';
       appendLog('log-cmp', JSON.stringify(rawA) + ' ' + op + ' ' + JSON.stringify(rawB) + ' → <span class="' + cls + '">' + result + '</span>');
     });
+  });
+
   /* ---- 증감 연산자 ---- */
   let incdecVal = 5;
   const incdecEl = document.getElementById('incdec-val');
