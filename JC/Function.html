@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 함수 알아보기</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: Arial, "Malgun Gothic", sans-serif;
+            color: #1f2937;
+            background: #f3f6fb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 20px 56px;
+            line-height: 1.65;
+        }
+
+        header {
+            margin-bottom: 28px;
+        }
+
+        h1, h2 {
+            line-height: 1.3;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            color: #173b72;
+        }
+
+        .intro, .card {
+            background: #fff;
+            border: 1px solid #dce4f0;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .card {
+            margin-top: 18px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #24549a;
+        }
+
+        code, pre {
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        code {
+            color: #8a2c68;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 14px;
+            border-radius: 8px;
+            background: #f1f4f9;
+            line-height: 1.55;
+        }
+
+        .demo {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        input, select, button {
+            min-height: 40px;
+            padding: 8px 11px;
+            border: 1px solid #bcc9da;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        button {
+            border-color: #24549a;
+            background: #24549a;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #173b72;
+        }
+
+        button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 3px solid #9ac5ff;
+            outline-offset: 2px;
+        }
+
+        output {
+            display: block;
+            min-height: 1.7em;
+            margin-top: 10px;
+            color: #173b72;
+            font-weight: bold;
+        }
+
+        .note {
+            color: #526174;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>JavaScript 함수 알아보기</h1>
+        <p>함수는 특정 작업을 수행하도록 작성한 코드 묶음입니다. 한 번 만들어 두면 필요할 때 여러 번 실행할 수 있습니다.</p>
+    </header>
+
+    <main>
+        <section class="intro" aria-label="함수 기본 문법">
+            <strong>기본 문법</strong>
+            <pre><code>function 함수이름(매개변수) {
+    // 실행할 코드
+    return 결과값;
+}
+
+함수이름(전달값);</code></pre>
+            <p class="note"><code>매개변수</code>는 함수에 전달되는 값을 받는 변수이고, <code>return</code>은 함수의 결과를 돌려줍니다.</p>
+        </section>
+
+        <section class="card" aria-labelledby="event-title">
+            <h2 id="event-title">1. 이벤트 함수</h2>
+            <p>이벤트 함수(이벤트 처리 함수)는 클릭, 입력, 키보드 입력처럼 사용자의 동작이 일어났을 때 실행됩니다. 아래 버튼을 누르면 클릭 횟수가 늘어납니다.</p>
+            <pre><code>let count = 0;
+
+function countClick() {
+    count = count + 1;
+    result.textContent = count + "회 클릭했습니다.";
+}
+
+button.addEventListener("click", countClick);</code></pre>
+            <div class="demo">
+                <button id="click-button" type="button">클릭해 보세요</button>
+                <span id="click-result" aria-live="polite">아직 클릭하지 않았습니다.</span>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="calculation-title">
+            <h2 id="calculation-title">2. 함수로 하는 연산</h2>
+            <p>함수에 숫자와 연산자를 전달하고, 함수 안에서 계산한 뒤 <code>return</code>으로 결과를 돌려줄 수 있습니다.</p>
+            <pre><code>function calculate(a, b, operator) {
+    if (operator === "+") return a + b;
+    if (operator === "-") return a - b;
+    if (operator === "*") return a * b;
+    if (operator === "/") return a / b;
+}</code></pre>
+            <div class="demo">
+                <label for="number-a">첫 번째 숫자</label>
+                <input id="number-a" type="number" value="12" step="any">
+                <label for="operator">연산</label>
+                <select id="operator" aria-label="연산 선택">
+                    <option value="+">더하기 (+)</option>
+                    <option value="-">빼기 (-)</option>
+                    <option value="*">곱하기 (×)</option>
+                    <option value="/">나누기 (÷)</option>
+                </select>
+                <label for="number-b">두 번째 숫자</label>
+                <input id="number-b" type="number" value="3" step="any">
+                <button id="calculate-button" type="button">계산하기</button>
+            </div>
+            <output id="calculation-result" aria-live="polite"></output>
+        </section>
+
+        <section class="card" aria-labelledby="built-in-title">
+            <h2 id="built-in-title">3. 내장 함수</h2>
+            <p>prompt, confirm, alert를 이용해 경고창 처럼 사용할 수 있습니다.</p>
+            <ul>
+                <li><code>prompt("내용","예시내용")</code>: 사용자에게 입력을 받는 창을 띄웁니다.</li>
+                <li><code>confirm("내용")</code>: 사용자에게 확인을 요청하는 창을 띄웁니다.</li>
+                <li><code>alert("내용")</code>: 사용자에게 알림을 표시하는 창을 띄웁니다.</li>
+            </ul>
+            <p>아래 버튼을 눌러 사용해보세요.</p>
+            <div class="demo">
+                <button id="prompt-button" type="button">prompt</button>
+                <button id="confirm-button" type="button">confirm</button>
+                <button id="alert-button" type="button">alert</button>
+            </div>
+            <output id="built-in-result" aria-live="polite"></output>
+        </section>
+    </main>
+
+    <script>
+        const clickButton = document.querySelector("#click-button");
+        const clickResult = document.querySelector("#click-result");
+        let clickCount = 0;
+
+        clickButton.addEventListener("click", function () {
+            clickCount += 1;
+            clickResult.textContent = clickCount + "회 클릭했습니다.";
+        });
+
+        function calculate(a, b, operator) {
+            if (operator === "+") return a + b;
+            if (operator === "-") return a - b;
+            if (operator === "*") return a * b;
+            if (operator === "/") return a / b;
+            return NaN;
+        }
+
+        document.querySelector("#calculate-button").addEventListener("click", function () {
+            const a = Number(document.querySelector("#number-a").value);
+            const b = Number(document.querySelector("#number-b").value);
+            const operator = document.querySelector("#operator").value;
+            const result = document.querySelector("#calculation-result");
+
+            if (!Number.isFinite(a) || !Number.isFinite(b)) {
+                result.textContent = "두 칸에 올바른 숫자를 입력해 주세요.";
+            } else if (operator === "/" && b === 0) {
+                result.textContent = "0으로 나눌 수 없습니다.";
+            } else {
+                result.textContent = "계산 결과: " + calculate(a, b, operator);
+            }
+        });
+
+        const builtInResult = document.querySelector("#built-in-result");
+
+        document.querySelector("#prompt-button").addEventListener("click", function () {
+            const userInput = prompt("원하는 내용을 입력하세요:", "예시 내용");
+            if (userInput !== null) {
+                builtInResult.textContent = "입력한 내용: " + userInput;
+            } else {
+                builtInResult.textContent = "입력을 취소했습니다.";
+            }
+        });
+
+        document.querySelector("#confirm-button").addEventListener("click", function () {
+            const userConfirmed = confirm("계속 진행하시겠습니까?");
+            if (userConfirmed) {
+                builtInResult.textContent = "사용자가 확인했습니다.";
+            } else {
+                builtInResult.textContent = "사용자가 취소했습니다.";
+            }
+        });
+
+        document.querySelector("#alert-button").addEventListener("click", function () {
+            alert("이것은 알림 메시지입니다.");
+            builtInResult.textContent = "알림 메시지를 확인했습니다.";
+        });
+    </script>
+</body>
+</html>

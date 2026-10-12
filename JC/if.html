@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 조건문과 반복문</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: Arial, "Malgun Gothic", sans-serif;
+            color: #1f2937;
+            background: #f3f6fb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 20px 56px;
+            line-height: 1.65;
+        }
+
+        header {
+            margin-bottom: 28px;
+        }
+
+        h1, h2 {
+            line-height: 1.3;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            color: #173b72;
+        }
+
+        .intro, .card {
+            padding: 22px;
+            border: 1px solid #dce4f0;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .card {
+            margin-top: 18px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #24549a;
+        }
+
+        code, pre {
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        code {
+            color: #8a2c68;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 14px;
+            border-radius: 8px;
+            background: #f1f4f9;
+            line-height: 1.55;
+        }
+
+        .demo {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        input, select, button {
+            min-height: 40px;
+            padding: 8px 11px;
+            border: 1px solid #bcc9da;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        button {
+            border-color: #24549a;
+            background: #24549a;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #173b72;
+        }
+
+        button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 3px solid #9ac5ff;
+            outline-offset: 2px;
+        }
+
+        output {
+            display: block;
+            min-height: 1.7em;
+            margin-top: 10px;
+            color: #173b72;
+            font-weight: bold;
+        }
+
+        .note {
+            color: #526174;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>JavaScript 조건문과 반복문</h1>
+        <p>조건문은 조건에 따라 다른 코드를 실행하고, 반복문은 같은 코드를 여러 번 실행합니다. 각 버튼을 눌러 예제를 확인해 보세요.</p>
+    </header>
+
+    <main>
+        <section class="intro" aria-label="조건문과 반복문 요약">
+            <strong>한눈에 보기</strong>
+            <ul>
+                <li><code>if</code>, <code>else if</code>, <code>else</code>, <code>switch</code>: 조건에 따라 실행할 코드를 선택합니다.</li>
+                <li><code>for</code>, <code>while</code>, <code>do while</code>: 조건이나 횟수에 따라 코드를 반복합니다.</li>
+            </ul>
+        </section>
+
+        <section class="card" aria-labelledby="if-else-title">
+            <h2 id="if-else-title">1. if else</h2>
+            <p><code>if</code> 조건이 참이면 첫 번째 코드를, 거짓이면 <code>else</code> 코드를 실행합니다.</p>
+            <pre><code>if (temperature >= 20) {
+    message = "따뜻해요.";
+} else {
+    message = "선선해요.";
+}</code></pre>
+            <div class="demo">
+                <label for="temperature">기온</label>
+                <input id="temperature" type="number" value="22">
+                <span>°C</span>
+                <button id="if-else-button" type="button">확인</button>
+            </div>
+            <output id="if-else-result" aria-live="polite"></output>
+        </section>
+
+        <section class="card" aria-labelledby="else-if-title">
+            <h2 id="else-if-title">2. else if</h2>
+            <p>여러 조건 중 어떤 조건이 참인지 차례로 검사합니다. 처음으로 참이 된 조건의 코드만 실행합니다.</p>
+            <pre><code>if (score >= 90) {
+    grade = "A";
+} else if (score >= 80) {
+    grade = "B";
+} else {
+    grade = "C";
+}</code></pre>
+            <div class="demo">
+                <label for="score">점수</label>
+                <input id="score" type="number" min="0" max="100" value="85">
+                <button id="else-if-button" type="button">등급 확인</button>
+            </div>
+            <output id="else-if-result" aria-live="polite"></output>
+        </section>
+
+        <section class="card" aria-labelledby="switch-title">
+            <h2 id="switch-title">3. switch</h2>
+            <p>하나의 값이 여러 경우 중 어떤 값과 같은지 비교할 때 사용합니다. 일치하는 <code>case</code>를 실행하고 <code>break</code>로 빠져나옵니다.</p>
+            <pre><code>switch (day) {
+    case "월요일":
+        message = "한 주의 시작!";
+        break;
+    case "금요일":
+        message = "주말이 가까워요!";
+        break;
+    default:
+        message = "좋은 하루 보내세요!";
+}</code></pre>
+            <div class="demo">
+                <label for="day">요일 선택</label>
+                <select id="day">
+                    <option>월요일</option>
+                    <option>화요일</option>
+                    <option>수요일</option>
+                    <option>목요일</option>
+                    <option>금요일</option>
+                </select>
+                <button id="switch-button" type="button">메시지 보기</button>
+            </div>
+            <output id="switch-result" aria-live="polite"></output>
+        </section>
+
+        <section class="card" aria-labelledby="for-title">
+            <h2 id="for-title">4. for</h2>
+            <p>반복 횟수가 정해져 있을 때 편리합니다. 아래 코드는 숫자 1부터 5까지 출력합니다.</p>
+            <pre><code>for (let i = 1; i <= 5; i++) {
+    numbers.push(i);
+}</code></pre>
+            <div class="demo">
+                <button id="for-button" type="button">for 실행</button>
+            </div>
+            <output id="for-result" aria-live="polite"></output>
+        </section>
+
+        <section class="card" aria-labelledby="while-title">
+            <h2 id="while-title">5. while</h2>
+            <p>조건이 참인 동안 반복합니다. 조건을 바꾸는 코드가 없으면 반복이 끝나지 않을 수 있으니 주의하세요.</p>
+            <pre><code>let i = 1;
+while (i <= 3) {
+    numbers.push(i);
+    i++;
+}</code></pre>
+            <div class="demo">
+                <button id="while-button" type="button">while 실행</button>
+            </div>
+            <output id="while-result" aria-live="polite"></output>
+        </section>
+
+        <section class="card" aria-labelledby="do-while-title">
+            <h2 id="do-while-title">6. do while</h2>
+            <p><code>do</code> 블록을 먼저 한 번 실행한 뒤 조건을 확인합니다. 그래서 조건이 처음부터 거짓이어도 한 번은 실행됩니다.</p>
+            <pre><code>let i = 1;
+do {
+    numbers.push(i);
+    i++;
+} while (i <= 3);</code></pre>
+            <div class="demo">
+                <button id="do-while-button" type="button">do while 실행</button>
+            </div>
+            <output id="do-while-result" aria-live="polite"></output>
+        </section>
+    </main>
+
+    <script>
+        document.querySelector("#if-else-button").addEventListener("click", function () {
+            const temperature = Number(document.querySelector("#temperature").value);
+            const result = document.querySelector("#if-else-result");
+
+            if (!Number.isFinite(temperature)) {
+                result.textContent = "기온을 숫자로 입력해 주세요.";
+            } else if (temperature >= 20) {
+                result.textContent = "따뜻해요.";
+            } else {
+                result.textContent = "선선해요.";
+            }
+        });
+
+        document.querySelector("#else-if-button").addEventListener("click", function () {
+            const score = Number(document.querySelector("#score").value);
+            const result = document.querySelector("#else-if-result");
+
+            if (!Number.isFinite(score) || score < 0 || score > 100) {
+                result.textContent = "0부터 100 사이의 점수를 입력해 주세요.";
+            } else if (score >= 90) {
+                result.textContent = "A 등급입니다.";
+            } else if (score >= 80) {
+                result.textContent = "B 등급입니다.";
+            } else {
+                result.textContent = "C 등급입니다.";
+            }
+        });
+
+        document.querySelector("#switch-button").addEventListener("click", function () {
+            const day = document.querySelector("#day").value;
+            let message;
+
+            switch (day) {
+                case "월요일":
+                    message = "한 주의 시작!";
+                    break;
+                case "금요일":
+                    message = "주말이 가까워요!";
+                    break;
+                default:
+                    message = "좋은 하루 보내세요!";
+            }
+
+            document.querySelector("#switch-result").textContent = message;
+        });
+
+        document.querySelector("#for-button").addEventListener("click", function () {
+            const numbers = [];
+
+            for (let i = 1; i <= 5; i++) {
+                numbers.push(i);
+            }
+
+            document.querySelector("#for-result").textContent = "결과: " + numbers.join(", ");
+        });
+
+        document.querySelector("#while-button").addEventListener("click", function () {
+            const numbers = [];
+            let i = 1;
+
+            while (i <= 3) {
+                numbers.push(i);
+                i++;
+            }
+
+            document.querySelector("#while-result").textContent = "결과: " + numbers.join(", ");
+        });
+
+        document.querySelector("#do-while-button").addEventListener("click", function () {
+            const numbers = [];
+            let i = 1;
+
+            do {
+                numbers.push(i);
+                i++;
+            } while (i <= 3);
+
+            document.querySelector("#do-while-result").textContent = "결과: " + numbers.join(", ");
+        });
+    </script>
+</body>
+</html>
