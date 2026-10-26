@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자바스크립트 객체 쉽게 배우기</title>
+<style>
+  :root{--bg:#f6f7f9;--card:#fff;--ink:#1f2430;--soft:#5b6270;--line:#dfe3ea;--accent:#1f6f8b;--ok:#2f7a4f;--bad:#b7402e;--code:#1b2030}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;font-size:16px;
+    font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+  .wrap{max-width:860px;margin:0 auto;padding:0 18px 80px}
+  header{padding:48px 0 20px}
+  h1{font-size:clamp(28px,5vw,40px);line-height:1.2;margin:0 0 10px}
+  header p{margin:0;color:var(--soft)}
+  nav.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin:18px 0 8px}
+  nav.toc h2{font-size:16px;margin:0 0 8px}
+  nav.toc ol{margin:0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--accent);text-decoration:none}
+  nav.toc a:hover{text-decoration:underline}
+  @media(max-width:560px){nav.toc ol{columns:1}}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 22px 24px;margin:20px 0;scroll-margin-top:12px}
+  h2.t{font-size:22px;margin:0 0 10px}
+  p{margin:8px 0}
+  .tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:99px;margin-right:6px;color:#fff;background:var(--accent)}
+  .tag.warn{background:var(--bad)}
+  .box{border-left:4px solid var(--accent);background:#eef5f8;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+  .box.warn{border-color:var(--bad);background:#fbefec}
+  code.i{background:#eef0f4;padding:1px 6px;border-radius:5px;font-size:.92em;font-family:ui-monospace,Menlo,Consolas,monospace}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f0f2f6}
+  .example{margin:14px 0}
+  .bar{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+  .bar b{font-size:14px;margin-right:auto}
+  button{font:inherit;font-size:14px;border:0;border-radius:8px;padding:8px 14px;min-height:38px;cursor:pointer;background:var(--accent);color:#fff}
+  button.sub{background:#e4e8ef;color:var(--ink)}
+  button:hover{filter:brightness(.93)}
+  button:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #f0b34a;outline-offset:2px}
+  textarea.code,pre.out,pre.exp{font-family:ui-monospace,Menlo,Consolas,"Noto Sans KR",monospace;font-size:13.5px;line-height:1.7;margin:0;white-space:pre;overflow:auto;tab-size:2}
+  textarea.code{width:100%;display:block;background:var(--code);color:#e6e9f2;border:0;border-radius:10px;padding:14px 16px;resize:vertical}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+  @media(max-width:640px){.pair{grid-template-columns:1fr}}
+  .lbl{font-size:12.5px;color:var(--soft);margin-bottom:3px;display:flex;justify-content:space-between;gap:8px}
+  pre.exp,pre.out{background:#f0f2f6;border-radius:8px;padding:10px 14px;min-height:54px}
+  pre.out .err{color:var(--bad)}
+  .badge.ok{color:var(--ok);font-weight:700}.badge.no{color:var(--bad);font-weight:700}
+  .lab{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:720px){.lab{grid-template-columns:1fr}}
+  .row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;align-items:center}
+  input,select{font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;min-width:0;flex:1 1 90px}
+  fieldset{border:1px solid var(--line);border-radius:10px;margin:0 0 10px;padding:8px 12px 10px}
+  legend{font-size:13px;font-weight:700;color:var(--accent);padding:0 6px}
+  #state td:first-child{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--accent)}
+  #log{list-style:none;margin:6px 0 0;padding:0;max-height:230px;overflow:auto;font-size:13.5px}
+  #log li{border-bottom:1px dashed var(--line);padding:4px 0}
+  #log code{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--accent)}
+  .q{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0}
+  .q pre{background:var(--code);color:#e6e9f2;border-radius:8px;padding:10px 14px;overflow:auto;font-size:13px;margin:6px 0}
+  .opt{display:block;width:100%;text-align:left;background:#f0f2f6;color:var(--ink);margin:6px 0}
+  .opt.right{background:#dcf0e3;color:#1d5a37}.opt.wrong{background:#f6dcd6;color:#8e2f20}
+  .fb{font-size:14px;margin-top:4px;min-height:1.2em}
+  footer{color:var(--soft);font-size:13px;text-align:center;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>자바스크립트 객체 쉽게 배우기</h1>
+  <p>코드를 직접 실행하고 고쳐 보면서, 객체의 기본부터 상속과 프로토타입까지 차근차근 익혀요.</p>
+</header>
+
+<nav class="toc" aria-label="목차">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#s0">들어가기: 객체란?</a></li>
+    <li><a href="#s1">객체 만들기</a></li>
+    <li><a href="#s2">속성</a></li>
+    <li><a href="#s3">메서드</a></li>
+    <li><a href="#s4">this</a></li>
+    <li><a href="#s5">생성자 함수</a></li>
+    <li><a href="#s6">클래스</a></li>
+    <li><a href="#s7">상속</a></li>
+    <li><a href="#s8">프로토타입</a></li>
+    <li><a href="#lab">실습: 강아지 객체 다루기</a></li>
+    <li><a href="#quiz">퀴즈</a></li>
+    <li><a href="#sum">요약</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="s0">
+  <h2 class="t">들어가기: 객체란?</h2>
+  <p><span class="tag">비유</span>스마트폰을 떠올려 보세요. 색상과 저장 용량 같은 <b>특징</b>이 있고, 전화 걸기와 사진 찍기 같은 <b>할 수 있는 일</b>이 있죠. 자바스크립트의 <b>객체</b>는 이 둘을 하나의 꾸러미로 묶어 둔 것이에요.</p>
+  <table>
+    <tr><th>현실</th><th>자바스크립트</th></tr>
+    <tr><td>스마트폰 한 대</td><td>객체 (object)</td></tr>
+    <tr><td>색상, 저장 용량</td><td>속성 (property)</td></tr>
+    <tr><td>전화 걸기</td><td>메서드 (method)</td></tr>
+    <tr><td>스마트폰 설계도</td><td>생성자 함수 / 클래스</td></tr>
+  </table>
+  <p>아래 예제의 <b>▶ 실행</b> 버튼을 눌러 보세요. 코드를 직접 고친 뒤 실행해도 돼요.</p>
+</section>
+
+<section id="s1">
+  <h2 class="t">1. 객체 만들기</h2>
+  <p><span class="tag">비유</span>학생증을 만든다고 생각해요. 빈 카드에 <b>이름: 값</b> 형태로 정보를 하나씩 적는 거예요.</p>
+  <ol>
+    <li>중괄호 <code class="i">{ }</code>로 객체를 만들어요.</li>
+    <li>안에 <code class="i">이름: 값</code>을 쉼표(,)로 구분해 적어요.</li>
+    <li>값에는 문자, 숫자, 배열, 다른 객체도 넣을 수 있어요.</li>
+    <li>읽을 때는 <code class="i">객체.이름</code> 또는 <code class="i">객체['이름']</code>을 써요.</li>
+  </ol>
+  <div class="example"><textarea class="code" spellcheck="false">const student = {
+  name: '민지',
+  age: 15,
+  scores: [90, 85, 100]
+};
+console.log(student);
+console.log(student.name);
+console.log(student['age']);</textarea><pre class="exp">{ name: '민지', age: 15, scores: [ 90, 85, 100 ] }
+민지
+15</pre></div>
+</section>
+
+<section id="s2">
+  <h2 class="t">2. 속성</h2>
+  <p><span class="tag">비유</span>학생증 정보는 고치고, 새 칸을 만들고, 지울 수 있어요. 객체의 속성도 똑같이 <b>읽기·바꾸기·추가·삭제</b>가 가능해요.</p>
+  <div class="example"><textarea class="code" spellcheck="false">const cat = { name: '나비', age: 2 };
+cat.age = 3;              // 바꾸기
+cat.color = '흰색';       // 추가하기
+console.log(cat);
+delete cat.color;         // 지우기
+console.log('color' in cat);
+console.log(Object.keys(cat));</textarea><pre class="exp">{ name: '나비', age: 3, color: '흰색' }
+false
+[ 'name', 'age' ]</pre></div>
+  <div class="box warn"><span class="tag warn">주의</span><code class="i">const</code>로 만든 객체도 <b>안의 속성은 바꿀 수 있어요.</b> const는 변수에 다른 객체를 다시 넣는 것만 막아요. 아래 <a href="#lab">실습</a>에서 직접 바꿔 보세요.</div>
+</section>
+
+<section id="s3">
+  <h2 class="t">3. 메서드</h2>
+  <p><span class="tag">비유</span>자판기의 버튼처럼, 누르면 동작하는 기능이에요. 값이 <b>함수</b>인 속성을 메서드라고 불러요. 실행하려면 이름 뒤에 괄호 <code class="i">()</code>를 꼭 붙여요.</p>
+  <div class="example"><textarea class="code" spellcheck="false">const calculator = {
+  add(a, b) {
+    return a + b;
+  },
+  hello() {
+    console.log('계산기를 켰어요!');
+  }
+};
+calculator.hello();
+console.log(calculator.add(2, 3));
+console.log(calculator.add);   // 괄호가 없으면 함수 자체가 나와요</textarea><pre class="exp">계산기를 켰어요!
+5
+[Function: add]</pre></div>
+</section>
+
+<section id="s4">
+  <h2 class="t">4. this</h2>
+  <p><span class="tag">비유</span>"내 이름은 ~입니다"라는 문장은 말하는 사람에 따라 뜻이 달라져요. <code class="i">this</code>는 <b>지금 이 메서드를 부른 객체</b>, 즉 "나"를 가리켜요.</p>
+  <div class="example"><textarea class="code" spellcheck="false">'use strict';
+const dog = {
+  name: '콩이',
+  introduce() {
+    console.log('내 이름은 ' + this.name + '입니다');
+  }
+};
+const cat = { name: '나비', introduce: dog.introduce };
+dog.introduce();   // this는 dog
+cat.introduce();   // this는 cat
+const lost = dog.introduce;   // 객체에서 떼어 낸 함수
+try {
+  lost();
+} catch (e) {
+  console.log('this를 잃어버렸어요!');
+}</textarea><pre class="exp">내 이름은 콩이입니다
+내 이름은 나비입니다
+this를 잃어버렸어요!</pre></div>
+  <div class="box warn"><span class="tag warn">주의</span>메서드를 객체에서 떼어 내면 <code class="i">this</code>를 잃어버려요. 필요하면 <code class="i">dog.introduce.bind(dog)</code>로 묶어 주세요. 또 객체의 메서드를 화살표 함수(<code class="i">=&gt;</code>)로 만들면 this가 객체를 가리키지 않으니 피하세요.</div>
+</section>
+
+<section id="s5">
+  <h2 class="t">5. 생성자 함수</h2>
+  <p><span class="tag">비유</span>붕어빵 틀이에요. 틀 하나로 같은 모양의 붕어빵(객체)을 여러 개 찍어 내요. 이름은 관례로 <b>대문자</b>로 시작하고, <code class="i">new</code>와 함께 불러요.</p>
+  <ol>
+    <li><code class="i">new</code>가 빈 객체를 만들어요.</li>
+    <li>함수 안의 <code class="i">this</code>가 그 새 객체를 가리켜요.</li>
+    <li>속성을 채운 뒤 완성된 객체를 돌려줘요.</li>
+  </ol>
+  <div class="example"><textarea class="code" spellcheck="false">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+const minji = new Person('민지', 15);
+const junho = new Person('준호', 17);
+console.log(minji);
+console.log(junho.name);
+console.log(minji instanceof Person);</textarea><pre class="exp">Person { name: '민지', age: 15 }
+준호
+true</pre></div>
+</section>
+
+<section id="s6">
+  <h2 class="t">6. 클래스</h2>
+  <p><span class="tag">비유</span>같은 붕어빵 틀을 더 읽기 쉬운 <b>새 설계도 양식</b>으로 쓴 거예요. <code class="i">constructor</code>는 객체가 만들어질 때 자동으로 실행되는 특별한 메서드예요.</p>
+  <div class="example"><textarea class="code" spellcheck="false">class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+  birthday() {
+    this.age += 1;
+    console.log(this.name + '은(는) 이제 ' + this.age + '살!');
+  }
+}
+const minji = new Person('민지', 15);
+minji.birthday();
+console.log(minji);</textarea><pre class="exp">민지은(는) 이제 16살!
+Person { name: '민지', age: 16 }</pre></div>
+</section>
+
+<section id="s7">
+  <h2 class="t">7. 상속</h2>
+  <p><span class="tag">비유</span>부모의 재산을 물려받는 것과 같아요. <b>동물</b>의 공통 기능을 <b>강아지</b>가 물려받고, 필요한 부분만 새로 만들거나 덮어써요. <code class="i">extends</code>로 물려받고, <code class="i">super</code>로 부모를 불러요.</p>
+  <div class="example"><textarea class="code" spellcheck="false">class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+  eat() {
+    console.log(this.name + ': 냠냠 밥을 먹어요');
+  }
+  speak() {
+    console.log(this.name + ': (소리를 냅니다)');
+  }
+}
+class Dog extends Animal {
+  constructor(name, breed) {
+    super(name);          // 부모 constructor 먼저 실행
+    this.breed = breed;
+  }
+  speak() {               // 부모의 speak를 덮어쓰기
+    console.log(this.name + ': 멍멍!');
+  }
+}
+const kong = new Dog('콩이', '푸들');
+kong.eat();
+kong.speak();
+console.log(kong);
+console.log(kong instanceof Animal);</textarea><pre class="exp">콩이: 냠냠 밥을 먹어요
+콩이: 멍멍!
+Dog { name: '콩이', breed: '푸들' }
+true</pre></div>
+  <div class="box warn"><span class="tag warn">주의</span>자식 constructor에서는 <code class="i">this</code>를 쓰기 전에 반드시 <code class="i">super()</code>를 먼저 불러야 해요.</div>
+</section>
+
+<section id="s8">
+  <h2 class="t">8. 프로토타입</h2>
+  <p><span class="tag">비유</span>학교 도서관이에요. 학생마다 같은 책을 사지 않고, 도서관(<b>프로토타입</b>)에 한 권을 두고 모두가 빌려 봐요. 객체에 없는 속성은 <b>자기 것 → 부모(프로토타입) → 그 위 부모</b> 순서로 찾아 올라가요.</p>
+  <p>예: <code class="i">a → Person.prototype → Object.prototype → null</code> (앞의 상속, 클래스도 이 원리로 움직여요.)</p>
+  <div class="example"><textarea class="code" spellcheck="false">function Person(name) {
+  this.name = name;
+}
+Person.prototype.sayHi = function () {
+  console.log('안녕, 내 이름은 ' + this.name);
+};
+const a = new Person('민지');
+const b = new Person('준호');
+a.sayHi();
+console.log(a.sayHi === b.sayHi);          // 같은 함수를 공유
+console.log(a.hasOwnProperty('sayHi'));    // a가 직접 가진 건 아님
+console.log('sayHi' in a);                 // 하지만 찾아서 쓸 수 있음
+console.log(Object.getPrototypeOf(a) === Person.prototype);</textarea><pre class="exp">안녕, 내 이름은 민지
+true
+false
+true
+true</pre></div>
+</section>
+
+<section id="lab">
+  <h2 class="t">실습: 강아지 객체 다루기</h2>
+  <p>아래 <code class="i">dog</code> 객체의 속성을 바꾸고, 추가·삭제하고, 메서드를 불러 보세요. 오른쪽 기록에 실제 코드가 한 줄씩 남아요.</p>
+  <div class="lab">
+    <div>
+      <fieldset><legend>속성 바꾸기</legend>
+        <div class="row"><select id="setKey" aria-label="바꿀 속성"></select><input id="setVal" placeholder="새 값" aria-label="새 값"><button id="btnSet">바꾸기</button></div>
+      </fieldset>
+      <fieldset><legend>속성 추가</legend>
+        <div class="row"><input id="addKey" placeholder="이름 (예: color)" aria-label="추가할 속성 이름"><input id="addVal" placeholder="값 (예: 갈색)" aria-label="추가할 속성 값"><button id="btnAdd">추가</button></div>
+      </fieldset>
+      <fieldset><legend>속성 삭제</legend>
+        <div class="row"><select id="delKey" aria-label="삭제할 속성"></select><button id="btnDel">삭제</button></div>
+      </fieldset>
+      <fieldset><legend>메서드 호출</legend>
+        <div class="row"><button class="sub" data-call="bark">dog.bark()</button><button class="sub" data-call="birthday">dog.birthday()</button><button class="sub" data-call="detach">떼어 내서 호출</button><button class="sub" data-call="bound">bind로 호출</button></div>
+      </fieldset>
+      <button class="sub" id="btnReset">처음 상태로</button>
+    </div>
+    <div>
+      <b style="font-size:14px">현재 dog 객체</b>
+      <table id="state"><tbody></tbody></table>
+      <b style="font-size:14px">실행 기록</b> <button class="sub" id="btnClear" style="min-height:30px;padding:2px 10px">지우기</button>
+      <ul id="log" role="log" aria-live="polite"></ul>
+    </div>
+  </div>
+  <div class="example"><b style="font-size:14px">나만의 코드 놀이터</b>
+    <textarea class="code" id="free" spellcheck="false" style="margin-top:6px">const pet = { name: '초코', age: 1 };
+pet.age = 2;
+console.log(pet);</textarea></div>
+</section>
+
+<section id="quiz">
+  <h2 class="t">퀴즈</h2>
+  <p>정답을 고르면 바로 해설이 나와요. <span id="qprog" aria-live="polite">0 / 0</span></p>
+  <div id="qbox"></div>
+  <div id="qres" aria-live="polite" style="font-weight:700;margin-top:10px"></div>
+  <button class="sub" id="qretry" hidden>다시 풀기</button>
+</section>
+
+<section id="sum">
+  <h2 class="t">요약</h2>
+  <table>
+    <tr><th>개념</th><th>한 줄 요약</th><th>기억할 코드</th></tr>
+    <tr><td>객체</td><td>속성과 메서드를 묶은 꾸러미</td><td><code class="i">{ a: 1 }</code></td></tr>
+    <tr><td>속성</td><td>이름과 값의 짝. 읽기·바꾸기·추가·삭제 가능</td><td><code class="i">o.a = 2; delete o.a</code></td></tr>
+    <tr><td>메서드</td><td>값이 함수인 속성</td><td><code class="i">o.say()</code></td></tr>
+    <tr><td>this</td><td>메서드를 부른 객체</td><td><code class="i">this.name</code></td></tr>
+    <tr><td>생성자 함수</td><td>new로 같은 모양의 객체를 찍어 내는 틀</td><td><code class="i">new Person('민지')</code></td></tr>
+    <tr><td>클래스</td><td>생성자 함수를 읽기 쉽게 쓰는 문법</td><td><code class="i">class A { constructor(){} }</code></td></tr>
+    <tr><td>상속</td><td>부모 기능을 물려받고 추가·덮어쓰기</td><td><code class="i">class B extends A</code>, <code class="i">super()</code></td></tr>
+    <tr><td>프로토타입</td><td>없는 속성을 찾아 올라가는 연결고리</td><td><code class="i">Person.prototype.sayHi</code></td></tr>
+  </table>
+  <div class="box warn"><span class="tag warn">자주 하는 실수</span>메서드 호출에 <code class="i">()</code> 빼먹기 · 메서드를 화살표 함수로 만들기 · 생성자 호출에 <code class="i">new</code> 빼먹기 · 자식 constructor에서 <code class="i">super()</code> 빼먹기 · 속성 이름 오타(결과가 undefined)</div>
+</section>
+
+</main>
+<footer>object.html · 외부 라이브러리 없이 동작하는 단일 파일 · 예제는 격리된 샌드박스에서 실행돼요</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ===== 샌드박스 부트스트랩 (iframe 안에서 실행됨) ===== */
+  /* BOOT-START */
+  function boot(token) {
+    function fmt(v, d, seen) {
+      if (typeof v === 'string') return d ? "'" + v + "'" : v;
+      if (v === null) return 'null';
+      if (typeof v === 'function') {
+        if (/^class\b/.test(Function.prototype.toString.call(v))) return '[class ' + (v.name || '(anonymous)') + ']';
+        return v.name ? '[Function: ' + v.name + ']' : '[Function (anonymous)]';
+      }
+      if (typeof v !== 'object') return String(v);
+      if (seen.indexOf(v) > -1) return '[Circular]';
+      var s = seen.concat([v]);
+      if (Array.isArray(v)) {
+        if (!v.length) return '[]';
+        if (d > 2) return '[Array]';
+        return '[ ' + v.map(function (x) { return fmt(x, d + 1, s); }).join(', ') + ' ]';
+      }
+      var p = Object.getPrototypeOf(v), n = p && p.constructor && p.constructor.name;
+      var pre = n && n !== 'Object' ? n + ' ' : '';
+      var ks = Object.keys(v);
+      if (!ks.length) return pre + '{}';
+      if (d > 2) return '[' + (n || 'Object') + ']';
+      return pre + '{ ' + ks.map(function (k) {
+        return (/^[A-Za-z_$][\w$]*$/.test(k) ? k : "'" + k + "'") + ': ' + fmt(v[k], d + 1, s);
+      }).join(', ') + ' }';
+    }
+    function post(type, text) { parent.postMessage({ token: token, type: type, text: text }, '*'); }
+    ['log', 'info', 'warn', 'error'].forEach(function (k) {
+      console[k] = function () {
+        var t = [].map.call(arguments, function (a) { return fmt(a, 0, []); }).join(' ');
+        post(k === 'error' || k === 'warn' ? 'err' : 'log', t);
+      };
+    });
+    window.onerror = function (msg) { post('err', '에러: ' + msg); return true; };
+    window.__done = function () { post('done', ''); };
+  }
+  /* BOOT-END */
+
+  /* ===== 안전한 실행기: sandbox iframe + 메시지 검증 + 시간 제한 ===== */
+  function runCode(code, onLine, onEnd) {
+    if (/while\s*\(\s*(true|1)\s*\)|for\s*\(\s*;\s*;\s*\)/.test(code)) {
+      onLine('err', '무한 반복이 의심돼서 실행하지 않았어요.'); onEnd(); return;
+    }
+    var token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    var f = document.createElement('iframe');
+    f.setAttribute('sandbox', 'allow-scripts');
+    f.title = '코드 실행 샌드박스'; f.hidden = true;
+    var count = 0, finished = false, timer;
+    function finish(msg) {
+      if (finished) return; finished = true;
+      clearTimeout(timer); window.removeEventListener('message', onMsg); f.remove();
+      if (msg) onLine('err', msg);
+      onEnd();
+    }
+    function onMsg(e) {
+      var d = e.data;
+      if (e.source !== f.contentWindow || !d || d.token !== token) return;
+      if (d.type === 'done') return finish();
+      if ((d.type === 'log' || d.type === 'err') && typeof d.text === 'string' && count++ < 200) onLine(d.type, d.text.slice(0, 500));
+    }
+    window.addEventListener('message', onMsg);
+    timer = setTimeout(function () { finish('실행 시간이 너무 길어 중단했어요.'); }, 3000);
+    f.srcdoc = '<!doctype html><html><body><script>(' + boot.toString() + ')(' + JSON.stringify(token) + ')<\/script><script>' +
+      code.replace(/<\/script/gi, '<\\/script') + '\n<\/script><script>__done()<\/script></body></html>';
+    document.body.appendChild(f);
+  }
+
+  /* ===== 예제 블록 꾸미기 ===== */
+  document.querySelectorAll('.example').forEach(function (ex, idx) {
+    var ta = ex.querySelector('textarea.code'), exp = ex.querySelector('pre.exp');
+    var orig = ta.value, expected = exp ? exp.textContent.trim() : null;
+    function fit() { ta.rows = Math.max(3, ta.value.split('\n').length); }
+    fit(); ta.addEventListener('input', fit);
+    ta.setAttribute('aria-label', '예제 코드 ' + (idx + 1));
+    var bar = document.createElement('div'); bar.className = 'bar';
+    var run = document.createElement('button'); run.textContent = '▶ 실행';
+    var reset = document.createElement('button'); reset.className = 'sub'; reset.textContent = '처음 코드로';
+    var title = document.createElement('b'); title.textContent = ex.querySelector('b') ? '' : '예제 ' + (idx + 1);
+    bar.append(title, reset, run);
+    if (!ex.querySelector('b')) ex.insertBefore(bar, ta); else ex.insertBefore(bar, ex.querySelector('b').nextSibling);
+    var pair = document.createElement('div'); pair.className = 'pair';
+    var left = document.createElement('div'), right = document.createElement('div');
+    if (exp) { var l1 = document.createElement('div'); l1.className = 'lbl'; l1.textContent = '예상 출력 결과'; left.append(l1, exp); pair.append(left); }
+    var l2 = document.createElement('div'); l2.className = 'lbl';
+    var l2t = document.createElement('span'); l2t.textContent = '실제 실행 결과'; var badge = document.createElement('span'); badge.className = 'badge';
+    l2.append(l2t, badge);
+    var out = document.createElement('pre'); out.className = 'out'; out.setAttribute('aria-live', 'polite'); out.textContent = '▶ 실행을 눌러 보세요';
+    right.append(l2, out); pair.append(right); ex.append(pair);
+    reset.addEventListener('click', function () { ta.value = orig; fit(); });
+    run.addEventListener('click', function () {
+      var lines = []; run.disabled = true; out.textContent = ''; badge.textContent = ''; badge.className = 'badge';
+      runCode(ta.value, function (type, text) {
+        lines.push(text);
+        var d = document.createElement('div'); if (type === 'err') d.className = 'err'; d.textContent = text; out.append(d);
+      }, function () {
+        run.disabled = false;
+        if (!lines.length) out.textContent = '(출력된 내용이 없어요)';
+        if (expected !== null && ta.value === orig) {
+          var same = lines.join('\n').trim() === expected;
+          badge.textContent = same ? '✓ 예상 출력과 같아요' : '✗ 예상과 달라요';
+          badge.className = 'badge ' + (same ? 'ok' : 'no');
+        }
+      });
+    });
+  });
+
+  /* ===== 실습: 속성 변경 ===== */
+  function makeDog() {
+    return {
+      name: '콩이', age: 3, energy: 50,
+      bark: function () { return this.name + ': 멍멍!'; },
+      birthday: function () { this.age += 1; return this.name + ' 생일 축하! 이제 ' + this.age + '살'; }
+    };
+  }
+  var dog = makeDog();
+  var $ = function (id) { return document.getElementById(id); };
+  function lit(v) { return typeof v === 'string' ? "'" + v.replace(/'/g, "\\'") + "'" : String(v); }
+  function access(k) { return /^[A-Za-z_$][\w$]*$/.test(k) ? 'dog.' + k : 'dog[' + lit(k) + ']'; }
+  function parse(s) {
+    s = s.trim();
+    if (s === 'true') return true; if (s === 'false') return false; if (s === 'null') return null;
+    return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : s;
+  }
+  function log(code, msg, bad) {
+    var li = document.createElement('li'), c = document.createElement('code'), m = document.createElement('span');
+    c.textContent = code; m.textContent = msg; if (bad) m.style.color = 'var(--bad)';
+    li.append(c, m); var ul = $('log'); ul.append(li); ul.scrollTop = ul.scrollHeight;
+    while (ul.children.length > 40) ul.firstChild.remove();
+  }
+  function render() {
+    var tb = $('state').tBodies[0]; tb.textContent = '';
+    var keys = Object.keys(dog), setSel = $('setKey'), delSel = $('delKey');
+    setSel.textContent = ''; delSel.textContent = '';
+    keys.forEach(function (k) {
+      var tr = tb.insertRow(), v = dog[k];
+      tr.insertCell().textContent = k;
+      tr.insertCell().textContent = typeof v === 'function' ? 'ƒ 메서드' : (typeof v) + ' · ' + lit(v);
+      if (typeof v !== 'function') setSel.add(new Option(k, k));
+      delSel.add(new Option(k, k));
+    });
+    if (!keys.length) tb.insertRow().insertCell().textContent = '(속성이 하나도 없어요)';
+  }
+  function setProp(k, raw, adding) {
+    if (!k) { log('', '속성 이름을 입력해 주세요.', true); return; }
+    if (k === '__proto__') { log('', "'__proto__'는 특별한 이름이라 쓸 수 없어요.", true); return; }
+    var had = Object.prototype.hasOwnProperty.call(dog, k), v = parse(raw);
+    dog[k] = v;
+    log(access(k) + ' = ' + lit(v) + ';', adding && had ? '이미 있던 속성이라 값만 바뀌었어요' : (had ? '값이 바뀌었어요' : '새 속성이 추가됐어요'));
+    render();
+  }
+  $('btnSet').addEventListener('click', function () { setProp($('setKey').value, $('setVal').value, false); });
+  $('btnAdd').addEventListener('click', function () { setProp($('addKey').value.trim(), $('addVal').value, true); $('addKey').value = ''; $('addVal').value = ''; });
+  $('btnDel').addEventListener('click', function () {
+    var k = $('delKey').value; if (!k) return;
+    delete dog[k]; log('delete ' + access(k) + ';', '속성을 지웠어요'); render();
+  });
+  document.querySelectorAll('[data-call]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var kind = b.getAttribute('data-call'), name = kind === 'detach' || kind === 'bound' ? 'bark' : kind;
+      if (typeof dog[name] !== 'function') { log('dog.' + name + '();', 'dog.' + name + '은(는) 함수가 아니에요 (지웠거나 값을 덮어썼어요)', true); return; }
+      if (kind === 'detach') {
+        log('const f = dog.bark; f();', '');
+        try { dog.bark.call(undefined); } catch (e) { log('', 'this가 undefined라서 this.name을 읽을 수 없어요', true); }
+      } else if (kind === 'bound') {
+        log('const g = dog.bark.bind(dog); g();', dog.bark.bind(dog)());
+      } else {
+        log('dog.' + name + '();', dog[name]());
+      }
+      render();
+    });
+  });
+  $('btnReset').addEventListener('click', function () { dog = makeDog(); log('dog = makeDog();', '처음 상태로 돌렸어요'); render(); });
+  $('btnClear').addEventListener('click', function () { $('log').textContent = ''; });
+  render();
+
+  /* ===== 퀴즈 ===== */
+  var QUIZ = [
+    { q: "객체의 '속성(property)'을 가장 잘 설명한 것은?", o: ['객체가 할 수 있는 동작', '이름과 값이 짝을 이룬 정보', '객체를 만드는 설계도', '객체를 지우는 명령'], a: 1, e: '속성은 이름: 값 형태의 정보예요. 동작은 메서드, 설계도는 생성자 함수나 클래스예요.' },
+    { q: "아래 코드를 실행하면?", c: "const user = { name: 'A' };\nuser.name = 'B';", o: ['에러가 난다', "user.name이 'B'로 바뀐다", 'user가 undefined가 된다', '아무 일도 일어나지 않는다'], a: 1, e: 'const는 변수에 다른 값을 다시 넣는 것만 막아요. 객체 안의 속성은 바꿀 수 있어요.' },
+    { q: '값이 함수인 속성을 부르는 이름은?', o: ['생성자', '프로토타입', '키워드', '메서드'], a: 3, e: '객체 안에 들어 있는 함수를 메서드라고 해요.' },
+    { q: 'console.log(b.who())의 출력은?', c: "const a = { n: 'A', who() { return this.n; } };\nconst b = { n: 'B', who: a.who };\nconsole.log(b.who());", o: ['A', 'undefined', '에러', 'B'], a: 3, e: 'this는 메서드를 정의한 곳이 아니라 부른 객체를 가리켜요. b가 불렀으니 b.n인 B예요.' },
+    { q: '생성자 함수로 객체를 만들 때 함수 앞에 붙이는 키워드는?', o: ['make', 'create', 'new', 'build'], a: 2, e: 'new Person()처럼 new와 함께 불러야 새 객체가 만들어져요.' },
+    { q: '자식 클래스의 constructor에서 this를 쓰기 전에 먼저 해야 하는 일은?', o: ['return 쓰기', 'super() 호출하기', 'prototype 지우기', 'new 붙이기'], a: 1, e: '부모를 먼저 초기화하는 super()를 호출해야 this를 쓸 수 있어요.' },
+    { q: '메서드를 객체마다 복사하지 않고 prototype에 두는 이유는?', o: ['코드를 숨기려고', '모든 객체가 하나를 공유해서 메모리를 아끼려고', '실행 속도를 일부러 늦추려고', '속성을 자동으로 지우려고'], a: 1, e: 'prototype에 둔 메서드는 모든 객체가 같은 함수를 빌려 써요.' }
+  ];
+  var answered = 0, score = 0;
+  function buildQuiz() {
+    var box = $('qbox'); box.textContent = ''; answered = 0; score = 0; $('qres').textContent = ''; $('qretry').hidden = true;
+    QUIZ.forEach(function (item, qi) {
+      var wrap = document.createElement('div'); wrap.className = 'q';
+      var h = document.createElement('div'); h.textContent = (qi + 1) + '. ' + item.q; h.style.fontWeight = '700'; wrap.append(h);
+      if (item.c) { var pre = document.createElement('pre'); pre.textContent = item.c; wrap.append(pre); }
+      var fb = document.createElement('div'); fb.className = 'fb'; fb.setAttribute('aria-live', 'polite');
+      var btns = item.o.map(function (txt, oi) {
+        var b = document.createElement('button'); b.className = 'opt'; b.textContent = String.fromCharCode(65 + oi) + '. ' + txt; wrap.append(b);
+        b.addEventListener('click', function () {
+          btns.forEach(function (x) { x.disabled = true; });
+          var ok = oi === item.a; if (ok) score++;
+          b.classList.add(ok ? 'right' : 'wrong'); btns[item.a].classList.add('right');
+          fb.textContent = (ok ? '정답! ' : '아쉬워요. ') + item.e; fb.style.color = ok ? 'var(--ok)' : 'var(--bad)';
+          answered++; progress();
+        });
+        return b;
+      });
+      wrap.append(fb); box.append(wrap);
+    });
+    progress();
+  }
+  function progress() {
+    $('qprog').textContent = answered + ' / ' + QUIZ.length + ' 문제 풀었어요';
+    if (answered === QUIZ.length) {
+      var msg = score === QUIZ.length ? '완벽해요!' : score >= QUIZ.length - 2 ? '잘했어요!' : '앞의 예제를 한 번 더 실행해 보세요.';
+      $('qres').textContent = '점수: ' + score + ' / ' + QUIZ.length + ' — ' + msg; $('qretry').hidden = false;
+    }
+  }
+  $('qretry').addEventListener('click', buildQuiz);
+  buildQuiz();
+})();
+</script>
+</body>
+</html>

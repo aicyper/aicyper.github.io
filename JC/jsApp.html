@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jsApp - 자바스크립트 객체 실전 예제 3가지</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#202636;--muted:#657087;--line:#dfe4ee;--accent:#286b86;--soft:#eaf4f7;--good:#217346;--bad:#b33c32;--code:#182130}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Malgun Gothic",sans-serif}
+.wrap{max-width:1000px;margin:auto;padding:24px 18px 60px}header{padding:28px 0 16px}h1{font-size:clamp(28px,4vw,40px);line-height:1.2;margin:0 0 12px}h2{font-size:23px;margin:0 0 8px}h3{font-size:17px;margin:16px 0 6px}.muted{color:var(--muted)}.intro{max-width:760px}
+nav{background:white;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0}nav a{color:var(--accent);text-decoration:none;margin-right:18px;display:inline-block}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin:20px 0;scroll-margin-top:14px}
+.pill{display:inline-block;background:var(--soft);color:var(--accent);border-radius:99px;padding:2px 10px;font-size:12px;font-weight:700;margin-bottom:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.panel{min-width:0}.code{width:100%;min-height:230px;resize:vertical;background:var(--code);color:#e7edf7;border:0;border-radius:10px;padding:14px;font:13px/1.65 ui-monospace,Consolas,monospace;tab-size:2}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0f3f8;border-radius:9px;padding:12px;margin:8px 0;min-height:72px;font:13px/1.6 ui-monospace,Consolas,monospace}
+button{border:0;border-radius:8px;background:var(--accent);color:white;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer;margin:4px 4px 4px 0}button.secondary{background:#e6ebf2;color:var(--ink)}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible{outline:3px solid #f0b34a;outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}input{min-width:0;flex:1 1 110px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px}
+.result{border-left:4px solid var(--accent);background:#f0f7fa;padding:10px 13px;border-radius:0 8px 8px 0;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}th,td{border:1px solid var(--line);padding:8px;text-align:left}th{background:#f0f3f8}.status{font-size:13px;color:var(--muted);min-height:1.5em}.err{color:var(--bad)}.ok{color:var(--good)}footer{text-align:center;color:var(--muted);font-size:13px;padding:20px}
+</style>
+</head>
+<body><div class="wrap">
+<header>
+  <span class="pill">JavaScript · 객체 실전</span>
+  <h1>객체를 실제 앱에 적용하기</h1>
+  <p class="intro muted">첨부 자료의 핵심인 객체와 속성, 메서드, <code>this</code>, 클래스와 상속을 실제로 쓸 수 있는 세 가지 작은 앱으로 연습합니다. 각 예제는 버튼으로 직접 실행할 수 있고, 코드도 수정할 수 있습니다.</p>
+</header>
+<nav aria-label="예제 목차"><strong>예제 바로가기</strong><br>
+<a href="#ex1">1. 성적 관리</a><a href="#ex2">2. 장바구니</a><a href="#ex3">3. 게임 캐릭터</a>
+</nav>
+
+<section id="ex1">
+<span class="pill">예제 1 · 객체 속성 + 메서드</span>
+<h2>학생 성적 관리 도구</h2>
+<p>학생 객체에 이름과 과목 점수를 저장하고, 메서드로 평균을 계산합니다. 실제 성적표나 학습 관리 페이지의 기본 구조와 비슷합니다.</p>
+<div class="grid">
+<div class="panel"><h3>입력 및 실행</h3>
+<div class="row"><input id="studentName" value="민지" aria-label="학생 이름" placeholder="학생 이름"><input id="score1" type="number" min="0" max="100" value="90" aria-label="국어 점수" placeholder="국어"><input id="score2" type="number" min="0" max="100" value="85" aria-label="수학 점수" placeholder="수학"></div>
+<div class="row"><input id="score3" type="number" min="0" max="100" value="100" aria-label="영어 점수" placeholder="영어"></div>
+<button id="gradeRun">성적 계산</button><button class="secondary" id="gradeReset">초기화</button>
+<div id="gradeResult" class="result" aria-live="polite">점수를 입력하고 성적 계산을 눌러 보세요.</div>
+</div>
+<div class="panel"><h3>핵심 코드</h3>
+<pre>const student = {
+  name: '민지',
+  scores: { 국어: 90, 수학: 85, 영어: 100 },
+  average() {
+    const values = Object.values(this.scores);
+    return values.reduce((sum, n) => sum + n, 0) / values.length;
+  }
+};</pre>
+<p class="muted">포인트: <code>scores</code>는 중첩 객체이고, <code>average()</code>는 메서드입니다. 메서드 안의 <code>this.scores</code>는 호출한 student 객체의 점수를 가리킵니다.</p>
+</div></div>
+</section>
+
+<section id="ex2">
+<span class="pill">예제 2 · 객체 배열 + 속성 변경</span>
+<h2>온라인 쇼핑 장바구니</h2>
+<p>상품을 객체로 표현하고, 상품 객체 여러 개를 배열에 담습니다. 수량을 변경하거나 상품을 추가·삭제하면 합계가 다시 계산됩니다.</p>
+<div class="grid">
+<div class="panel"><h3>상품 추가</h3>
+<div class="row"><input id="productName" placeholder="상품명 (예: 마우스)" aria-label="상품명"><input id="productPrice" type="number" min="1" placeholder="가격 (원)" aria-label="상품 가격"><input id="productQty" type="number" min="1" value="1" placeholder="수량" aria-label="상품 수량"></div>
+<button id="addProduct">장바구니에 추가</button><button class="secondary" id="cartReset">장바구니 비우기</button>
+<div id="cartMessage" class="status" aria-live="polite"></div>
+</div>
+<div class="panel"><h3>장바구니 현황</h3>
+<table><thead><tr><th>상품</th><th>가격</th><th>수량</th><th>금액</th><th>관리</th></tr></thead><tbody id="cartRows"></tbody></table>
+<div class="result"><strong>총 합계: <span id="cartTotal">0원</span></strong><br><span class="muted">상품 종류: <span id="cartCount">0</span>개</span></div>
+</div></div>
+<h3>핵심 코드</h3>
+<pre>const cart = {
+  items: [],
+  add(product) { this.items.push(product); },
+  total() {
+    return this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }
+};</pre>
+<p class="muted">포인트: <code>items</code>는 객체 배열입니다. <code>reduce()</code>는 각 상품의 가격 × 수량을 누적해 합계를 구합니다. 실제 결제 기능을 만들 때는 서버에서도 가격을 검증해야 합니다.</p>
+</section>
+
+<section id="ex3">
+<span class="pill">예제 3 · 클래스 + 상속 + 메서드 재정의</span>
+<h2>게임 캐릭터 상태 시뮬레이터</h2>
+<p>공통 상태를 가진 캐릭터 클래스를 만들고, 전사와 마법사가 이를 상속합니다. 공격 버튼을 누르면 캐릭터별 메서드가 실행되고 HP가 변합니다.</p>
+<div class="row"><button id="warriorAttack">전사 공격</button><button id="mageAttack">마법사 공격</button><button class="secondary" id="battleReset">전투 초기화</button></div>
+<div class="grid">
+<div class="panel"><h3>전사</h3><div id="warriorState" class="result">HP: 100 / 100</div></div>
+<div class="panel"><h3>마법사</h3><div id="mageState" class="result">HP: 80 / 80</div></div>
+</div>
+<div><h3>전투 기록</h3><pre id="battleLog" aria-live="polite">전투 준비 완료! 공격 버튼을 눌러 보세요.</pre></div>
+<h3>핵심 코드</h3>
+<pre>class Character {
+  constructor(name, hp) { this.name = name; this.hp = hp; }
+  takeDamage(amount) { this.hp = Math.max(0, this.hp - amount); }
+}
+class Warrior extends Character {
+  attack(target) { target.takeDamage(15); }
+}
+class Mage extends Character {
+  attack(target) { target.takeDamage(22); } // 공격 방식 확장
+}</pre>
+<p class="muted">포인트: <code>extends</code>로 공통 기능을 상속하고, 각 클래스에 다른 공격력을 정의했습니다. 여기서는 메서드를 재정의하는 대신 각 하위 클래스에 고유한 <code>attack()</code>을 추가했습니다.</p>
+</section>
+<footer>jsApp.html · 외부 라이브러리 없이 동작하는 단일 HTML 파일</footer>
+</div>
+<script>
+'use strict';
+// 예제 1: 성적 객체
+function calculateGrade() {
+  const name = document.getElementById('studentName').value.trim() || '이름 없음';
+  const raw = ['score1','score2','score3'].map(id => Number(document.getElementById(id).value));
+  const result = document.getElementById('gradeResult');
+  if (raw.some(n => !Number.isFinite(n) || n < 0 || n > 100)) {
+    result.innerHTML = '<span class="err">점수는 0부터 100 사이의 숫자로 입력해 주세요.</span>'; return;
+  }
+  const student = {
+    name,
+    scores: { 국어: raw[0], 수학: raw[1], 영어: raw[2] },
+    average() { return Object.values(this.scores).reduce((sum, n) => sum + n, 0) / Object.values(this.scores).length; }
+  };
+  const avg = student.average();
+  const level = avg >= 90 ? '우수' : avg >= 80 ? '양호' : avg >= 60 ? '보통' : '보충 학습 필요';
+  result.textContent = `${student.name} 학생의 평균은 ${avg.toFixed(1)}점입니다. 평가: ${level}. 과목별 점수: 국어 ${raw[0]}, 수학 ${raw[1]}, 영어 ${raw[2]}`;
+}
+document.getElementById('gradeRun').addEventListener('click', calculateGrade);
+document.getElementById('gradeReset').addEventListener('click', () => {
+  document.getElementById('studentName').value='민지';
+  ['score1','score2','score3'].forEach((id,i)=>document.getElementById(id).value=[90,85,100][i]);
+  document.getElementById('gradeResult').textContent='점수를 입력하고 성적 계산을 눌러 보세요.';
+});
+
+// 예제 2: 장바구니 객체와 객체 배열
+const cart = {
+  items: [
+    {id:1, name:'키보드', price:35000, quantity:1},
+    {id:2, name:'USB 메모리', price:12000, quantity:2}
+  ],
+  nextId:3,
+  add(product) { this.items.push({...product, id:this.nextId++}); },
+  total() { return this.items.reduce((sum,item)=>sum+item.price*item.quantity,0); }
+};
+const won = n => new Intl.NumberFormat('ko-KR').format(n)+'원';
+function renderCart() {
+  const tbody=document.getElementById('cartRows'); tbody.textContent='';
+  cart.items.forEach(item=>{
+    const tr=document.createElement('tr');
+    const name=document.createElement('td'); name.textContent=item.name;
+    const price=document.createElement('td'); price.textContent=won(item.price);
+    const qty=document.createElement('td');
+    const select=document.createElement('select'); select.setAttribute('aria-label',item.name+' 수량');
+    for(let n=1;n<=10;n++){const opt=new Option(String(n),String(n));opt.selected=n===item.quantity;select.add(opt);}
+    select.addEventListener('change',()=>{item.quantity=Number(select.value);renderCart();});
+    qty.append(select);
+    const subtotal=document.createElement('td'); subtotal.textContent=won(item.price*item.quantity);
+    const action=document.createElement('td'); const del=document.createElement('button');del.textContent='삭제';del.className='secondary';
+    del.addEventListener('click',()=>{cart.items=cart.items.filter(x=>x.id!==item.id);renderCart();});
+    action.append(del);tr.append(name,price,qty,subtotal,action);tbody.append(tr);
+  });
+  document.getElementById('cartTotal').textContent=won(cart.total());
+  document.getElementById('cartCount').textContent=cart.items.length;
+}
+document.getElementById('addProduct').addEventListener('click',()=>{
+  const name=document.getElementById('productName').value.trim();
+  const price=Number(document.getElementById('productPrice').value);
+  const quantity=Number(document.getElementById('productQty').value);
+  const msg=document.getElementById('cartMessage');
+  if(!name||!Number.isFinite(price)||price<=0||!Number.isInteger(quantity)||quantity<1){msg.textContent='상품명, 1원 이상의 가격, 1 이상의 정수 수량을 입력해 주세요.';msg.className='status err';return;}
+  cart.add({name,price:Math.round(price),quantity});
+  document.getElementById('productName').value='';document.getElementById('productPrice').value='';document.getElementById('productQty').value='1';
+  msg.textContent='상품을 장바구니에 추가했습니다.';msg.className='status ok';renderCart();
+});
+document.getElementById('cartReset').addEventListener('click',()=>{cart.items=[];renderCart();document.getElementById('cartMessage').textContent='장바구니를 비웠습니다.';});
+renderCart();
+
+// 예제 3: 클래스와 상속
+class Character {
+  constructor(name,hp,maxHp){this.name=name;this.hp=hp;this.maxHp=maxHp;}
+  takeDamage(amount){this.hp=Math.max(0,this.hp-amount);}
+  getStatus(){return `${this.name} · HP ${this.hp}/${this.maxHp}`;}
+}
+class Warrior extends Character {
+  constructor(){super('전사',100,100);}
+  attack(target){target.takeDamage(15);return `${this.name}가 검으로 공격했습니다! ${target.name}에게 15 피해`;}
+}
+class Mage extends Character {
+  constructor(){super('마법사',80,80);}
+  attack(target){target.takeDamage(22);return `${this.name}가 마법을 사용했습니다! ${target.name}에게 22 피해`;}
+}
+let warrior=new Warrior(), mage=new Mage(), battleHistory=[];
+function renderBattle(){
+  document.getElementById('warriorState').textContent=warrior.getStatus();
+  document.getElementById('mageState').textContent=mage.getStatus();
+  document.getElementById('battleLog').textContent=battleHistory.length?battleHistory.join('\n'):'전투 준비 완료! 공격 버튼을 눌러 보세요.';
+}
+document.getElementById('warriorAttack').addEventListener('click',()=>{
+  if(mage.hp===0){battleHistory.push('마법사는 이미 쓰러졌습니다.');}
+  else {battleHistory.push(warrior.attack(mage));if(mage.hp===0)battleHistory.push('마법사가 쓰러졌습니다!');}
+  renderBattle();
+});
+document.getElementById('mageAttack').addEventListener('click',()=>{
+  if(warrior.hp===0){battleHistory.push('전사는 이미 쓰러졌습니다.');}
+  else {battleHistory.push(mage.attack(warrior));if(warrior.hp===0)battleHistory.push('전사가 쓰러졌습니다!');}
+  renderBattle();
+});
+document.getElementById('battleReset').addEventListener('click',()=>{warrior=new Warrior();mage=new Mage();battleHistory=[];renderBattle();});
+renderBattle();
+</script>
+</body></html>

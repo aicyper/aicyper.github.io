@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="정보보안 분야의 학습 목표, 관심사, 핵심 기술과 프로젝트를 단계적으로 기록하는 개인 학습 포트폴리오입니다.">
+  <meta name="keywords" content="정보보안, 보안 학습, 네트워크 보안, 웹 보안, 리눅스, Python, 포트폴리오">
+  <meta name="author" content="aicyper">
+  <meta name="theme-color" content="#101827">
+  <title>My Interest | 정보보안 학습 포트폴리오</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #121c2e;
+      --panel-soft: #172338;
+      --text: #edf3ff;
+      --muted: #a9b8d0;
+      --accent: #65d6c4;
+      --accent-2: #8ab4ff;
+      --line: rgba(169, 184, 208, .18);
+      --warning: #ffd28a;
+      --radius: 18px;
+      --max-width: 1080px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 85% 0%, rgba(101,214,196,.10), transparent 28rem),
+        radial-gradient(circle at 0% 30%, rgba(138,180,255,.08), transparent 24rem),
+        var(--bg);
+      color: var(--text);
+      font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: var(--accent); text-underline-offset: 4px; }
+    a:hover { color: #a5f2e6; }
+    .wrap { width: min(var(--max-width), calc(100% - 40px)); margin: 0 auto; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(14px);
+      background: rgba(11,17,32,.86);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { color: var(--text); font-size: 1.18rem; font-weight: 850; letter-spacing: .04em; text-decoration: none; }
+    .brand span { color: var(--accent); }
+    nav { display: flex; flex-wrap: wrap; gap: 18px; }
+    nav a { color: var(--muted); font-size: .92rem; text-decoration: none; }
+    nav a:hover { color: var(--text); }
+    .hero { padding: 78px 0 52px; }
+    .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: .15em; font-size: .78rem; font-weight: 800; }
+    h1 { margin: 12px 0 18px; max-width: 820px; font-size: clamp(2.2rem, 6vw, 4.25rem); line-height: 1.12; letter-spacing: -.045em; }
+    h1 .highlight { color: var(--accent); }
+    .lead { max-width: 760px; color: var(--muted); font-size: 1.08rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); text-decoration: none; font-weight: 750; }
+    .button.primary { color: #071b1a; background: var(--accent); border-color: var(--accent); }
+    .button:hover { transform: translateY(-1px); }
+    .section { padding: 34px 0; scroll-margin-top: 90px; }
+    .section-heading { margin-bottom: 22px; }
+    .section-heading h2 { margin: 0 0 6px; font-size: clamp(1.55rem, 3vw, 2.1rem); letter-spacing: -.025em; }
+    .section-heading p { margin: 0; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .card { background: linear-gradient(150deg, rgba(23,35,56,.96), rgba(18,28,46,.96)); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+    .card h3 { margin: 0 0 8px; font-size: 1.12rem; }
+    .card p { margin: 0; color: var(--muted); }
+    .icon { display: inline-grid; place-items: center; width: 42px; height: 42px; margin-bottom: 14px; border-radius: 13px; background: rgba(101,214,196,.12); color: var(--accent); font-size: 1.2rem; font-weight: 900; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+    .tag { display: inline-block; padding: 4px 10px; border-radius: 999px; background: rgba(138,180,255,.10); border: 1px solid rgba(138,180,255,.2); color: #c5d9ff; font-size: .82rem; }
+    .callout { border-left: 3px solid var(--accent); padding: 14px 18px; background: rgba(101,214,196,.07); border-radius: 0 12px 12px 0; color: var(--muted); }
+    .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .step { position: relative; padding: 18px; border-radius: 16px; border: 1px solid var(--line); background: rgba(18,28,46,.8); }
+    .step-number { color: var(--accent); font-weight: 900; font-size: .8rem; letter-spacing: .1em; }
+    .step h3 { margin: 8px 0; font-size: 1rem; }
+    .step p { margin: 0; color: var(--muted); font-size: .92rem; }
+    .skill-table { width: 100%; border-collapse: collapse; }
+    .skill-table th, .skill-table td { padding: 14px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .skill-table th { color: var(--accent); font-size: .9rem; }
+    .skill-table td { color: var(--muted); }
+    .skill-table td:first-child { color: var(--text); font-weight: 750; white-space: nowrap; }
+    .status { display: inline-block; font-size: .76rem; font-weight: 800; padding: 3px 8px; border-radius: 999px; color: var(--warning); background: rgba(255,210,138,.10); }
+    .project-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .project { display: flex; flex-direction: column; gap: 10px; min-height: 190px; }
+    .project .project-link { margin-top: auto; font-weight: 800; text-decoration: none; }
+    .placeholder { color: var(--muted); border: 1px dashed rgba(169,184,208,.35); border-radius: 12px; padding: 10px 12px; font-size: .88rem; }
+    .small { color: var(--muted); font-size: .88rem; }
+    footer { margin-top: 44px; padding: 28px 0 38px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; }
+    footer .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    @media (max-width: 820px) {
+      .span-4, .span-5, .span-7, .span-8 { grid-column: span 12; }
+      .roadmap { grid-template-columns: repeat(2, 1fr); }
+      .project-list { grid-template-columns: 1fr; }
+      .nav { align-items: flex-start; flex-direction: column; padding: 14px 0; gap: 8px; }
+      nav { gap: 12px; }
+    }
+    @media (max-width: 520px) {
+      .wrap { width: min(100% - 28px, var(--max-width)); }
+      .hero { padding-top: 52px; }
+      .roadmap { grid-template-columns: 1fr; }
+      .skill-table th:nth-child(3), .skill-table td:nth-child(3) { display: none; }
+      .card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#top">ai<span>cyper</span> / MY INTEREST</a>
+      <nav aria-label="주요 메뉴">
+        <a href="#about">소개</a>
+        <a href="#interests">관심 분야</a>
+        <a href="#roadmap">학습 로드맵</a>
+        <a href="#skills">핵심 기술</a>
+        <a href="#projects">작품 기록</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <div class="eyebrow">Personal Cybersecurity Learning Portfolio</div>
+      <h1>보안을 배우고,<br><span class="highlight">직접 만들며 성장합니다.</span></h1>
+      <p class="lead">
+        안녕하세요. 저는 정보보안 분야에 관심을 가지고 기초부터 차근차근 역량을 쌓아 가는 대학 1학년 학생입니다.
+        아직 전공 지식과 기술 용어가 익숙하지 않은 부분도 있지만, 개념을 이해하는 데서 멈추지 않고 직접 구현하고 기록하며
+        실력을 키우는 것을 목표로 합니다.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="#roadmap">학습 계획 보기</a>
+        <a class="button" href="#projects">프로젝트 기록 보기</a>
+      </div>
+    </section>
+
+    <section class="section wrap" id="about">
+      <div class="section-heading">
+        <h2>01. 나의 소개</h2>
+        <p>현재 위치와 앞으로 이루고 싶은 목표를 정리합니다.</p>
+      </div>
+      <div class="grid">
+        <article class="card span-7">
+          <div class="icon">01</div>
+          <h3>현재의 나</h3>
+          <p>
+            컴퓨터와 소프트웨어가 작동하는 원리를 배우고, 그 안에서 발생할 수 있는 보안 문제를 이해하는 데 관심이 있습니다.
+            학습한 내용을 작은 프로그램이나 실습으로 연결하고, 결과와 배운 점을 이 홈페이지에 단계적으로 공개할 계획입니다.
+          </p>
+          <div class="tag-list">
+            <span class="tag">대학교 1학년</span>
+            <span class="tag">정보보안 입문</span>
+            <span class="tag">기초부터 실습까지</span>
+          </div>
+        </article>
+        <article class="card span-5">
+          <div class="icon">02</div>
+          <h3>나의 목표</h3>
+          <p>
+            1년 후 졸업 시점에 관련 분야로 편입하는 것을 목표로 준비하고 있습니다.
+            장기적으로는 전공 기초, 실습 프로젝트, 기술 문서 작성 능력을 갖추어 정보보안 분야의 진학과 취업에 도전하고 싶습니다.
+          </p>
+          <div class="callout" style="margin-top:16px">
+            핵심 전략: <strong>배우기 → 구현하기 → 검증하기 → 기록하기 → 개선하기</strong>
+          </div>
+        </article>
+        <article class="card span-12">
+          <h3>내가 중요하게 생각하는 학습 방식</h3>
+          <div class="grid">
+            <div class="span-4">
+              <strong>개념을 내 언어로 설명하기</strong>
+              <p>새로운 용어를 외우는 데서 끝내지 않고, 쉬운 말과 예시로 다시 설명합니다.</p>
+            </div>
+            <div class="span-4">
+              <strong>작게라도 직접 구현하기</strong>
+              <p>완성 가능한 작은 기능부터 만들고, 테스트 결과를 통해 이해를 확인합니다.</p>
+            </div>
+            <div class="span-4">
+              <strong>과정을 기록하고 개선하기</strong>
+              <p>코드, 오류 해결 과정, 보안상 한계와 개선점을 함께 남깁니다.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section wrap" id="interests">
+      <div class="section-heading">
+        <h2>02. 관심 분야</h2>
+        <p>아직 한 분야로 좁히기보다 여러 영역을 경험하며 나에게 맞는 방향을 찾습니다.</p>
+      </div>
+      <div class="grid">
+        <article class="card span-4">
+          <div class="icon">NW</div>
+          <h3>네트워크 보안</h3>
+          <p>컴퓨터가 데이터를 주고받는 방식을 이해하고, 패킷·통신 기록에서 이상 징후를 찾아보는 분야입니다.</p>
+          <div class="tag-list"><span class="tag">TCP/IP</span><span class="tag">DNS</span><span class="tag">Wireshark</span></div>
+        </article>
+        <article class="card span-4">
+          <div class="icon">WEB</div>
+          <h3>웹 애플리케이션 보안</h3>
+          <p>웹사이트의 로그인, 입력값 처리, 데이터베이스 연결 과정에서 생길 수 있는 취약점을 분석하고 수정합니다.</p>
+          <div class="tag-list"><span class="tag">HTTP</span><span class="tag">SQL</span><span class="tag">OWASP</span></div>
+        </article>
+        <article class="card span-4">
+          <div class="icon">SYS</div>
+          <h3>시스템·리눅스 보안</h3>
+          <p>운영체제, 계정 권한, 파일 접근 제어, 시스템 로그를 살펴보며 안전한 컴퓨터 환경을 만드는 분야입니다.</p>
+          <div class="tag-list"><span class="tag">Linux</span><span class="tag">권한 관리</span><span class="tag">로그</span></div>
+        </article>
+        <article class="card span-12">
+          <h3>탐색 원칙</h3>
+          <p>세 분야의 기초 실습을 각각 진행한 뒤, 흥미도·이해도·프로젝트 완성 경험을 비교해 다음 학습 방향을 결정합니다. 보안 테스트는 직접 만든 환경이나 명시적으로 허가된 실습 시스템에서만 진행합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section wrap" id="roadmap">
+      <div class="section-heading">
+        <h2>03. 단계별 학습 로드맵</h2>
+        <p>현재의 기초 학습을 편입 준비와 장기적인 취업 역량으로 연결하기 위한 계획입니다.</p>
+      </div>
+      <div class="roadmap">
+        <article class="step">
+          <div class="step-number">PHASE 01</div>
+          <h3>컴퓨터·코딩 기초</h3>
+          <p>Python 기초, 자료형, 조건문, 반복문, 함수, 파일 처리와 기본 디버깅을 익힙니다.</p>
+        </article>
+        <article class="step">
+          <div class="step-number">PHASE 02</div>
+          <h3>네트워크·운영체제</h3>
+          <p>IP, TCP/UDP, DNS, HTTP와 Linux 명령어, 프로세스, 파일 권한을 실습합니다.</p>
+        </article>
+        <article class="step">
+          <div class="step-number">PHASE 03</div>
+          <h3>보안 원리·분석</h3>
+          <p>인증과 인가, 암호화와 해시, 로그 분석, 웹 취약점의 원인과 방어 방법을 배웁니다.</p>
+        </article>
+        <article class="step">
+          <div class="step-number">PHASE 04</div>
+          <h3>작품·진학 준비</h3>
+          <p>프로젝트를 문서화하고 GitHub에 공개합니다. 지원 대학의 편입 요건과 전형 일정을 확인합니다.</p>
+        </article>
+      </div>
+      <p class="small" style="margin-top:14px">※ 단계별 기간은 현재 학업 일정과 편입 전형에 따라 조정합니다. 편입 자격, 인정 학점, 모집 시기 등은 목표 대학의 공식 모집요강을 반드시 확인해야 합니다.</p>
+    </section>
+
+    <section class="section wrap" id="skills">
+      <div class="section-heading">
+        <h2>04. 앞으로 익힐 핵심 기술</h2>
+        <p>기술 이름만 나열하지 않고, 왜 필요한지와 무엇을 할 수 있어야 하는지 함께 기록합니다.</p>
+      </div>
+      <div class="card span-12">
+        <table class="skill-table">
+          <thead>
+            <tr><th>기술</th><th>쉬운 설명</th><th>학습 결과 예시</th><th>상태</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Python</td>
+              <td>데이터를 처리하고 반복 작업을 자동화하는 프로그래밍 언어입니다.</td>
+              <td>로그 검색기 또는 보안 점검용 작은 스크립트 작성</td>
+              <td><span class="status">학습 예정</span></td>
+            </tr>
+            <tr>
+              <td>네트워크 기초</td>
+              <td>IP 주소와 포트, 프로토콜을 통해 장치 사이의 통신을 이해합니다.</td>
+              <td>TCP 연결과 DNS 조회 과정을 설명하고 패킷을 관찰</td>
+              <td><span class="status">학습 예정</span></td>
+            </tr>
+            <tr>
+              <td>Linux</td>
+              <td>서버에서 널리 사용되는 운영체제와 명령줄 환경을 다룹니다.</td>
+              <td>파일·사용자 권한을 확인하고 로그에서 이벤트 검색</td>
+              <td><span class="status">학습 예정</span></td>
+            </tr>
+            <tr>
+              <td>웹 보안</td>
+              <td>웹 요청, 인증, 입력값 처리 과정에서 발생하는 위험과 방어를 배웁니다.</td>
+              <td>안전한 실습 환경에서 취약한 코드와 수정 코드를 비교</td>
+              <td><span class="status">학습 예정</span></td>
+            </tr>
+            <tr>
+              <td>Git·GitHub</td>
+              <td>코드 변경 이력을 관리하고 프로젝트와 문서를 공개하는 도구입니다.</td>
+              <td>README, 실행 방법, 테스트 결과가 포함된 저장소 운영</td>
+              <td><span class="status">학습 예정</span></td>
+            </tr>
+            <tr>
+              <td>기술 문서 작성</td>
+              <td>문제, 원인, 해결 과정, 테스트 결과를 다른 사람이 이해할 수 있게 기록합니다.</td>
+              <td>프로젝트 보고서와 보안 분석 기록 작성</td>
+              <td><span class="status">지속 개선</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section wrap" id="projects">
+      <div class="section-heading">
+        <h2>05. 내가 만든 작품과 학습 기록</h2>
+        <p>프로젝트가 완성될 때마다 설명과 링크를 추가합니다. 현재는 다음 페이지를 연결하기 전의 자리표시자입니다.</p>
+      </div>
+      <div class="project-list">
+        <article class="card project">
+          <div class="icon">P1</div>
+          <h3>Python 보안 도구</h3>
+          <p>비밀번호 점검기, 로그 분석기 등 직접 작성한 코드와 실행 결과를 기록합니다.</p>
+          <div class="placeholder">추후 연결: password-checker.html 또는 GitHub 저장소</div>
+          <a class="project-link" href="#contact">작품 링크 추가 예정 ↗</a>
+        </article>
+        <article class="card project">
+          <div class="icon">P2</div>
+          <h3>네트워크 분석 실습</h3>
+          <p>패킷 관찰, 프로토콜 정리, 분석 과정과 배운 점을 보고서로 정리합니다.</p>
+          <div class="placeholder">추후 연결: network-lab.html</div>
+          <a class="project-link" href="#contact">작품 링크 추가 예정 ↗</a>
+        </article>
+        <article class="card project">
+          <div class="icon">P3</div>
+          <h3>웹 보안 실습 보고서</h3>
+          <p>실습 환경에서 취약점의 원인, 영향, 수정 방법과 검증 결과를 기록합니다.</p>
+          <div class="placeholder">추후 연결: web-security.html</div>
+          <a class="project-link" href="#contact">작품 링크 추가 예정 ↗</a>
+        </article>
+      </div>
+      <p class="small" style="margin-top:14px">프로젝트 링크를 연결할 때는 실제 파일 경로나 GitHub 저장소 주소로 href를 바꾸세요. 완성하지 않은 작품은 완료된 것처럼 표시하지 않고 진행 상태를 솔직하게 기록합니다.</p>
+    </section>
+
+    <section class="section wrap" id="contact">
+      <div class="section-heading">
+        <h2>06. 앞으로의 기록</h2>
+        <p>이 페이지는 출발점입니다. 이후 세부 기술별 HTML 문서를 만들어 학습과 작품을 연결할 예정입니다.</p>
+      </div>
+      <div class="card">
+        <h3>다음에 추가할 페이지</h3>
+        <ul>
+          <li><strong>python-basics.html</strong> — Python 기초와 코드 실습</li>
+          <li><strong>network-security.html</strong> — 네트워크 개념과 패킷 분석</li>
+          <li><strong>linux-security.html</strong> — Linux 명령어와 권한 관리</li>
+          <li><strong>web-security.html</strong> — 웹 보안 개념, 취약점과 방어</li>
+          <li><strong>projects.html</strong> — 완성한 작품과 GitHub 링크 모음</li>
+        </ul>
+        <div class="callout">
+          목표는 기술을 많이 안다고 주장하는 것이 아니라, <strong>무엇을 배웠고, 무엇을 구현했으며, 어떻게 검증했는지</strong> 증명하는 포트폴리오를 만드는 것입니다.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© <span id="year">2026</span> aicyper · My Interest</span>
+      <span>정보보안 학습 기록 및 개인 포트폴리오</span>
+    </div>
+  </footer>
+  <script>
+    // 연도를 자동으로 갱신합니다.
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
