@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JavaScript Math 객체의 상수</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+            color: #17233b;
+            background: #f3f6fb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        main {
+            width: min(100%, 1000px);
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(1.7rem, 4vw, 2.4rem);
+        }
+
+        header p {
+            margin: 0;
+            color: #52617a;
+            line-height: 1.7;
+        }
+
+        .constant-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+            gap: 18px;
+        }
+
+        article {
+            overflow: hidden;
+            padding: 20px;
+            border: 1px solid #e0e7f1;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 5px 18px rgb(34 54 88 / 6%);
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            font-size: 1.15rem;
+        }
+
+        .value {
+            display: block;
+            margin-bottom: 10px;
+            color: #3156c9;
+            font-size: 1.3rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .description {
+            min-height: 3.4em;
+            margin: 0;
+            color: #52617a;
+            line-height: 1.65;
+        }
+
+        figure {
+            margin: 16px 0 0;
+            padding: 12px;
+            border-radius: 12px;
+            background: #f5f8ff;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 118px;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            color: #33425e;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+
+        .line {
+            fill: none;
+            stroke: #3156c9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 3;
+        }
+
+        .muted-line {
+            fill: none;
+            stroke: #9aa8bf;
+            stroke-dasharray: 5 5;
+            stroke-width: 2;
+        }
+
+        .fill {
+            fill: #dce6ff;
+            stroke: #3156c9;
+            stroke-width: 2;
+        }
+
+        .accent {
+            fill: #f4a340;
+        }
+
+        .svg-label {
+            fill: #33425e;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 28px 14px;
+            }
+
+            article {
+                padding: 17px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <h1>JavaScript Math 객체의 상수</h1>
+        <p>Math 객체에는 수학 계산에 자주 쓰이는 상수가 준비되어 있습니다. 각 그림을 보며 상수가 뜻하는 수와 관계를 확인해 보세요.</p>
+    </header>
+
+    <section class="constant-list" aria-label="Math 상수와 그림 설명">
+        <article>
+            <h2>Math.E — 오일러 수</h2>
+            <output class="value" id="ca" aria-live="polite"></output>
+            <p class="description">자연로그의 밑으로 쓰이는 수입니다. 약 2.718이며, 연속적인 성장이나 변화식을 나타낼 때 자주 사용합니다.</p>
+            <figure>
+                <svg viewBox="0 0 260 118" role="img" aria-labelledby="e-title e-desc">
+                    <title id="e-title">오일러 수에 가까워지는 값</title>
+                    <desc id="e-desc">계산 횟수가 늘어날수록 값이 2.718인 오일러 수에 가까워집니다.</desc>
+                    <path class="muted-line" d="M25 35H235"/>
+                    <path class="line" d="M30 91L75 61L120 48L165 40L210 36"/>
+                    <circle class="accent" cx="210" cy="36" r="5"/>
+                    <text class="svg-label" x="28" y="108">계산 횟수 증가</text>
+                    <text class="svg-label" x="153" y="25">약 2.718</text>
+                </svg>
+                <figcaption>(1 + 1/n)ⁿ에서 n을 크게 하면 결과가 E에 가까워집니다.</figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Math.LN2 — 자연로그 2</h2>
+            <output class="value" id="cca" aria-live="polite"></output>
+            <p class="description">e를 몇 제곱해야 2가 되는지를 나타냅니다. 즉, e를 약 0.693 제곱하면 2가 됩니다.</p>
+            <figure>
+                <svg viewBox="0 0 260 118" role="img" aria-labelledby="ln2-title ln2-desc">
+                    <title id="ln2-title">자연로그 2의 지수 관계</title>
+                    <desc id="ln2-desc">e의 0.693 제곱은 2입니다.</desc>
+                    <rect class="fill" x="22" y="37" width="55" height="42" rx="8"/>
+                    <rect class="fill" x="183" y="37" width="55" height="42" rx="8"/>
+                    <path class="line" d="M84 58H174"/>
+                    <path class="line" d="M166 50L175 58L166 66"/>
+                    <text class="svg-label" x="42" y="64">e</text>
+                    <text class="svg-label" x="204" y="64">2</text>
+                    <text class="svg-label" x="91" y="48">0.693 제곱</text>
+                </svg>
+                <figcaption>e<sup>0.693</sup> ≈ 2 — 로그와 지수는 서로 반대 관계입니다.</figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Math.LN10 — 자연로그 10</h2>
+            <output class="value" id="cnct" aria-live="polite"></output>
+            <p class="description">e를 몇 제곱해야 10이 되는지를 나타냅니다. 그 지수는 약 2.303입니다.</p>
+            <figure>
+                <svg viewBox="0 0 260 118" role="img" aria-labelledby="ln10-title ln10-desc">
+                    <title id="ln10-title">자연로그 10의 지수 관계</title>
+                    <desc id="ln10-desc">e의 2.303 제곱은 10입니다.</desc>
+                    <rect class="fill" x="22" y="37" width="55" height="42" rx="8"/>
+                    <rect class="fill" x="183" y="37" width="55" height="42" rx="8"/>
+                    <path class="line" d="M84 58H174"/>
+                    <path class="line" d="M166 50L175 58L166 66"/>
+                    <text class="svg-label" x="42" y="64">e</text>
+                    <text class="svg-label" x="201" y="64">10</text>
+                    <text class="svg-label" x="88" y="48">2.303 제곱</text>
+                </svg>
+                <figcaption>e<sup>2.303</sup> ≈ 10 — LN10은 e를 10으로 바꾸는 지수입니다.</figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Math.LOG2E — 밑이 2인 로그 E</h2>
+            <output class="value" id="ido" aria-live="polite"></output>
+            <p class="description">2를 몇 제곱해야 e가 되는지를 나타냅니다. 약 1.443번 제곱하면 e에 도달합니다.</p>
+            <figure>
+                <svg viewBox="0 0 260 118" role="img" aria-labelledby="log2e-title log2e-desc">
+                    <title id="log2e-title">밑이 2인 로그 E의 지수 관계</title>
+                    <desc id="log2e-desc">2의 1.443 제곱은 e입니다.</desc>
+                    <rect class="fill" x="22" y="37" width="55" height="42" rx="8"/>
+                    <rect class="fill" x="183" y="37" width="55" height="42" rx="8"/>
+                    <path class="line" d="M84 58H174"/>
+                    <path class="line" d="M166 50L175 58L166 66"/>
+                    <text class="svg-label" x="43" y="64">2</text>
+                    <text class="svg-label" x="202" y="64">e</text>
+                    <text class="svg-label" x="87" y="48">1.443 제곱</text>
+                </svg>
+                <figcaption>2<sup>1.443</sup> ≈ e — LOG2E는 log₂(e)와 같습니다.</figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Math.LOG10E — 밑이 10인 로그 E</h2>
+            <output class="value" id="fxd" aria-live="polite"></output>
+            <p class="description">10을 몇 제곱해야 e가 되는지를 나타냅니다. 그 지수는 약 0.434입니다.</p>
+            <figure>
+                <svg viewBox="0 0 260 118" role="img" aria-labelledby="log10e-title log10e-desc">
+                    <title id="log10e-title">밑이 10인 로그 E의 지수 관계</title>
+                    <desc id="log10e-desc">10의 0.434 제곱은 e입니다.</desc>
+                    <rect class="fill" x="22" y="37" width="55" height="42" rx="8"/>
+                    <rect class="fill" x="183" y="37" width="55" height="42" rx="8"/>
+                    <path class="line" d="M84 58H174"/>
+                    <path class="line" d="M166 50L175 58L166 66"/>
+                    <text class="svg-label" x="41" y="64">10</text>
+                    <text class="svg-label" x="202" y="64">e</text>
+                    <text class="svg-label" x="89" y="48">0.434 제곱</text>
+                </svg>
+                <figcaption>10<sup>0.434</sup> ≈ e — LOG10E는 log₁₀(e)와 같습니다.</figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Math.PI — 원주율</h2>
+            <output class="value" id="prc" aria-live="polite"></output>
+            <p class="description">원의 둘레를 지름으로 나눈 값입니다. 어떤 크기의 원이든 이 비율은 약 3.14159입니다.</p>
+            <figure>
+                <svg viewBox="0 0 260 118" role="img" aria-labelledby="pi-title pi-desc">
+                    <title id="pi-title">원의 둘레와 지름</title>
+                    <desc id="pi-desc">원 둘레를 지름으로 나누면 원주율 파이가 됩니다.</desc>
+                    <circle class="fill" cx="82" cy="59" r="39"/>
+                    <path class="muted-line" d="M43 59H121"/>
+                    <circle class="accent" cx="82" cy="59" r="3"/>
+                    <text class="svg-label" x="71" y="53">지름</text>
+                    <text class="svg-label" x="151" y="46">둘레 ÷ 지름</text>
+                    <text class="svg-label" x="173" y="72">= π</text>
+                </svg>
+                <figcaption>원 둘레 = π × 지름 — 원의 크기와 관계없이 같은 비율입니다.</figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Math.SQRT1_2 — 1/√2</h2>
+            <output class="value" id="str" aria-live="polite"></output>
+            <p class="description">1을 √2로 나눈 값입니다. 약 0.707이며, √2의 역수이기도 합니다.</p>
+            <figure>
+                <svg viewBox="0 0 260 118" role="img" aria-labelledby="sqrt-half-title sqrt-half-desc">
+                    <title id="sqrt-half-title">제곱근 2의 역수</title>
+                    <desc id="sqrt-half-desc">1 나누기 제곱근 2는 약 0.707입니다.</desc>
+                    <path class="fill" d="M34 88L112 88L112 10Z"/>
+                    <path class="muted-line" d="M34 88L112 10"/>
+                    <text class="svg-label" x="67" y="105">1</text>
+                    <text class="svg-label" x="118" y="55">1</text>
+                    <text class="svg-label" x="55" y="42">√2</text>
+                    <text class="svg-label" x="155" y="47">1 ÷ √2</text>
+                    <text class="svg-label" x="155" y="69">≈ 0.707</text>
+                </svg>
+                <figcaption>√2 × (1/√2) = 1 — 두 수를 곱하면 1이 됩니다.</figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Math.SQRT2 — 2의 제곱근</h2>
+            <output class="value" id="vlf" aria-live="polite"></output>
+            <p class="description">제곱해서 2가 되는 양수입니다. 한 변이 1인 정사각형의 대각선 길이와 같습니다.</p>
+            <figure>
+                <svg viewBox="0 0 260 118" role="img" aria-labelledby="sqrt2-title sqrt2-desc">
+                    <title id="sqrt2-title">정사각형의 대각선과 제곱근 2</title>
+                    <desc id="sqrt2-desc">한 변이 1인 정사각형의 대각선 길이는 제곱근 2입니다.</desc>
+                    <rect class="fill" x="32" y="14" width="82" height="82"/>
+                    <path class="line" d="M32 96L114 14"/>
+                    <text class="svg-label" x="66" y="112">한 변 = 1</text>
+                    <text class="svg-label" x="117" y="48">√2</text>
+                    <text class="svg-label" x="151" y="47">1² + 1² = 2</text>
+                    <text class="svg-label" x="151" y="70">대각선 = √2</text>
+                </svg>
+                <figcaption>피타고라스 정리: 1² + 1² = 대각선², 따라서 대각선은 √2입니다.</figcaption>
+            </figure>
+        </article>
+    </section>
+</main>
+
+<script>
+    const mathConstants = [
+        ["ca", Math.E],
+        ["cca", Math.LN2],
+        ["cnct", Math.LN10],
+        ["ido", Math.LOG2E],
+        ["fxd", Math.LOG10E],
+        ["prc", Math.PI],
+        ["str", Math.SQRT1_2],
+        ["vlf", Math.SQRT2]
+    ];
+
+    for (const [id, value] of mathConstants) {
+        document.getElementById(id).textContent = value.toFixed(5);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JavaScript String 메소드 알아보기</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+            color: #17233b;
+            background: #f3f6fb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        main {
+            width: min(100%, 1100px);
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(1.7rem, 4vw, 2.4rem);
+        }
+
+        header p {
+            margin: 0;
+            color: #52617a;
+            line-height: 1.7;
+        }
+
+        .sample {
+            margin: 18px 0 28px;
+            padding: 15px 18px;
+            border: 1px solid #dfe7f3;
+            border-radius: 12px;
+            background: #fff;
+            color: #33425e;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .sample code {
+            color: #244db8;
+            font-size: 1rem;
+        }
+
+        .method-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+            gap: 16px;
+        }
+
+        article {
+            overflow: hidden;
+            padding: 19px;
+            border: 1px solid #e0e7f1;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 5px 18px rgb(34 54 88 / 6%);
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            color: #263d78;
+            font-size: 1.12rem;
+        }
+
+        .description {
+            min-height: 3.2em;
+            margin: 0;
+            color: #52617a;
+            line-height: 1.6;
+        }
+
+        .example {
+            margin: 12px 0 0;
+            padding: 9px 11px;
+            border-radius: 8px;
+            background: #f2f5fb;
+            color: #33425e;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
+        }
+
+        .example output {
+            color: #244db8;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        figure {
+            margin: 14px 0 0;
+            padding: 10px;
+            border-radius: 12px;
+            background: #f5f8ff;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 118px;
+        }
+
+        figcaption {
+            margin-top: 5px;
+            color: #52617a;
+            font-size: 0.84rem;
+            line-height: 1.5;
+        }
+
+        .cell {
+            fill: #fff;
+            stroke: #cbd6e8;
+            stroke-width: 1.5;
+        }
+
+        .highlight {
+            fill: #dce6ff;
+            stroke: #3156c9;
+            stroke-width: 2;
+        }
+
+        .graph-line {
+            fill: none;
+            stroke: #3156c9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 3;
+        }
+
+        .svg-label {
+            fill: #33425e;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        .small-label {
+            fill: #66758d;
+            font-family: inherit;
+            font-size: 10px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 28px 14px;
+            }
+
+            article {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <h1>JavaScript String 메소드</h1>
+        <p>문자열에서 글자를 찾고, 이어 붙이고, 원하는 부분을 바꾸는 방법을 알아봅니다. 그림에서 색으로 강조된 부분과 인덱스를 확인해 보세요. 문자열 메소드는 원래 문자열을 바꾸지 않고 새로운 결과를 돌려줍니다.</p>
+    </header>
+
+    <p class="sample">실습 문자열: <code id="sample-text"></code></p>
+    <section class="method-list" id="method-list" aria-label="문자열 메소드 설명"></section>
+</main>
+
+<script>
+    const sample = "hello, welcome to AI Software!!";
+    const addition = "???";
+    const numericValue = 5678;
+
+    const methods = [
+        {
+            name: "charAt(index)",
+            description: "지정한 위치(index)에 있는 문자 하나를 가져옵니다. 문자열의 첫 글자 위치는 0입니다.",
+            example: `sample.charAt(0) → "${sample.charAt(0)}"`,
+            graphic: "character",
+            caption: "인덱스 0을 가리키는 글자 h를 가져옵니다."
+        },
+        {
+            name: "charCodeAt(index)",
+            description: "지정한 위치에 있는 문자의 UTF-16 코드 단위 숫자를 반환합니다. 영문 대문자 A의 값은 65입니다.",
+            example: `sample.charCodeAt(0) → ${sample.charCodeAt(0)}`,
+            graphic: "character-code",
+            caption: "첫 글자 h의 UTF-16 코드 단위 값은 104입니다."
+        },
+        {
+            name: "concat(value, ...)",
+            description: "문자열 뒤에 다른 문자열을 이어 붙여 새 문자열을 반환합니다. + 연산자로도 같은 일을 할 수 있습니다.",
+            example: `sample.concat("${addition}") → "${sample.concat(addition)}"`,
+            graphic: "concat",
+            caption: "두 문자열을 순서대로 이어 하나의 문자열을 만듭니다."
+        },
+        {
+            name: "indexOf(searchValue)",
+            description: "찾는 문자열이 처음 나타나는 위치를 반환합니다. 찾지 못하면 -1을 반환합니다.",
+            example: `sample.indexOf("AI") → ${sample.indexOf("AI")}`,
+            graphic: "find-first",
+            caption: "왼쪽부터 살펴보고 AI가 처음 시작되는 위치를 찾습니다."
+        },
+        {
+            name: "lastIndexOf(searchValue)",
+            description: "찾는 문자열이 마지막으로 나타나는 위치를 반환합니다. 찾지 못하면 -1을 반환합니다.",
+            example: `sample.lastIndexOf("o") → ${sample.lastIndexOf("o")}`,
+            graphic: "find-last",
+            caption: "오른쪽에서 왼쪽으로 찾아 마지막 o의 위치를 찾습니다."
+        },
+        {
+            name: "replace(searchValue, newValue)",
+            description: "처음으로 일치하는 문자열을 새 문자열로 바꾼 결과를 반환합니다. 기본 문자열 검색은 첫 번째 일치 항목만 바꿉니다.",
+            example: `sample.replace("hello", "Good Bye") → "${sample.replace("hello", "Good Bye")}"`,
+            graphic: "replace",
+            caption: "hello를 Good Bye로 바꾼 새 문자열을 만듭니다."
+        },
+        {
+            name: "match(regexp)",
+            description: "정규식과 일치하는 부분을 찾아 결과를 반환합니다. 일치하는 내용이 없으면 null입니다.",
+            example: `sample.match(/AI/) → "${sample.match(/AI/)[0]}"`,
+            graphic: "match",
+            caption: "문자열을 훑어 정규식과 일치하는 AI를 찾습니다."
+        },
+        {
+            name: "search(regexp)",
+            description: "정규식과 일치하는 부분이 시작되는 위치를 반환합니다. 찾지 못하면 -1을 반환합니다.",
+            example: `sample.search(/Software/) → ${sample.search(/Software/)}`,
+            graphic: "search",
+            caption: "Software가 시작되는 인덱스를 찾아 반환합니다."
+        },
+        {
+            name: "slice(start, end)",
+            description: "start부터 end 바로 전까지 문자열 일부를 잘라 새 문자열로 반환합니다. end를 생략하면 끝까지 가져옵니다.",
+            example: `sample.slice(7, 14) → "${sample.slice(7, 14)}"`,
+            graphic: "slice",
+            caption: "인덱스 7부터 13까지, end인 14는 포함하지 않고 가져옵니다."
+        },
+        {
+            name: "split(separator)",
+            description: "구분자를 기준으로 문자열을 나누어 배열로 반환합니다. 구분자 자체는 결과에 포함되지 않습니다.",
+            example: `sample.split(" ") → [${sample.split(" ").map((word) => `"${word}"`).join(", ")}]`,
+            graphic: "split",
+            caption: "공백을 기준으로 문자열을 여러 단어로 나눕니다."
+        },
+        {
+            name: "toUpperCase()",
+            description: "영문 소문자를 대문자로 바꾼 새 문자열을 반환합니다. 원본 문자열은 그대로 유지됩니다.",
+            example: `sample.toUpperCase() → "${sample.toUpperCase()}"`,
+            graphic: "uppercase",
+            caption: "소문자 문자열이 대문자로 변환되는 모습을 보여줍니다."
+        },
+        {
+            name: "toString()",
+            description: "값을 문자열로 변환합니다. 숫자나 객체의 값을 문자열로 표현할 때 사용할 수 있습니다.",
+            example: `(${numericValue}).toString() → "${numericValue.toString()}" (문자열)`,
+            graphic: "to-string",
+            caption: "숫자 5678을 문자열 \"5678\"로 바꿉니다."
+        }
+    ];
+
+    function graphicMarkup(kind, caption) {
+        let drawing = "";
+
+        switch (kind) {
+            case "character":
+            case "character-code":
+                drawing = `<rect class="highlight" x="30" y="24" width="38" height="38" rx="6"/>
+                    <rect class="cell" x="72" y="24" width="38" height="38" rx="6"/>
+                    <rect class="cell" x="114" y="24" width="38" height="38" rx="6"/>
+                    <rect class="cell" x="156" y="24" width="38" height="38" rx="6"/>
+                    <rect class="cell" x="198" y="24" width="38" height="38" rx="6"/>
+                    <text class="svg-label" x="49" y="49" text-anchor="middle">h</text>
+                    <text class="svg-label" x="91" y="49" text-anchor="middle">e</text>
+                    <text class="svg-label" x="133" y="49" text-anchor="middle">l</text>
+                    <text class="svg-label" x="175" y="49" text-anchor="middle">l</text>
+                    <text class="svg-label" x="217" y="49" text-anchor="middle">o</text>
+                    <text class="small-label" x="49" y="77" text-anchor="middle">0</text>
+                    <text class="small-label" x="91" y="77" text-anchor="middle">1</text>
+                    <text class="small-label" x="133" y="77" text-anchor="middle">2</text>
+                    <text class="small-label" x="175" y="77" text-anchor="middle">3</text>
+                    <text class="small-label" x="217" y="77" text-anchor="middle">4</text>
+                    <text class="svg-label" x="246" y="49">${kind === "character" ? "h" : "104"}</text>`;
+                break;
+            case "concat":
+                drawing = `<rect class="cell" x="25" y="28" width="112" height="35" rx="7"/>
+                    <rect class="highlight" x="158" y="28" width="55" height="35" rx="7"/>
+                    <text class="svg-label" x="81" y="50" text-anchor="middle">hello, welcome</text>
+                    <text class="svg-label" x="185" y="50" text-anchor="middle">???</text>
+                    <text class="small-label" x="143" y="50" text-anchor="middle">+</text>
+                    <text class="small-label" x="222" y="50">= 연결</text>`;
+                break;
+            case "find-first":
+                drawing = `<text class="svg-label" x="28" y="48">hello, welcome to</text>
+                    <rect class="highlight" x="151" y="27" width="31" height="29" rx="5"/>
+                    <text class="svg-label" x="166" y="47" text-anchor="middle">AI</text>
+                    <text class="svg-label" x="189" y="48">Software!!</text>
+                    <text class="small-label" x="151" y="73">처음 일치</text>`;
+                break;
+            case "find-last":
+                drawing = `<text class="svg-label" x="28" y="48">... to AI S</text>
+                    <rect class="highlight" x="99" y="27" width="20" height="29" rx="5"/>
+                    <text class="svg-label" x="109" y="47" text-anchor="middle">o</text>
+                    <text class="svg-label" x="122" y="48">ftware!!</text>
+                    <text class="small-label" x="87" y="73">마지막 일치 (인덱스 22)</text>`;
+                break;
+            case "replace":
+                drawing = `<rect class="cell" x="20" y="26" width="88" height="34" rx="7"/>
+                    <rect class="highlight" x="190" y="26" width="91" height="34" rx="7"/>
+                    <text class="svg-label" x="64" y="48" text-anchor="middle">hello</text>
+                    <text class="svg-label" x="235" y="48" text-anchor="middle">Good Bye</text>
+                    <text class="small-label" x="119" y="48">교체</text>`;
+                break;
+            case "match":
+                drawing = `<text class="svg-label" x="22" y="48">hello, welcome to</text>
+                    <rect class="highlight" x="154" y="27" width="31" height="29" rx="5"/>
+                    <text class="svg-label" x="169" y="47" text-anchor="middle">AI</text>
+                    <text class="svg-label" x="191" y="48">Software!!</text>
+                    <text class="small-label" x="154" y="73">일치한 결과</text>`;
+                break;
+            case "search":
+                drawing = `<text class="svg-label" x="22" y="48">hello, welcome to AI</text>
+                    <rect class="highlight" x="184" y="27" width="82" height="29" rx="5"/>
+                    <text class="svg-label" x="225" y="47" text-anchor="middle">Software</text>
+                    <text class="small-label" x="184" y="73">시작 위치 반환</text>`;
+                break;
+            case "slice":
+                drawing = `<text class="small-label" x="27" y="31">인덱스</text>
+                    <text class="small-label" x="27" y="54">문자</text>
+                    <text class="small-label" x="27" y="76">결과</text>
+                    <text class="small-label" x="87" y="31">7</text>
+                    <text class="small-label" x="119" y="31">8</text>
+                    <text class="small-label" x="151" y="31">9</text>
+                    <text class="small-label" x="183" y="31">10</text>
+                    <text class="small-label" x="215" y="31">11</text>
+                    <text class="small-label" x="247" y="31">12</text>
+                    <text class="small-label" x="279" y="31" text-anchor="middle">13</text>
+                    <text class="svg-label" x="87" y="54">w</text>
+                    <text class="svg-label" x="119" y="54">e</text>
+                    <text class="svg-label" x="151" y="54">l</text>
+                    <text class="svg-label" x="183" y="54">c</text>
+                    <text class="svg-label" x="215" y="54">o</text>
+                    <text class="svg-label" x="247" y="54">m</text>
+                    <text class="svg-label" x="279" y="54" text-anchor="middle">e</text>
+                    <path class="graph-line" d="M87 72 H286"/>`;
+
+                break;
+            case "split":
+                drawing = `<rect class="cell" x="18" y="28" width="61" height="34" rx="6"/>
+                    <rect class="cell" x="86" y="28" width="64" height="34" rx="6"/>
+                    <rect class="cell" x="157" y="28" width="38" height="34" rx="6"/>
+                    <rect class="cell" x="202" y="28" width="38" height="34" rx="6"/>
+                    <text class="svg-label" x="48" y="50" text-anchor="middle">hello,</text>
+                    <text class="svg-label" x="118" y="50" text-anchor="middle">welcome</text>
+                    <text class="svg-label" x="176" y="50" text-anchor="middle">to</text>
+                    <text class="svg-label" x="221" y="50" text-anchor="middle">AI</text>
+                    <path class="graph-line" d="M82 23V67 M153 23V67 M198 23V67"/>`;
+                break;
+            case "uppercase":
+                drawing = `<text class="svg-label" x="28" y="36">hello</text>
+                    <text class="svg-label" x="28" y="78">HELLO</text>
+                    <path class="graph-line" d="M90 73 C135 73 143 37 190 37"/>`;
+                break;
+            case "to-string":
+                drawing = `<rect class="cell" x="28" y="28" width="84" height="36" rx="7"/>
+                    <rect class="highlight" x="188" y="28" width="84" height="36" rx="7"/>
+                    <text class="svg-label" x="70" y="51" text-anchor="middle">5678</text>
+                    <text class="svg-label" x="230" y="51" text-anchor="middle">"5678"</text>
+                    <text class="small-label" x="150" y="50" text-anchor="middle">문자열로</text>`;
+                break;
+        }
+
+        return `<svg viewBox="0 0 300 112" role="img" aria-label="${caption}">
+            ${drawing}
+        </svg>`;
+    }
+
+    document.getElementById("sample-text").textContent = `"${sample}"`;
+
+    const methodList = document.getElementById("method-list");
+    methods.forEach((method) => {
+        const article = document.createElement("article");
+        const title = document.createElement("h2");
+        title.textContent = method.name;
+
+        const description = document.createElement("p");
+        description.className = "description";
+        description.textContent = method.description;
+
+        const example = document.createElement("p");
+        example.className = "example";
+        const exampleOutput = document.createElement("output");
+        exampleOutput.textContent = method.example;
+        example.append(exampleOutput);
+
+        const figure = document.createElement("figure");
+        figure.innerHTML = graphicMarkup(method.graphic, method.caption);
+        const caption = document.createElement("figcaption");
+        caption.textContent = method.caption;
+        figure.append(caption);
+
+        article.append(title, description, example, figure);
+        methodList.append(article);
+    });
+</script>
+</body>
+</html>
