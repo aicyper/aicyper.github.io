@@ -449,6 +449,43 @@
             margin-bottom: 10px;
         }
 
+        .visitor-count {
+            display: flex;
+            justify-content: center;
+            gap: clamp(5px, 1.5vw, 10px);
+            margin: 24px 0 0;
+            perspective: 500px;
+        }
+
+        .visitor-digit {
+            display: block;
+            width: clamp(30px, 8vw, 46px);
+            height: auto;
+            overflow: visible;
+            filter: drop-shadow(0 0 7px rgba(0, 243, 255, 0.6))
+                    drop-shadow(0 0 18px rgba(0, 243, 255, 0.25));
+            animation: visitor-digit-appear 0.45s both;
+        }
+
+        .visitor-digit-segment {
+            fill: rgba(0, 243, 255, 0.09);
+        }
+
+        .visitor-digit-segment.is-on {
+            fill: #b9fbff;
+        }
+
+        @keyframes visitor-digit-appear {
+            from {
+                opacity: 0;
+                transform: rotateX(-35deg) translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: rotateX(0) translateY(0);
+            }
+        }
+
         footer a {
             color: var(--primary-color);
             text-decoration: none;
@@ -724,9 +761,73 @@
                 aiyittaehee@gmail.com
             </a>
         </p>
+        <p class="visitor-count" id="visitor-count" role="img" aria-label="방문자 수를 불러오는 중"></p>
     </footer>
 
     <script>
+        const visitorCount = document.getElementById('visitor-count');
+        const visitorSegments = {
+            a: 'M14 4H50L56 10L50 16H14L8 10Z',
+            b: 'M52 12L58 18V43L52 49L46 43V18Z',
+            c: 'M52 51L58 57V82L52 88L46 82V57Z',
+            d: 'M14 84H50L56 90L50 96H14L8 90Z',
+            e: 'M6 57L12 51L18 57V82L12 88L6 82Z',
+            f: 'M6 18L12 12L18 18V43L12 49L6 43Z',
+            g: 'M14 44H50L56 50L50 56H14L8 50Z'
+        };
+        const visitorDigitSegments = [
+            'abcdef',
+            'bc',
+            'abged',
+            'abgcd',
+            'fgbc',
+            'afgcd',
+            'afgecd',
+            'abc',
+            'abcdefg',
+            'abfgcd'
+        ];
+
+        fetch('https://api.visitorbadge.io/api/visitors?path=aicyper.github.io&label=', { cache: 'no-store' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Visitor counter request failed: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(svgText => {
+                const badge = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+                const count = badge.querySelector('title')?.textContent?.trim();
+                if (!/^\d+$/.test(count || '')) {
+                    throw new Error('Visitor counter returned an invalid count');
+                }
+
+                const svgNamespace = 'http://www.w3.org/2000/svg';
+                const digits = document.createDocumentFragment();
+                for (const [index, digit] of [...count].entries()) {
+                    const svg = document.createElementNS(svgNamespace, 'svg');
+                    svg.setAttribute('class', 'visitor-digit');
+                    svg.setAttribute('viewBox', '0 0 64 100');
+                    svg.setAttribute('aria-hidden', 'true');
+                    svg.style.animationDelay = `${index * 45}ms`;
+
+                    for (const [segment, path] of Object.entries(visitorSegments)) {
+                        const shape = document.createElementNS(svgNamespace, 'path');
+                        shape.setAttribute('d', path);
+                        shape.setAttribute('class', `visitor-digit-segment${visitorDigitSegments[Number(digit)].includes(segment) ? ' is-on' : ''}`);
+                        svg.appendChild(shape);
+                    }
+                    digits.appendChild(svg);
+                }
+
+                visitorCount.replaceChildren(digits);
+                visitorCount.setAttribute('aria-label', `누적 방문자 수 ${count}명`);
+            })
+            .catch(error => {
+                console.error('방문자 수를 불러오지 못했습니다.', error);
+                visitorCount.setAttribute('aria-label', '방문자 수를 불러오지 못했습니다.');
+            });
+
         // Navbar effect on scroll
         window.addEventListener('scroll', () => {
             const header = document.querySelector('header');
