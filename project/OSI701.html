@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OSI 7 Layer: Advanced Security Lab</title>
+<style>
+:root{--bg:#2d3e50;--pn:#1b2a3d;--pn2:#223446;--bd:#3a4d63;--tx:#eef2f7;--mu:#a9b8cc;--ac:#f1c40f;--at:#ff6b5b;--df:#34d399;--wn:#f1c40f;--tl:#1abc9c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.6 "Pretendard","Noto Sans KR","Malgun Gothic",sans-serif}
+button{font:inherit;color:var(--tx);background:var(--pn2);border:1px solid var(--bd);border-radius:6px;padding:8px 14px;cursor:pointer}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.top{display:flex;gap:18px;padding:14px 20px;align-items:stretch;flex-wrap:wrap}
+.ctl{padding-right:18px;border-right:1px solid var(--bd)}.ctl small{display:block;font-size:.7rem;color:var(--mu);margin-bottom:8px}
+.ctl .r{display:flex;gap:8px}.ctl button{border:0;font-weight:700;color:#1b1b1b;background:var(--ac);min-width:76px;padding:10px 16px}
+.ctl button{white-space:nowrap}.ctl .r{flex-wrap:wrap}.ctl .rs{background:#e74c3c;color:#fff}.ctl .au{background:#5b7088;color:#fff}
+.main{flex:1;min-width:280px}.ttl{color:var(--ac);font-weight:700;font-size:1.1rem;margin:2px 0 8px}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cell{background:#213140;border-left:3px solid var(--tl);padding:4px 10px;font-size:.82rem}.cell b{color:var(--ac);margin-right:6px}
+.exp{background:#16213a;border-top:2px solid var(--ac);border-bottom:2px solid #e74c3c;padding:14px 28px}.exp p{margin:0}.exp b{color:#fff}.exp .rd{color:#ff6b5b;font-weight:700}
+.scene{height:470px;perspective:1500px;overflow:hidden;position:relative;cursor:grab;touch-action:none;user-select:none}
+#world{position:absolute;left:50%;top:62%;width:0;height:0;transform-style:preserve-3d}
+.box{position:absolute;left:-45px;top:-15px;width:90px;height:30px;transform-style:preserve-3d;cursor:pointer;transition:transform .4s}
+.f{position:absolute;backface-visibility:hidden}
+.fr,.bk{width:90px;height:30px;left:0;top:0}.fr{transform:translateZ(30px)}.bk{transform:rotateY(180deg) translateZ(30px);filter:brightness(.6)}
+.rt,.lf{width:60px;height:30px;left:15px;top:0}.rt{transform:rotateY(90deg) translateZ(45px);filter:brightness(.7)}.lf{transform:rotateY(-90deg) translateZ(45px);filter:brightness(.5)}
+.tp{width:90px;height:60px;left:0;top:-15px;transform:rotateX(90deg) translateZ(15px);filter:brightness(1.2)}
+.box.sel .f{outline:2px solid #fff}
+.ln{position:absolute;left:-420px;top:-1px;width:840px;height:2px;background:var(--ac);transform:translateZ(32px)}
+.lbl{position:absolute;left:0;top:0;font:600 26px Georgia,"Times New Roman",serif;color:#fadadd;white-space:nowrap}
+.pk{position:absolute;left:-11px;top:-11px;width:22px;height:22px;background:#f4dcff;border-radius:4px;box-shadow:0 0 16px #fff;opacity:0;transition:transform .5s,opacity .3s;pointer-events:none}.pk.on{opacity:1}
+.hint{position:absolute;left:12px;bottom:6px;color:var(--mu);font-size:.75rem;pointer-events:none}
+.scene .vr{position:absolute;right:12px;top:10px;z-index:2;padding:4px 10px;font-size:.8rem}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.pn{background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:14px}
+.banner{background:#3a2e10;border:1px solid var(--wn);color:#fde68a;border-radius:8px;padding:8px 12px;font-size:.85rem;margin-bottom:10px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.tabs button[aria-selected=true]{border-color:var(--ac);background:#3a3410}
+.mA[aria-selected=true]{border-color:var(--at)!important;background:#3b1823!important}.mD[aria-selected=true]{border-color:var(--df)!important;background:#12352c!important}
+.badge{display:inline-block;background:var(--pn2);border:1px solid var(--bd);border-radius:20px;padding:1px 10px;margin:2px;font-size:.8rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.card{background:var(--pn2);border:1px solid var(--bd);border-radius:10px;padding:12px}.card h4{margin:0 0 6px;font-size:.95rem}.card p{margin:0;color:#d5deec}
+.atk h4{color:var(--at)}.def h4{color:var(--df)}.full{grid-column:1/-1}
+.cia{display:grid;grid-template-columns:70px 1fr 40px;gap:6px;align-items:center;font-size:.8rem;margin-top:4px}.cia i{display:block;height:8px;border-radius:4px;background:var(--at)}.cia span.t{background:#0b1220;border-radius:4px;display:block}
+.flow{display:flex;flex-wrap:wrap;gap:6px}.flow div{flex:1 1 150px;background:#16213a;border:1px solid var(--bd);border-radius:8px;padding:8px;font-size:.85rem}.flow b{display:block;font-size:.75rem;color:var(--mu)}
+.note{color:var(--wn);font-size:.85rem}.ref{color:var(--mu);font-size:.8rem}.empty{color:var(--mu);text-align:center;padding:20px}
+.sr{position:absolute;left:-9999px}
+@media(max-width:700px){.grid,.info{grid-template-columns:1fr}.scene{height:320px}.ctl button{min-width:0;padding:10px 12px}.lbl{font-size:30px}.exp{padding:12px 16px}.ctl{border:0}}
+@media(prefers-reduced-motion:reduce){.box,.pk{transition:none}}
+</style></head><body>
+<div class="top"><div class="ctl"><small>CONTROLS</small><div class="r"><button class="rs" id="bReset">초기화</button><button id="bPrev">이전</button><button id="bNext">다음 단계</button><button class="au" id="bAuto" aria-pressed="false">자동 재생</button></div></div>
+<div class="main"><div class="ttl" id="ttl" aria-live="polite"></div><div class="info" id="info"></div></div></div>
+<div class="exp" id="exp"></div>
+<div class="scene" id="scene" aria-label="OSI 계층 3D 모델: 송신측, 스위치, 라우터, 수신측"><div id="world"></div><button class="vr" id="bView" tabindex="-1">시점 초기화</button><div class="hint">드래그로 회전 · 블록 클릭으로 계층 선택 · Tab 키로 송신측 블록 선택</div></div>
+<div class="wrap"><section class="pn" id="rep" aria-label="보안 분석 리포트"></section></div>
+<div class="sr" id="live" aria-live="polite"></div>
+<script>
+(function(){'use strict';
+/* ===== 데이터 (OSI_SECURITY_DATA) : v=[이름,원리,조건,피해,CIA(H/M/L/N),탐지] m=[제목,적용방법,한계] ===== */
+const OSI_SECURITY_DATA={
+7:{n:'응용 계층 (Application)',p:['HTTP/HTTPS','DNS','SMTP','FTP','SSH'],u:'Data',t:'입력값 검증 미흡에 따른 인젝션·스크립트 실행, DNS 응답 위조',note:'',
+v:[['SQL Injection','사용자 입력이 SQL 문 구조의 일부로 해석되어 질의 의미가 바뀐다.','문자열 결합 방식 쿼리, 입력 검증 부재, DB 계정 과다 권한','데이터 무단 열람·변조·삭제','HHM','WAF 로그의 비정상 질의 패턴, DB 오류 급증'],
+['XSS (Cross-Site Scripting)','신뢰된 페이지 문맥에 삽입된 스크립트가 피해자 브라우저에서 실행된다.','출력 인코딩 부재, CSP 미적용','세션 탈취, 사용자 정보 노출','HHL','CSP 위반 리포트, 입력값 내 스크립트 패턴 로그'],
+['DNS Spoofing','위조된 DNS 응답이 리졸버 캐시에 수락되어 도메인이 다른 IP로 해석된다.','DNSSEC 미검증, 예측 가능한 질의 식별자','피싱, 중간자 공격','HHL','같은 도메인의 응답 IP·TTL 급변, 중복 응답'],
+['Command Injection','입력이 운영체제 명령 실행 문자열로 전달되어 의도하지 않은 명령이 실행된다.','셸 호출 시 입력 직접 결합, 높은 프로세스 권한','서버 비인가 명령 실행, 시스템 장악','HHH','비정상 자식 프로세스 생성, 감사 로그'],
+['HTTP Request Smuggling','프록시와 백엔드가 요청 경계를 다르게 해석하는 차이를 악용한다.','프록시·백엔드 간 HTTP 파서 불일치','요청 우회, 접근 제어 우회','MHL','프록시/백엔드 요청 수 불일치, 비정상 헤더 조합']],
+m:[['Prepared Statement + 출력 인코딩','쿼리와 데이터를 분리 바인딩하고, 출력 문맥(HTML/JS/URL)별 인코딩을 적용','프레임워크·ORM의 원시 쿼리 사용 시 우회 가능, 문맥을 틀리면 무효'],
+['CSP·WAF·안전한 HTTP 헤더','CSP로 스크립트 출처 제한, WAF로 알려진 패턴 차단','WAF는 우회 가능하므로 코드 수정을 대체하지 못함'],
+['DNSSEC 검증 / SFTP·FTPS 사용','리졸버에서 DNSSEC 검증 활성화, FTP는 SFTP/FTPS로 대체','도메인 서명 미적용 구간은 보호되지 않음'],
+['서버 측 권한 검증·최소 권한','화이트리스트 검증, DB·프로세스 계정 권한 최소화','검증 누락 지점이 하나라도 있으면 취약']],
+d:['매개변수화 쿼리와 출력 인코딩 적용','로직 결함, 인증·인가 오류, 서드파티 취약점은 별도 대응 필요'],r:['OWASP Top 10','OWASP Cheat Sheet Series','RFC 4033 (DNSSEC)']},
+6:{n:'표현 계층 (Presentation)',p:['TLS','인코딩','압축','암호화'],u:'Data',t:'다운그레이드, 취약한 암호 설정, 인코딩 처리 차이',note:'TLS는 6계층에만 고정되는 프로토콜이 아니며, 본 분류는 OSI 교육을 위한 기능적 분류입니다. HSTS는 응용 계층의 HTTP 보안 정책입니다.',
+v:[['SSL Stripping','HTTPS 이동을 HTTP 상태로 유지시켜 암호화되지 않은 통신을 유도한다.','중간자 위치 확보, HTTPS 강제 정책(HSTS) 부재','로그인 정보·민감 정보 평문 노출','HHL','HTTPS 대신 HTTP 접속 증가, 인증서 경고 회피 시도'],
+['취약한 암호화 알고리즘','구형 알고리즘·약한 설정이 허용되어 암호문 해독 가능성이 생긴다.','구형 Cipher Suite 허용, 짧은 키','암호문 해독, 기밀성 침해','HMN','TLS 설정 점검 도구 결과, 약한 암호 협상 로그'],
+['TLS Downgrade Attack','협상 과정에서 낮은 TLS 버전·약한 설정 사용을 유도한다.','구버전 TLS 허용, 폴백 허용','통신 보안 수준 저하','HMN','협상된 프로토콜 버전 통계 이상'],
+['잘못된 인코딩·디코딩','인코딩 처리 차이와 검증 미흡으로 필터를 우회한다.','다단계 디코딩, 정규화 전 검증','데이터 변조, 보안 필터 우회','MHL','이중 인코딩 문자열 로그']],
+m:[['TLS 1.3 우선, TLS 1.2 이상 허용','SSL 2.0/3.0, TLS 1.0/1.1 비활성화, 안전한 Cipher Suite만 허용','구형 클라이언트 호환성 저하 가능'],
+['HSTS 적용 (응용 계층 정책)','Strict-Transport-Security 헤더 설정','첫 접속 시점은 보호되지 않음(Preload로 보완)'],
+['인증서·호스트 이름 검증','체인·만료·호스트명 검증을 클라이언트에서 강제','검증 비활성화 코드가 있으면 무효'],
+['안전한 인코딩 처리·키 관리','검증 전 정규화, 키 생성·보관·교체 절차 수립','키 유출 시 암호화 효과 상실']],
+d:['안전한 TLS 설정 및 HSTS 적용','잘못 구성된 인증서 신뢰, 엔드포인트 침해는 막지 못함'],r:['RFC 8446 (TLS 1.3)','RFC 6797 (HSTS)','NIST SP 800-52']},
+5:{n:'세션 계층 (Session)',p:['NetBIOS Session','RPC','세션 관리'],u:'Data',t:'세션 식별자 탈취·고정, 인증 메시지 재전송',note:'',
+v:[['Session Hijacking','유효한 세션 ID/토큰을 탈취해 인증된 사용자로 행세한다.','토큰 노출, 평문 전송, 쿠키 속성 미설정','인증된 권한으로 무단 접근','HHL','같은 세션의 IP·UA 급변, 동시 접속'],
+['Session Fixation','공격자가 정한 세션 ID를 피해자가 쓰게 한 뒤 인증 후 그 ID를 이용한다.','로그인 후 세션 ID 미재발급','인증 후 세션 권한 탈취','HHL','로그인 전후 동일 세션 ID 사용'],
+['Replay Attack','과거에 전송된 인증·요청 메시지를 재전송한다.','Nonce·Timestamp 검증 부재','중복 요청, 비인가 작업','MHL','중복 Nonce, 만료 시각 요청'],
+['Insecure Session Management','만료·재인증·ID 관리 미흡으로 접근 가능 기간이 길어진다.','긴 만료, 로그아웃 후 토큰 유효','장기간 비인가 접근','HML','비정상 시간대 장기 세션']],
+m:[['안전한 난수 기반 세션 ID, 로그인 시 재발급','CSPRNG로 생성, 로그인·권한 변경 시 재발급','구현 오류가 있으면 효과 감소'],
+['HttpOnly·Secure·SameSite 쿠키','쿠키 속성 설정, 만료 시간 지정','토큰 유출 경로가 다르면(예: 로그) 무효'],
+['Nonce·Timestamp 검증, 재인증','민감 작업에 재인증, 요청 유일성 검증','서버 시간 동기화·저장소 필요'],
+['RPC 인증·접근 제어','RPC 호출 인증과 최소 권한 적용','레거시 서비스는 적용 어려움']],
+d:['세션 ID 재발급 및 세션 검증','엔드포인트 악성코드로 인한 토큰 탈취는 남음'],r:['OWASP Session Management Cheat Sheet','OWASP ASVS']},
+4:{n:'전송 계층 (Transport)',p:['TCP','UDP','SCTP'],u:'Segment (TCP) / Datagram (UDP)',t:'연결 자원 고갈, 연결 강제 종료, 포트 탐색',note:'',
+v:[['TCP SYN Flooding','3-Way Handshake의 반개방 연결을 대량 생성해 대기 자원을 고갈시킨다.','SYN 처리 한도 낮음, SYN Cookie 미사용','서버 연결 자원 고갈, 서비스 거부','NNH','SYN_RECV 상태 급증, 출발지 분포 이상'],
+['UDP Flooding','대량 UDP 패킷으로 서버와 네트워크 자원을 소모시킨다.','연결 없는 특성, 속도 제한 부재','서비스 지연·중단','NNH','UDP pps/대역폭 급증, ICMP unreachable 증가'],
+['TCP Reset Attack','위조된 RST 패킷으로 연결을 강제 종료한다.','출발지·목적지 포트와 시퀀스 범위 일치','통신 세션 중단','NNH','비정상 RST 급증'],
+['Port Scanning','열린 포트와 서비스를 탐색해 공격 표면을 파악한다.','불필요한 포트 개방','후속 공격 정보 노출','LNN','단일 출발지의 다수 포트 접속 시도']],
+m:[['SYN Cookie, 연결 제한','커널 SYN Cookie 활성화, 연결 한도 조정','대규모 분산 공격은 단독 방어 불가'],
+['방화벽·불필요 포트 비활성화','필요 포트만 허용, 미사용 서비스 종료','허용 포트 내부 공격은 별도 대응 필요'],
+['Rate Limiting, IDS/IPS','임계치 기반 제한과 이상 트래픽 탐지','정상 트래픽 오차단 가능성'],
+['DDoS 방어 서비스','상위 대역에서 트래픽 정제','비용·지연, 설정 필요']],
+d:['SYN Cookie 및 트래픽 제한 정책 적용','대역폭 자체를 채우는 대용량 공격은 남음'],r:['RFC 4987 (TCP SYN Flooding)','RFC 9293 (TCP)']},
+3:{n:'네트워크 계층 (Network)',p:['IPv4','IPv6','ICMP','IPSec','IGMP','BGP'],u:'Packet',t:'출발지 주소 위조, 증폭·폭주, 경로 조작',note:'IPSec은 IP Spoofing이나 DDoS 자체를 해결하는 기술이 아니라 IP 통신의 인증·무결성·기밀성을 보완하는 기술입니다.',
+v:[['IP Spoofing','IP 패킷의 출발지 주소를 위조한다.','출발지 검증 필터 부재','접근 제어 우회, 반사 공격 악용','LMH','비정상 출발지 대역 유입, uRPF 드롭 카운터'],
+['ICMP Flooding','대량 ICMP 패킷으로 네트워크 자원을 소모한다.','ICMP 무제한 허용','지연·서비스 거부','NNH','ICMP 트래픽 급증'],
+['Smurf Attack','위조 출발지와 브로드캐스트 응답 증폭으로 피해자에게 응답을 집중시킨다.','Directed Broadcast 허용','대역폭 고갈','NNH','대량 ICMP Echo Reply 유입'],
+['Routing Attack','라우팅 정보 위조·변조로 경로를 비정상 유도한다.','경로 검증·인증 부재','트래픽 도청, 통신 장애','HMH','경로 변동 알림, 비정상 AS 경로']],
+m:[['Ingress/Egress Filtering, uRPF','위조 출발지 패킷을 경계에서 차단','비대칭 라우팅 환경에서 오탐 가능'],
+['ACL, Directed Broadcast 비활성화','필요 트래픽만 허용, 브로드캐스트 전달 차단','정책 관리 부담'],
+['ICMP 제한, 이상 징후 모니터링','유형별 속도 제한, 임계치 경보','필요한 ICMP(예: PMTUD)까지 막지 않도록 주의'],
+['BGP 보안, IPSec','경로 필터링·검증, IPSec으로 인증·무결성·기밀성 보완','IPSec은 스푸핑·DDoS 해결책이 아님']],
+d:['uRPF 및 ACL에 의한 위조 출발지 패킷 필터링','타 사업자 구간 위조와 대용량 공격은 남음'],r:['RFC 2827 (BCP 38)','RFC 3704','RFC 4301 (IPsec)']},
+2:{n:'데이터 링크 계층 (Data Link)',p:['Ethernet','ARP','VLAN','STP','PPP'],u:'Frame',t:'ARP 매핑 변조, 스위치 테이블 포화, VLAN·STP 조작',note:'MAC Flooding의 영향은 스위치 구현과 설정에 따라 다르며, 모든 스위치가 무조건 허브처럼 동작하는 것은 아닙니다.',
+v:[['ARP Spoofing','위조 ARP 응답으로 IP-MAC 매핑을 바꿔 트래픽을 가로챈다.','ARP 응답 무검증, 동일 L2 세그먼트','중간자 공격, 패킷 도청','HHL','같은 IP에 MAC 변경, 중복 응답'],
+['MAC Flooding','가짜 MAC을 대량 학습시켜 CAM 테이블을 포화시킨다.','포트별 MAC 수 제한 없음','미등록 유니캐스트 플러딩으로 정보 노출 가능','HNM','포트당 MAC 수 급증, 학습 이벤트'],
+['VLAN Hopping','트렁크 협상·설정 오류를 악용해 다른 VLAN에 접근한다.','Trunk 자동 협상, Native VLAN 설정 오류','VLAN 분리 우회','HHL','예상치 못한 트렁크 포트 전환'],
+['STP Manipulation','위조 BPDU로 스패닝 트리 구성을 바꾼다.','엣지 포트의 BPDU 수신 허용','경로 변경, 서비스 장애','MML','Root Bridge 변경, 토폴로지 변경 로그']],
+m:[['DHCP Snooping + DAI','신뢰 포트 지정, 바인딩 테이블 기반 ARP 검증','정적 IP 환경은 ARP ACL 병행 필요'],
+['Port Security','포트별 허용 MAC 수·위반 동작 설정','MAC 위조 자체를 완전히 막지는 못함'],
+['VLAN 접근 제어, Trunk 협상 비활성화','미사용 포트 shutdown, 불필요 trunk 협상 해제','정기 설정 점검 필요'],
+['BPDU Guard, Root Guard','엣지 포트에서 BPDU 차단, Root 위치 보호','잘못 적용 시 포트 차단 장애']],
+d:['DAI에 의한 비정상 ARP 패킷 차단','DAI는 신뢰 포트·바인딩 정보가 정확해야 하며 L2 외부 공격은 남음'],r:['IEEE 802.1Q','IEEE 802.1X','벤더 L2 보안 가이드']},
+1:{n:'물리 계층 (Physical)',p:['UTP/STP','광케이블','Hub','Repeater','RS-232'],u:'Bit',t:'물리적 접근·도청·파손, 비인가 장비 연결',note:'광케이블과 STP 케이블도 도청을 완전히 막지 못하므로 물리적 보호와 암호화를 병행합니다.',
+v:[['Wiretapping','통신 케이블에 물리 접근해 신호를 가로챈다.','케이블 노출, 무암호 통신','기밀성 침해','HLN','케이블 손실 변화, 장비 변조 알림'],
+['Physical Port Unauthorized Access','개방된 포트에 비인가 단말을 연결한다.','미사용 포트 활성, 접속 인증 부재','내부망 무단 접근','HMM','알 수 없는 MAC 연결, 링크 업 이벤트'],
+['Cable Cutting / Physical Destruction','케이블·장비를 물리적으로 파손한다.','출입 통제 부재, 이중화 미비','서비스 중단','NNH','링크 다운, 장비 장애 알림'],
+['Rogue Hardware Installation','비인가 허브·스위치·AP를 설치한다.','장비 인벤토리·점검 부재','도청, 내부망 침투','HHL','미등록 장비·SSID 탐지'],
+['Electromagnetic Eavesdropping','장비·선로의 전자기 신호로 정보를 수집한다.','차폐 부족, 근접 위치','민감 정보 노출 가능','HNN','시설 점검, 차폐 수준 측정']],
+m:[['출입 통제, CCTV, 접근 기록','서버실·통신실 출입 통제와 기록 보관','내부자 위협은 별도 관리 필요'],
+['케이블 보호관·잠금장치·변조 탐지','보호관, 잠금, 장비 봉인 및 변조 탐지','완전한 도청 방지는 아님'],
+['미사용 포트 비활성화, 802.1X','미사용 포트 shutdown, 접속 시 인증(2계층 연계)','802.1X 미지원 장비 존재'],
+['상위 계층 암호화, 차폐 케이블','TLS·IPsec 등 암호화 병행, 필요 시 차폐 적용','광·STP도 도청을 완전히 막지 못함']],
+d:['물리적 접근 통제 및 비인가 장비 연결 차단','내부자 위협과 고급 도청 기법은 남음'],r:['NIST SP 800-53 (PE 통제)','ISO/IEC 27001']}
+};
+
+/* ===== 상태 ===== */
+const S={step:-1,layer:0,mode:'attack',vi:0,timer:null};
+const $=id=>document.getElementById(id);
+const LV={H:['높음',100],M:['중간',60],L:['낮음',30],N:['없음',4]};
+function h(tag,attrs,...kids){const e=document.createElement(tag);for(const k in(attrs||{})){if(k==='class')e.className=attrs[k];else if(k.startsWith('on'))e.addEventListener(k.slice(2),attrs[k]);else e.setAttribute(k,attrs[k]);}
+kids.flat().forEach(c=>{if(c==null)return;e.appendChild(typeof c==='string'?document.createTextNode(c):c);});return e;}
+function card(cls,title,text){return h('div',{class:'card '+cls},h('h4',null,title),h('p',null,text));}
+function tabNav(container,sel){container.addEventListener('keydown',e=>{const t=[...container.querySelectorAll(sel)];const i=t.indexOf(document.activeElement);if(i<0)return;
+let n=i;const k=e.key;if(k==='ArrowRight'||k==='ArrowDown')n=(i+1)%t.length;else if(k==='ArrowLeft'||k==='ArrowUp')n=(i-1+t.length)%t.length;else if(k==='Home')n=0;else if(k==='End')n=t.length-1;else return;
+e.preventDefault();t[n].focus();t[n].click();});}
+
+/* ===== 시뮬레이션 단계 (송신 → 스위치 → 라우터 → 수신) ===== */
+const SND={7:'애플리케이션 서비스 실행',6:'데이터 인코딩·압축·암호화',5:'세션 설정·관리',4:'세그먼트 분할·포트 지정',3:'IP 헤더 추가·경로 결정',2:'프레임화·MAC 주소 부여',1:'비트를 전기·광 신호로 변환 후 전송'};
+const RCV={1:'신호 수신·비트 복원',2:'프레임 검사·MAC 주소 확인',3:'IP 주소 확인·패킷 처리',4:'세그먼트 재조립·포트 전달',5:'세션 확인',6:'데이터 복호화·디코딩',7:'애플리케이션 데이터 전달'};
+const FN={7:'사용자 응용 프로세스와 직접 통신하여 네트워크 서비스를 제공하는 창구 역할을 수행합니다.',6:'데이터 형식 변환, 인코딩, 압축, 암호화를 담당합니다.',5:'통신 세션의 설정, 유지, 종료와 동기화를 관리합니다.',4:'종단 간 데이터 전달과 포트 기반 다중화, 흐름·혼잡 제어를 담당합니다.',3:'IP 주소를 기준으로 목적지까지의 경로를 결정하고 패킷을 전달합니다.',2:'같은 네트워크 안에서 MAC 주소로 프레임을 전달하고 오류를 검출합니다.',1:'비트를 전기·광·무선 신호로 바꿔 전송 매체로 내보냅니다.'};
+const NODES=[['sender','SENDER',7,-420,'송신측'],['switch','SWITCH',2,-140,'스위치'],['router','ROUTER',3,140,'라우터'],['receiver','RECEIVER',7,420,'수신측']];
+const STEPS=[];
+for(let l=7;l>=1;l--)STEPS.push(['sender',l,'송신측: '+SND[l]]);
+[[1,'물리 신호 수신'],[2,'MAC 주소 확인·프레임 전달'],[1,'물리 신호 재전송']].forEach(a=>STEPS.push(['switch',a[0],'스위치: '+a[1]]));
+[[1,'물리 신호 수신'],[2,'프레임 헤더 제거·확인'],[3,'IP 주소 확인·라우팅 결정'],[2,'새 프레임 생성'],[1,'물리 신호 재전송']].forEach(a=>STEPS.push(['router',a[0],'라우터: '+a[1]]));
+for(let l=1;l<=7;l++)STEPS.push(['receiver',l,'수신측: '+RCV[l]]);
+/* ===== 요약 패널 ===== */
+function updateLayerSummary(n){const d=OSI_SECURITY_DATA[n],st=STEPS[S.step];
+$('ttl').textContent=st?st[2]:'시뮬레이션 대기 중 — “다음 단계”를 눌러 시작하세요';
+const it=[['계층:',n?n+'. '+d.n:'-'],['프로토콜:',d?d.p.join(', '):'-'],['보안위협:',d?d.t:'-'],['PDU 단위:',d?d.u:'-']];
+const i=$('info');i.textContent='';it.forEach(a=>i.appendChild(h('div',{class:'cell'},h('b',null,a[0]),a[1])));
+const e=$('exp');e.textContent='';
+if(!d){e.appendChild(h('p',null,'시뮬레이션을 시작하면 해당 계층의 ',h('b',null,'프로토콜 분석 및 보안 취약점 리포트'),'가 상세히 출력됩니다.'));return;}
+e.appendChild(h('p',null,h('b',null,'[프로토콜] '),d.p.join(', ')));
+e.appendChild(h('p',null,h('b',null,'[주요 기능] '),FN[n]));
+e.appendChild(h('p',null,h('b',null,'[해킹위협 및 내용] '),h('span',{class:'rd'},d.v.slice(0,2).map(v=>v[0]).join(' / ')+': '),d.t));}
+function renderVulnerabilityList(n){const d=OSI_SECURITY_DATA[n];const w=h('div',{class:'tabs',role:'tablist','aria-label':'취약점 선택'});
+d.v.forEach((v,i)=>w.appendChild(h('button',{role:'tab','aria-selected':String(i===S.vi),tabindex:i===S.vi?'0':'-1',onclick:()=>selectVulnerability(n,i)},v[0])));tabNav(w,'button');return w;}
+function renderMitigationList(n){const d=OSI_SECURITY_DATA[n];const g=h('div',{class:'grid'});
+d.m.forEach(m=>g.appendChild(h('div',{class:'card def'},h('h4',null,'🛡 '+m[0]),h('p',null,h('b',null,'적용 방법 '),m[1]),h('p',{class:'note'},h('b',null,'한계·주의 '),m[2]))));return g;}
+function flow(steps){return h('div',{class:'flow'},steps.map((s,i)=>h('div',null,h('b',null,(i+1)+'단계 · '+s[0]),s[1])));}
+function renderSecurityReport(n){const r=$('rep');r.textContent='';
+if(!n){r.appendChild(h('div',{class:'empty'},'시뮬레이션을 시작하면 해당 계층의 프로토콜 분석 및 보안 취약점 리포트가 상세히 출력됩니다. (“다음 단계” 또는 계층을 선택하세요)'));return;}
+const d=OSI_SECURITY_DATA[n],v=d.v[S.vi];
+r.appendChild(h('div',{class:'banner'},'⚠ 교육용 논리 시뮬레이션입니다. 실제 공격·방어 엔진이나 보안 장비가 동작하지 않으며, 설명용 데이터를 단계별로 보여줍니다.'));
+const mt=h('div',{class:'tabs',role:'tablist','aria-label':'모드 전환'},
+h('button',{class:'mA',role:'tab','aria-selected':String(S.mode==='attack'),onclick:()=>setSecurityMode('attack')},'⚔ Attack Mode'),
+h('button',{class:'mD',role:'tab','aria-selected':String(S.mode==='defense'),onclick:()=>setSecurityMode('defense')},'🛡 Defense Mode'));tabNav(mt,'button');r.appendChild(mt);
+r.appendChild(h('h3',null,n+'계층 · '+d.n));
+r.appendChild(h('div',null,d.p.map(p=>h('span',{class:'badge'},p)),h('span',{class:'badge'},'PDU: '+d.u)));
+if(d.note)r.appendChild(h('p',{class:'note'},'※ '+d.note));
+r.appendChild(renderVulnerabilityList(n));
+const g=h('div',{class:'grid'});
+if(S.mode==='attack'){
+g.appendChild(card('atk','공격 원리',v[1]));g.appendChild(card('atk','발생 조건',v[2]));
+const c=h('div',{class:'card atk'},h('h4',null,'예상 피해 및 CIA 영향'),h('p',null,v[3]));
+[['기밀성',v[4][0]],['무결성',v[4][1]],['가용성',v[4][2]]].forEach(([a,k])=>c.appendChild(h('div',{class:'cia'},h('span',null,a),h('span',{class:'t'},h('i',{style:'width:'+LV[k][1]+'%'})),h('span',null,LV[k][0]))));
+g.appendChild(c);g.appendChild(card('atk','탐지 방법 / 보안 이벤트',v[5]));
+const f=h('div',{class:'card atk full'},h('h4',null,'공격 진행 흐름 (개념도)'),flow([['조건',v[2]],['공격 원리',v[1]],['피해',v[3]],['탐지 단서',v[5]]]));g.appendChild(f);
+}else{
+const rel=d.m;g.classList.remove('grid');r.appendChild(g);
+const mg=renderMitigationList(n);r.appendChild(mg);
+const f=h('div',{class:'card def',style:'margin-top:10px'},h('h4',null,'방어 흐름: '+d.d[0]),flow([['공격 시도',v[0]+' 시도'],['방어 적용 지점',d.d[0]],['차단·완화 결과','위협 경로 차단 또는 피해 완화 (논리 시뮬레이션)'],['남은 위험',d.d[1]]]));r.appendChild(f);
+}
+if(S.mode==='attack')r.appendChild(g);
+r.appendChild(h('p',{class:'ref'},'참고(기관·문서명): '+d.r.join(' · ')));}
+function updateSecurityFeedback(n,mode){const d=OSI_SECURITY_DATA[n];if(!d)return;$('live').textContent=n+'계층 '+(mode==='attack'?'공격 모드: '+d.v[S.vi][0]:'방어 모드: '+d.d[0]);}
+
+/* ===== 3D 모델 (CSS 3D, 라이브러리 없음) ===== */
+const V3={rx:-20,ry:-14},COL=['','#7a5560','#7a6a4a','#7a7a4a','#3f8a72','#4a7494','#4a6a94','#6b5b95'],BOX={},world=$('world'),pk=h('div',{class:'pk'}),sc=$('scene');
+let moved=false,drag=null,GX=1;
+function apply3D(){const k=Math.min(1,sc.clientWidth/(2*(420*GX+75)*1.2));world.style.transform='scale('+k+') rotateX('+V3.rx+'deg) rotateY('+V3.ry+'deg)';}
+function jump(node,l){const i=STEPS.findIndex(s=>s[0]===node&&s[1]===l);if(i>=0)go(i);}
+function build3D(){NODES.forEach(nd=>{for(let l=1;l<=nd[2];l++){const c=COL[l],f=(k)=>h('div',{class:'f '+k,style:'background:'+c});
+const b=h('div',{class:'box',role:'button','aria-label':nd[4]+' '+l+'계층',tabindex:nd[0]==='sender'?'0':'-1',style:'transform:translate3d('+nd[3]*GX+'px,'+(-(l-1)*36)+'px,0)',onclick:()=>{if(!moved)jump(nd[0],l);},onkeydown:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();jump(nd[0],l);}}},f('fr'),f('bk'),f('rt'),f('lf'),f('tp'));BOX[nd[0]+l]=b;world.appendChild(b);}
+world.appendChild(h('div',{class:'lbl',style:'transform:translate3d('+(nd[3]*GX-60)+'px,60px,40px)'},nd[1]));});
+world.appendChild(h('div',{class:'ln',style:'left:'+(-420*GX)+'px;width:'+(840*GX)+'px'}));world.appendChild(pk);apply3D();}
+function u3(){const st=STEPS[S.step];for(const k in BOX)BOX[k].classList.remove('sel');
+if(!st){pk.classList.remove('on');return;}BOX[st[0]+st[1]].classList.add('sel');const nd=NODES.find(n=>n[0]===st[0]);
+pk.style.transform='translate3d('+nd[3]*GX+'px,'+(-(st[1]-1)*36)+'px,34px)';pk.classList.add('on');}
+sc.addEventListener('pointerdown',e=>{if(e.target.id==='bView')return;drag={x:e.clientX,y:e.clientY,rx:V3.rx,ry:V3.ry};moved=false;});
+window.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>5)moved=true;if(!moved)return;V3.ry=drag.ry+dx*.3;V3.rx=Math.max(-70,Math.min(10,drag.rx+dy*.3));apply3D();});
+window.addEventListener('pointerup',()=>{drag=null;setTimeout(()=>{moved=false;},0);});
+$('bView').onclick=()=>{V3.rx=-20;V3.ry=-14;apply3D();};window.addEventListener('resize',()=>{const g=sc.clientWidth<700?.6:1;if(g!==GX){GX=g;world.textContent='';build3D();u3();}else apply3D();});
+/* ===== 상태 변경 ===== */
+function selectVulnerability(n,i){S.vi=i;renderSecurityReport(n);updateSecurityFeedback(n,S.mode);const b=$('rep').querySelectorAll('[aria-label="취약점 선택"] button')[i];if(b)b.focus();}
+function setSecurityMode(m){S.mode=m;renderSecurityReport(S.layer);updateSecurityFeedback(S.layer,m);const b=$('rep').querySelector(m==='attack'?'.mA':'.mD');if(b)b.focus();}
+function go(i){S.step=i;S.layer=i<0?0:STEPS[i][1];S.vi=0;updateLayerSummary(S.layer);u3();renderSecurityReport(S.layer);updateSecurityFeedback(S.layer,S.mode);}
+function stop(){clearInterval(S.timer);S.timer=null;$('bAuto').setAttribute('aria-pressed','false');$('bAuto').textContent='자동 재생';}
+function next(){if(S.step<STEPS.length-1)go(S.step+1);else stop();}
+$('bNext').onclick=()=>{stop();next();};$('bPrev').onclick=()=>{stop();if(S.step>0)go(S.step-1);};
+$('bReset').onclick=()=>{stop();S.mode='attack';go(-1);};
+$('bAuto').onclick=()=>{if(S.timer){stop();return;}$('bAuto').setAttribute('aria-pressed','true');$('bAuto').textContent='정지';next();S.timer=setInterval(()=>{if(S.step>=STEPS.length-1)stop();else next();},1800);};
+GX=sc.clientWidth<700?.6:1;build3D();go(-1);
+})();
+</script></body></html>

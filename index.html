@@ -3,7 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>보안 전문가 성장 포트폴리오</title>
+    <title>정보보안 포트폴리오 | 사이버보안 및 네트워크 보안 학습</title>
+    <meta name="description" content="정보보안 전문가를 목표로 프로그래밍, 네트워크 보안, OSI 7계층, Linux 시스템 보안, 웹 보안 및 AI 보안 기술을 학습하고 실습 프로젝트를 기록하는 포트폴리오입니다.">
+
+    <meta name="keywords" content="정보보안, 사이버보안, 정보보안 포트폴리오, 네트워크 보안, OSI 7계층, TCP/IP, Linux 보안, 시스템 보안, 웹 보안, Python 보안, AI 보안">
+
+    <meta name="author" content="AICYPER">
+
+    <!-- 검색엔진 색인 허용 -->
+    <meta name="robots" content="index, follow">
+
+    <!-- 모바일 최적화 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 검색 결과 및 SNS 공유 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="정보보안 포트폴리오 | AICYPER">
+    <meta property="og:url" content="https://aicyper.github.io/">
+    <meta property="og:site_name" content="AICYPER">
+
+    <!-- 대표 URL -->
+    <link rel="canonical" href="https://aicyper.github.io/">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -451,10 +471,23 @@
 
         .visitor-count {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            gap: clamp(5px, 1.5vw, 10px);
             margin: 24px 0 0;
             perspective: 500px;
+        }
+
+        .visitor-digits {
+            display: flex;
+            justify-content: center;
+            gap: clamp(5px, 1.5vw, 10px);
+        }
+
+        .visitor-count-status {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            letter-spacing: normal;
         }
 
         .visitor-digit {
@@ -761,7 +794,9 @@
                 aiyittaehee@gmail.com
             </a>
         </p>
-        <p class="visitor-count" id="visitor-count" role="img" aria-label="방문자 수를 불러오는 중"></p>
+        <div class="visitor-count" id="visitor-count" role="img" aria-label="방문자 수를 불러오는 중">
+            <span class="visitor-count-status">방문자 수를 불러오는 중...</span>
+        </div>
     </footer>
 
     <script>
@@ -788,7 +823,59 @@
             'abfgcd'
         ];
 
-        fetch('https://api.visitorbadge.io/api/visitors?path=aicyper.github.io&label=', { cache: 'no-store' })
+        const visitorCountCacheKey = 'aicyper-visitor-count';
+
+        function renderVisitorCount(count, status) {
+            const svgNamespace = 'http://www.w3.org/2000/svg';
+            const digits = document.createElement('span');
+            digits.className = 'visitor-digits';
+
+            for (const [index, digit] of [...count].entries()) {
+                const svg = document.createElementNS(svgNamespace, 'svg');
+                svg.setAttribute('class', 'visitor-digit');
+                svg.setAttribute('viewBox', '0 0 64 100');
+                svg.setAttribute('aria-hidden', 'true');
+                svg.style.animationDelay = `${index * 45}ms`;
+
+                for (const [segment, path] of Object.entries(visitorSegments)) {
+                    const shape = document.createElementNS(svgNamespace, 'path');
+                    shape.setAttribute('d', path);
+                    shape.setAttribute('class', `visitor-digit-segment${visitorDigitSegments[Number(digit)].includes(segment) ? ' is-on' : ''}`);
+                    svg.appendChild(shape);
+                }
+                digits.appendChild(svg);
+            }
+
+            visitorCount.replaceChildren(digits);
+            if (status) {
+                const statusMessage = document.createElement('span');
+                statusMessage.className = 'visitor-count-status';
+                statusMessage.textContent = status;
+                visitorCount.appendChild(statusMessage);
+            }
+            visitorCount.setAttribute('aria-label', status
+                ? `누적 방문자 수 ${count}명. ${status}`
+                : `누적 방문자 수 ${count}명`);
+        }
+
+        let cachedVisitorCount = null;
+        try {
+            const storedCount = localStorage.getItem(visitorCountCacheKey);
+            if (/^\d+$/.test(storedCount || '')) {
+                cachedVisitorCount = storedCount;
+                renderVisitorCount(cachedVisitorCount, '저장된 방문자 수 · 최신 수 확인 중');
+            }
+        } catch (error) {
+            console.warn('저장된 방문자 수를 읽지 못했습니다.', error);
+        }
+
+        const visitorCountController = new AbortController();
+        const visitorCountTimeout = window.setTimeout(() => visitorCountController.abort(), 10000);
+
+        fetch('https://api.visitorbadge.io/api/visitors?path=aicyper.github.io&label=', {
+            cache: 'no-store',
+            signal: visitorCountController.signal
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Visitor counter request failed: ${response.status}`);
@@ -802,30 +889,28 @@
                     throw new Error('Visitor counter returned an invalid count');
                 }
 
-                const svgNamespace = 'http://www.w3.org/2000/svg';
-                const digits = document.createDocumentFragment();
-                for (const [index, digit] of [...count].entries()) {
-                    const svg = document.createElementNS(svgNamespace, 'svg');
-                    svg.setAttribute('class', 'visitor-digit');
-                    svg.setAttribute('viewBox', '0 0 64 100');
-                    svg.setAttribute('aria-hidden', 'true');
-                    svg.style.animationDelay = `${index * 45}ms`;
-
-                    for (const [segment, path] of Object.entries(visitorSegments)) {
-                        const shape = document.createElementNS(svgNamespace, 'path');
-                        shape.setAttribute('d', path);
-                        shape.setAttribute('class', `visitor-digit-segment${visitorDigitSegments[Number(digit)].includes(segment) ? ' is-on' : ''}`);
-                        svg.appendChild(shape);
-                    }
-                    digits.appendChild(svg);
+                renderVisitorCount(count, '');
+                try {
+                    localStorage.setItem(visitorCountCacheKey, count);
+                } catch (error) {
+                    console.warn('방문자 수를 저장하지 못했습니다.', error);
                 }
-
-                visitorCount.replaceChildren(digits);
-                visitorCount.setAttribute('aria-label', `누적 방문자 수 ${count}명`);
             })
             .catch(error => {
                 console.error('방문자 수를 불러오지 못했습니다.', error);
-                visitorCount.setAttribute('aria-label', '방문자 수를 불러오지 못했습니다.');
+                if (cachedVisitorCount) {
+                    renderVisitorCount(cachedVisitorCount, '저장된 방문자 수 · 최신 수를 불러오지 못했습니다');
+                    return;
+                }
+
+                const statusMessage = document.createElement('span');
+                statusMessage.className = 'visitor-count-status';
+                statusMessage.textContent = '방문자 수를 일시적으로 불러오지 못했습니다.';
+                visitorCount.replaceChildren(statusMessage);
+                visitorCount.setAttribute('aria-label', '방문자 수를 일시적으로 불러오지 못했습니다.');
+            })
+            .finally(() => {
+                window.clearTimeout(visitorCountTimeout);
             });
 
         // Navbar effect on scroll
